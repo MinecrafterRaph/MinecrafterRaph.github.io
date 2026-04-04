@@ -6,22 +6,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+    :root {
+        --bg: #f5f0e6;
+        --text: #222;
+        --fontSize: 16px;
+        --width: 900px;
+    }
+
     body {
         margin: 0;
         padding: 0;
-        font-family: "Georgia", "Times New Roman", serif;
-        background: var(--bg, #f5f0e6);
-        color: var(--text, #222);
-        font-size: var(--fontSize, 16px);
+        font-family: "Georgia", serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: var(--fontSize);
     }
 
     .page {
-        max-width: var(--width, 900px);
+        max-width: var(--width);
         margin: 40px auto;
         padding: 40px;
         background: #fffdf6;
         border: 1px solid #333;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     .masthead {
@@ -34,38 +40,28 @@
     .masthead h1 {
         margin: 0;
         font-size: 3rem;
-        letter-spacing: 0.15em;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
     }
 
     .nav {
         position: sticky;
         top: 0;
-        background: #f5f0e6;
+        background: #ddd;
+        padding: 10px;
         border-bottom: 1px solid #aaa;
-        padding: 8px 0;
-        z-index: 10;
-    }
-
-    .nav-inner {
-        max-width: 900px;
-        margin: 0 auto;
-        display: flex;
-        gap: 15px;
-        font-size: 0.9rem;
     }
 
     .nav a {
+        margin-right: 15px;
         text-decoration: none;
-        color: #222;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
+        color: #000;
+        font-weight: bold;
     }
 
     .columns {
         display: flex;
         gap: 20px;
-        margin-top: 10px;
     }
 
     .col {
@@ -74,21 +70,27 @@
     }
 
     .image-placeholder {
-        border: 1px solid #555;
         background: #eee;
-        height: 160px;
+        border: 1px solid #555;
+        height: 150px;
         display: flex;
-        align-items: center;
         justify-content: center;
-        margin: 10px 0 15px;
+        align-items: center;
+        margin: 15px 0;
     }
 </style>
 
 <script>
-    // Einstellungen aus Editor laden
-    document.addEventListener("DOMContentLoaded", () => {
-        const text = localStorage.getItem("textColor");
-        const bg = localStorage.getItem("bgColor");
-        const size = localStorage.getItem("fontSize");
-        const width = localStorage.getItem("pageWidth");
-        const title
+// Texte laden
+document.addEventListener("DOMContentLoaded", () => {
+    const ids = document.querySelectorAll("[data-id]");
+    ids.forEach(el => {
+        const saved = localStorage.getItem(el.dataset.id);
+        if (saved) el.innerText = saved;
+    });
+
+    // Editor-Einstellungen laden
+    const text = localStorage.getItem("textColor");
+    const bg = localStorage.getItem("bgColor");
+    const size = localStorage.getItem("fontSize");
+    const width = localStorage.getItem("pageWidth");

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Schulzeitung Kommentare</title>
+<style>
+body{font-family:sans-serif;background:#f9f6f1;color:#333;padding:12px;}
+h2,h3{color:#bfa23c;}
+.box{border:2px solid gold;padding:8px;margin:8px 0;background:#fff;}
+button{background:gold;color:#000;border:none;padding:4px 8px;margin:2px;cursor:pointer;}
+button:hover{background:#cfa11f;}
+textarea,input{width:100%;margin:4px 0;padding:4px;}
+.comment-approved{border-left:4px solid green;}
+.comment-pending{border-left:4px solid orange;}
+.comment-rejected{border-left:4px solid red;}
+</style>
+</head>
+<body>
+<h2>Kommentare</h2>
+<div id="commentsContainer" class="box"></div>
+<h3>Neuen Kommentar hinzufügen</h3>
+<input type="text" id="commentName" placeholder="Name">
+<textarea id="commentContent" placeholder="Kommentar"></textarea>
+<button onclick="submitComment()">Kommentar senden</button>
+
+<script>
+// Kommentar-Daten simuliert
+let comments=[];
+
+// Kommentar rendern
+function renderComments(){
+  let el=document.getElementById('commentsContainer');
+  el.innerHTML='';
+  if(comments.length===0){ el.innerHTML='<p>Keine Kommentare vorhanden</p>'; return; }
+  comments.forEach((c,i)=>{
+    let d=document.createElement('div');
+    d.className='box comment-'+c.status;
+    d.innerHTML=`<b>${c.name}</b> (${c.status})<p>${c.content}</p>`;
+    if(c.status==='pending'){
+      let approveBtn=document.createElement('button');
+      approveBtn.innerText='Freigeben';
+      approveBtn.onclick=()=>{c.status='approved'; renderComments();};
+      let rejectBtn=document.createElement('button');
+      rejectBtn.innerText='Ablehnen';
+      rejectBtn.onclick=()=>{c.status='rejected'; renderComments();};
+      d.appendChild(approveBtn);
+      d.appendChild(rejectBtn);
+    }
+    el.appendChild(d);
+  });
+}
+
+// Kommentar einreichen
+function submitComment(){
+  let name=document.getElementById('commentName').value.trim();
+  let content=document.getElementById('commentContent').value.trim();
+  if(!name || !content) return alert('Name und Kommentar erforderlich');
+  comments.push({name,content,status:'pending'});
+  document.getElementById('commentName').value='';
+  document.getElementById('commentContent').value='';
+  renderComments();
+}
+
+// Initialisierung
+document.addEventListener('DOMContentLoaded',()=>{ renderComments(); });
+</script>
+</body>
+</html>

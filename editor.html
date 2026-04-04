@@ -13,7 +13,7 @@
     }
 
     #loginBox, #editorBox {
-        max-width: 400px;
+        max-width: 500px;
         margin: auto;
         padding: 20px;
         background: white;
@@ -23,10 +23,14 @@
 
     #editorBox { display: none; }
 
-    input {
+    input, textarea, select {
         width: 100%;
         padding: 10px;
         margin-top: 10px;
+    }
+
+    textarea {
+        height: 120px;
     }
 
     button {
@@ -52,20 +56,41 @@
 <div id="editorBox">
     <h2>Editor</h2>
 
+    <label>Text auswählen:</label>
+    <select id="textSelect" onchange="loadText()">
+        <option value="t1">Titel</option>
+        <option value="t2">Untertitel</option>
+        <option value="t3">Headline</option>
+        <option value="t4">Absatz 1</option>
+        <option value="t5">Absatz 2</option>
+        <option value="t6">Seite 2 Titel</option>
+        <option value="t7">Seite 2 Text</option>
+        <option value="t8">News Titel</option>
+        <option value="t9">News Text</option>
+        <option value="t10">Interview Titel</option>
+        <option value="t11">Interview Text</option>
+        <option value="t12">Projekte Titel</option>
+        <option value="t13">Projekte Text</option>
+        <option value="t14">Rätsel Titel</option>
+        <option value="t15">Rätsel Text</option>
+    </select>
+
+    <textarea id="textEditor"></textarea>
+    <button onclick="saveText()">Text speichern</button>
+
+    <hr>
+
     <label>Textfarbe:</label>
-    <input type="color" id="textColor" onchange="save()">
+    <input type="color" id="textColor" onchange="saveSettings()">
 
     <label>Hintergrundfarbe:</label>
-    <input type="color" id="bgColor" onchange="save()">
+    <input type="color" id="bgColor" onchange="saveSettings()">
 
     <label>Schriftgröße (px):</label>
-    <input type="number" id="fontSize" value="16" onchange="save()">
+    <input type="number" id="fontSize" value="16" onchange="saveSettings()">
 
     <label>Seitenbreite (px):</label>
-    <input type="number" id="pageWidth" value="900" onchange="save()">
-
-    <label>Titel ändern:</label>
-    <input type="text" id="customTitle" placeholder="Neuer Titel" onchange="save()">
+    <input type="number" id="pageWidth" value="900" onchange="saveSettings()">
 
     <button onclick="window.location.href='index.html'">Zur Zeitung</button>
 </div>
@@ -80,15 +105,25 @@ function login() {
     }
 }
 
-function save() {
+function loadText() {
+    const id = document.getElementById("textSelect").value;
+    const saved = localStorage.getItem(id);
+    document.getElementById("textEditor").value = saved || "";
+}
+
+function saveText() {
+    const id = document.getElementById("textSelect").value;
+    const text = document.getElementById("textEditor").value;
+    localStorage.setItem(id, text);
+}
+
+function saveSettings() {
     localStorage.setItem("textColor", document.getElementById("textColor").value);
     localStorage.setItem("bgColor", document.getElementById("bgColor").value);
     localStorage.setItem("fontSize", document.getElementById("fontSize").value);
     localStorage.setItem("pageWidth", document.getElementById("pageWidth").value);
-    localStorage.setItem("customTitle", document.getElementById("customTitle").value);
 }
 </script>
 
 </body>
 </html>
-

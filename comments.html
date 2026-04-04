@@ -60,6 +60,212 @@ function submitComment(){
   document.getElementById('commentContent').value='';
   renderComments();
 }
+<script>
+// Kommentare Initialisierung
+function initComments(articleId){
+  let el=document.getElementById('commentsSection');
+  if(!el){
+    el=document.createElement('div');
+    el.id='commentsSection';
+    el.className='box gold-frame';
+    el.style.margin='12px 0';
+    document.getElementById('mainContent').appendChild(el);
+  }
+  el.innerHTML=`<h3>Kommentare</h3>
+    <div id="commentList" style="max-height:200px; overflow:auto;"></div>
+    <input type="text" id="commentInput" placeholder="Dein Kommentar..." style="width:70%;">
+    <button onclick="submitComment(${articleId})">Senden</button>`;
+  renderComments(articleId);
+}
+
+// Kommentar speichern
+function submitComment(articleId){
+  let txt=document.getElementById('commentInput').value.trim();
+  if(!txt) return alert('Kommentar darf nicht leer sein');
+  if(!window.comments) window.comments=[];
+  comments.push({articleId, text:txt, date:new Date().toISOString()});
+  saveAll();
+  document.getElementById('commentInput').value='';
+  renderComments(articleId);
+}
+
+// Kommentare anzeigen
+function renderComments(articleId){
+  let list=document.getElementById('commentList');
+  list.innerHTML='';
+  let comms=comments.filter(c=>c.articleId===articleId);
+  if(comms.length===0){ list.innerHTML='<p>Keine Kommentare</p>'; return; }
+  comms.forEach(c=>{
+    let div=document.createElement('div');
+    div.className='box gold-frame';
+    div.style.margin='4px 0';
+    div.innerHTML=`<p>${c.text}</p><small>${c.date}</small>`;
+    list.appendChild(div);
+  });
+}
+
+// Umfrage Initialisierung in comments.html
+function initCommentsPoll(){
+  let el=document.getElementById('pollSection');
+  if(!el){
+    el=document.createElement('div');
+    el.id='pollSection';
+    el.className='box gold-frame';
+    el.style.margin='12px 0';
+    document.getElementById('mainContent').appendChild(el);
+  }
+  el.innerHTML=`<h3>Leserumfrage</h3>
+    <p>Welches Thema interessiert dich am meisten?</p>
+    <form id="pollForm">
+      <input type="radio" name="pollOption" value="Lokales"> Lokales<br>
+      <input type="radio" name="pollOption" value="Sport"> Sport<br>
+      <input type="radio" name="pollOption" value="Kultur"> Kultur<br>
+      <input type="radio" name="pollOption" value="Meinungen"> Meinungen<br>
+      <button type="button" onclick="submitPoll()">Abstimmen</button>
+    </form>
+    <div id="pollResult" style="margin-top:6px;"></div>`;
+  renderPollResults();
+}
+
+// Umfrage speichern
+function submitPoll(){
+  let form=document.getElementById('pollForm');
+  let choice=form.pollOption.value;
+  if(!choice) return alert('Bitte eine Option wählen');
+  if(!window.pollData) window.pollData={Lokales:0,Sport:0,Kultur:0,Meinungen:0};
+  pollData[choice]++;
+  saveAll();
+  renderPollResults();
+}
+
+// Umfrage Ergebnisse anzeigen
+function renderPollResults(){
+  let el=document.getElementById('pollResult');
+  if(!el || !window.pollData) return;
+  let total=Object.values(pollData).reduce((a,b)=>a+b,0);
+  el.innerHTML='<h4>Ergebnisse</h4>';
+  for(let key in pollData){
+    let percent=total>0 ? ((pollData[key]/total)*100).toFixed(1) : 0;
+    let bar=document.createElement('div');
+    bar.className='pollBar box gold-frame';
+    bar.style.width=percent+'%';
+    bar.style.height='20px';
+    bar.style.margin='2px 0';
+    bar.style.background='lightgoldenrodyellow';
+    bar.innerText=`${key}: ${pollData[key]} Stimmen (${percent}%)`;
+    el.appendChild(bar);
+  }
+}
+
+// Initialisierung Kommentare + Umfrage
+document.addEventListener('DOMContentLoaded',()=>{
+  let articleId=currentArticleId || 0; // aktuelle Artikel-ID
+  initComments(articleId);
+  initCommentsPoll();
+});
+</script><script>
+// Kommentare Initialisierung
+function initComments(articleId){
+  let el=document.getElementById('commentsSection');
+  if(!el){
+    el=document.createElement('div');
+    el.id='commentsSection';
+    el.className='box gold-frame';
+    el.style.margin='12px 0';
+    document.getElementById('mainContent').appendChild(el);
+  }
+  el.innerHTML=`<h3>Kommentare</h3>
+    <div id="commentList" style="max-height:200px; overflow:auto;"></div>
+    <input type="text" id="commentInput" placeholder="Dein Kommentar..." style="width:70%;">
+    <button onclick="submitComment(${articleId})">Senden</button>`;
+  renderComments(articleId);
+}
+
+// Kommentar speichern
+function submitComment(articleId){
+  let txt=document.getElementById('commentInput').value.trim();
+  if(!txt) return alert('Kommentar darf nicht leer sein');
+  if(!window.comments) window.comments=[];
+  comments.push({articleId, text:txt, date:new Date().toISOString()});
+  saveAll();
+  document.getElementById('commentInput').value='';
+  renderComments(articleId);
+}
+
+// Kommentare anzeigen
+function renderComments(articleId){
+  let list=document.getElementById('commentList');
+  list.innerHTML='';
+  let comms=comments.filter(c=>c.articleId===articleId);
+  if(comms.length===0){ list.innerHTML='<p>Keine Kommentare</p>'; return; }
+  comms.forEach(c=>{
+    let div=document.createElement('div');
+    div.className='box gold-frame';
+    div.style.margin='4px 0';
+    div.innerHTML=`<p>${c.text}</p><small>${c.date}</small>`;
+    list.appendChild(div);
+  });
+}
+
+// Umfrage Initialisierung in comments.html
+function initCommentsPoll(){
+  let el=document.getElementById('pollSection');
+  if(!el){
+    el=document.createElement('div');
+    el.id='pollSection';
+    el.className='box gold-frame';
+    el.style.margin='12px 0';
+    document.getElementById('mainContent').appendChild(el);
+  }
+  el.innerHTML=`<h3>Leserumfrage</h3>
+    <p>Welches Thema interessiert dich am meisten?</p>
+    <form id="pollForm">
+      <input type="radio" name="pollOption" value="Lokales"> Lokales<br>
+      <input type="radio" name="pollOption" value="Sport"> Sport<br>
+      <input type="radio" name="pollOption" value="Kultur"> Kultur<br>
+      <input type="radio" name="pollOption" value="Meinungen"> Meinungen<br>
+      <button type="button" onclick="submitPoll()">Abstimmen</button>
+    </form>
+    <div id="pollResult" style="margin-top:6px;"></div>`;
+  renderPollResults();
+}
+
+// Umfrage speichern
+function submitPoll(){
+  let form=document.getElementById('pollForm');
+  let choice=form.pollOption.value;
+  if(!choice) return alert('Bitte eine Option wählen');
+  if(!window.pollData) window.pollData={Lokales:0,Sport:0,Kultur:0,Meinungen:0};
+  pollData[choice]++;
+  saveAll();
+  renderPollResults();
+}
+
+// Umfrage Ergebnisse anzeigen
+function renderPollResults(){
+  let el=document.getElementById('pollResult');
+  if(!el || !window.pollData) return;
+  let total=Object.values(pollData).reduce((a,b)=>a+b,0);
+  el.innerHTML='<h4>Ergebnisse</h4>';
+  for(let key in pollData){
+    let percent=total>0 ? ((pollData[key]/total)*100).toFixed(1) : 0;
+    let bar=document.createElement('div');
+    bar.className='pollBar box gold-frame';
+    bar.style.width=percent+'%';
+    bar.style.height='20px';
+    bar.style.margin='2px 0';
+    bar.style.background='lightgoldenrodyellow';
+    bar.innerText=`${key}: ${pollData[key]} Stimmen (${percent}%)`;
+    el.appendChild(bar);
+  }
+}
+
+// Initialisierung Kommentare + Umfrage
+document.addEventListener('DOMContentLoaded',()=>{
+  let articleId=currentArticleId || 0; // aktuelle Artikel-ID
+  initComments(articleId);
+  initCommentsPoll();
+});
 
 // Initialisierung
 document.addEventListener('DOMContentLoaded',()=>{ renderComments(); });

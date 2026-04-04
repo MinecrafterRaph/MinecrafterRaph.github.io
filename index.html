@@ -1403,3 +1403,322 @@ function saveQuizContent(articleId){
   saveAll();
 }
 </script>
+<script>
+// Rätsel/Quiz hinzufügen
+function insertQuiz(){
+  let question=prompt('Frage für das Quiz:');
+  if(!question) return;
+  let options=[];
+  for(let i=0;i<4;i++){
+    let opt=prompt('Option '+(i+1));
+    if(!opt) return;
+    options.push(opt);
+  }
+  let correct=parseInt(prompt('Nummer der richtigen Antwort (1-4)'))-1;
+  if(isNaN(correct) || correct<0 || correct>3) return alert('Ungültige Antwort');
+  let html='<div class="quiz box gold-frame" style="margin:8px 0;padding:6px;">';
+  html+=`<p>${question}</p>`;
+  options.forEach((o,i)=>{
+    html+=`<button class="quizOption" onclick="checkAnswer(this,${i},${correct})">${o}</button>`;
+  });
+  html+='</div>';
+  document.execCommand('insertHTML',false,html);
+}
+
+// Quiz prüfen
+function checkAnswer(btn,index,correct){
+  if(index===correct){
+    btn.style.background='gold';
+    btn.style.color='black';
+    alert('Richtig!');
+  } else{
+    btn.style.background='gray';
+    btn.style.color='white';
+    alert('Falsch! Richtig war Option '+(correct+1));
+  }
+}
+
+// Quiz Animation
+function animateQuiz(){
+  document.querySelectorAll('.quiz').forEach((q,i)=>{
+    q.style.transform='translateY(-20px)';
+    q.style.opacity='0';
+    q.style.transition=`transform 0.5s ease ${i*0.1}s, opacity 0.5s ease ${i*0.1}s`;
+    setTimeout(()=>{q.style.transform='translateY(0)'; q.style.opacity='1';},50);
+  });
+}
+
+// Toolbar Button für Quiz
+function addQuizToolbar(){
+  let toolbar=document.querySelector('.toolbar');
+  if(!toolbar) return;
+  let quizBtn=document.createElement('button');
+  quizBtn.innerText='Quiz/Rätsel';
+  quizBtn.onclick=insertQuiz;
+  toolbar.appendChild(quizBtn);
+}
+
+// Initialisierung Quiz
+document.addEventListener('DOMContentLoaded',()=>{
+  addQuizToolbar();
+  animateQuiz();
+});
+
+// Quiz speichern mit Artikel
+function saveQuizContent(articleId){
+  let article=articles.find(a=>a.id===articleId);
+  if(!article) return;
+  article.quiz=document.querySelector('#editorContent').innerHTML;
+  saveAll();
+}
+</script>
+<script>
+// Scroll Animation für Artikel-Boxen
+function applyScrollAnimations(){
+  let boxes=document.querySelectorAll('.box');
+  boxes.forEach(b=>{
+    b.style.opacity='0';
+    b.style.transform='translateY(30px)';
+    b.style.transition='opacity 0.6s ease, transform 0.6s ease';
+  });
+
+  window.addEventListener('scroll',()=>{
+    boxes.forEach(b=>{
+      let rect=b.getBoundingClientRect();
+      if(rect.top < window.innerHeight - 50){
+        b.style.opacity='1';
+        b.style.transform='translateY(0)';
+      }
+    });
+  });
+}
+
+// Blätterbare Seiten Animation verbessern
+function enhancePageFlip(){
+  document.querySelectorAll('.page').forEach(p=>{
+    p.style.cursor='pointer';
+    p.addEventListener('mouseenter',()=>p.style.boxShadow='0 0 20px gold');
+    p.addEventListener('mouseleave',()=>p.style.boxShadow='none');
+    p.addEventListener('click',()=>{
+      p.style.transition='transform 0.8s ease';
+      p.style.transform='rotateY(180deg)';
+    });
+  });
+}
+
+// Smooth Scroll für interne Links
+function initSmoothScroll(){
+  document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
+    anchor.addEventListener('click',function(e){
+      e.preventDefault();
+      document.querySelector(this.getAttribute('href')).scrollIntoView({behavior:'smooth'});
+    });
+  });
+}
+
+// Artikel-Übergang beim Laden
+function animateArticleLoad(){
+  let pages=document.querySelectorAll('.page');
+  pages.forEach((p,i)=>{
+    p.style.opacity='0';
+    p.style.transform='translateX(50px)';
+    setTimeout(()=>{p.style.transition='opacity 0.5s ease, transform 0.5s ease';p.style.opacity='1';p.style.transform='translateX(0)';},i*100);
+  });
+}
+
+// Initialisierung aller visuellen Effekte
+document.addEventListener('DOMContentLoaded',()=>{
+  applyScrollAnimations();
+  enhancePageFlip();
+  initSmoothScroll();
+  animateArticleLoad();
+});
+</script>
+<script>
+// Newsletter Anmeldungen speichern
+let newsletterSubscribers=[];
+
+// Newsletter Formular rendern
+function renderNewsletterForm(){
+  let el=document.getElementById('newsletterSection');
+  if(!el) return;
+  el.innerHTML=`<h3>Newsletter Anmeldung</h3>
+    <input type="email" id="newsletterEmail" placeholder="Deine E-Mail" style="width:100%;margin-bottom:6px;">
+    <button onclick="subscribeNewsletter()">Anmelden</button>
+    <div id="newsletterMsg" style="margin-top:6px;"></div>`;
+}
+
+// Newsletter anmelden
+function subscribeNewsletter(){
+  let email=document.getElementById('newsletterEmail').value;
+  if(!email) return alert('Bitte E-Mail eingeben');
+  if(newsletterSubscribers.includes(email)) return alert('Du bist bereits angemeldet');
+  newsletterSubscribers.push(email);
+  document.getElementById('newsletterMsg').innerText='Danke! Du bist nun angemeldet.';
+  saveAll();
+}
+
+// Neue Ausgabe Benachrichtigung (simuliert)
+function notifyNewIssue(issueTitle){
+  newsletterSubscribers.forEach(email=>{
+    console.log(`Benachrichtigung an ${email}: Neue Ausgabe "${issueTitle}" verfügbar!`);
+  });
+}
+
+// Neue Ausgabe erstellen erweitern
+function createNewIssue(){
+  let title=document.getElementById('newIssueTitle').value;
+  let date=document.getElementById('newIssueDate').value;
+  let sel=document.getElementById('newIssueArticles');
+  let articleIds=[...sel.selectedOptions].map(o=>parseInt(o.value));
+  if(!title || !date || articleIds.length===0) return alert('Alle Felder ausfüllen');
+  let newIssue={id:issues.length,title,date,articles:articleIds};
+  issues.push(newIssue);
+  saveAll();
+  renderIssueList();
+  alert('Neue Ausgabe erstellt');
+  notifyNewIssue(title);
+}
+
+// Newsletter Initialisierung
+document.addEventListener('DOMContentLoaded',()=>{ renderNewsletterForm(); });
+</script>
+<script>
+// Suchfeld rendern
+function renderSearchBar(){
+  let el=document.getElementById('searchSection');
+  if(!el) return;
+  el.innerHTML=`<h3>Artikel Suche</h3>
+    <input type="text" id="searchInput" placeholder="Suchbegriff" style="width:100%;margin-bottom:6px;">
+    <select id="categoryFilter" style="width:100%;margin-bottom:6px;">
+      <option value="">Alle Kategorien</option>
+      <option value="Lokales">Lokales</option>
+      <option value="Sport">Sport</option>
+      <option value="Kultur">Kultur</option>
+      <option value="Meinungen">Meinungen</option>
+    </select>
+    <button onclick="searchArticles()">Suchen</button>
+    <div id="searchResults" style="margin-top:6px;"></div>`;
+}
+
+// Artikel durchsuchen
+function searchArticles(){
+  let term=document.getElementById('searchInput').value.toLowerCase();
+  let category=document.getElementById('categoryFilter').value;
+  let results=articles.filter(a=>{
+    let match=(!term || a.title.toLowerCase().includes(term) || a.content.toLowerCase().includes(term));
+    let catMatch=!category || a.category===category;
+    return match && catMatch && a.status==='approved';
+  });
+  renderSearchResults(results, term);
+}
+
+// Suchergebnisse rendern
+function renderSearchResults(results, term){
+  let el=document.getElementById('searchResults');
+  el.innerHTML='<h4>Ergebnisse:</h4>';
+  if(results.length===0){ el.innerHTML+='<p>Keine Treffer</p>'; return; }
+  results.forEach(a=>{
+    let div=document.createElement('div');
+    div.className='box gold-frame';
+    let highlighted=a.content.replace(new RegExp(`(${term})`,'gi'), '<mark>$1</mark>');
+    div.innerHTML=`<h4>${a.title}</h4><p>${highlighted.substring(0,150)}...</p>
+      <button onclick="viewArticle(${a.id})">Artikel lesen</button>`;
+    el.appendChild(div);
+  });
+}
+
+// Artikelanzeige beim Klicken
+function viewArticle(id){
+  let a=articles.find(x=>x.id===id);
+  if(!a) return alert('Artikel nicht gefunden');
+  let el=document.getElementById('articleView');
+  if(!el) return;
+  el.innerHTML=`<h2>${a.title}</h2><p>${a.content}</p>`;
+  renderCommentsForArticle(a.id);
+  renderCommentForm(a.id);
+}
+
+// Initialisierung Suche
+document.addEventListener('DOMContentLoaded',()=>{ renderSearchBar(); });
+</script>
+<script>
+// Autorenprofile rendern
+function renderAuthorProfiles(){
+  let el=document.getElementById('authorsSection');
+  if(!el) return;
+  el.innerHTML='<h3>Autoren</h3>';
+  users.filter(u=>u.role==='editor').forEach(u=>{
+    let div=document.createElement('div');
+    div.className='box gold-frame';
+    div.style.margin='6px 0';
+    div.innerHTML=`
+      <img src="${u.avatar||'default-avatar.png'}" style="width:60px;height:60px;border-radius:50%;float:left;margin-right:12px;">
+      <b>${u.name||u.email}</b><br>
+      <small>${u.bio||'Keine Beschreibung'}</small>
+      <div id="articles-${u.email}"></div>
+    `;
+    el.appendChild(div);
+    renderAuthorArticles(u.email);
+  });
+}
+
+// Liste eigener Artikel
+function renderAuthorArticles(email){
+  let container=document.getElementById('articles-'+email);
+  container.innerHTML='<p>Artikel:</p>';
+  let userArticles=articles.filter(a=>a.author===email && a.status==='approved');
+  if(userArticles.length===0){ container.innerHTML+='<p>Keine veröffentlichten Artikel</p>'; return; }
+  userArticles.forEach(a=>{
+    let d=document.createElement('div');
+    d.style.padding='2px 0';
+    d.innerHTML=`<button onclick="viewArticle(${a.id})">${a.title}</button>`;
+    container.appendChild(d);
+  });
+}
+
+// Statistik für Autoren
+function renderAuthorStats(){
+  let el=document.getElementById('authorsStats');
+  if(!el) return;
+  el.innerHTML='<h3>Statistik</h3>';
+  users.filter(u=>u.role==='editor').forEach(u=>{
+    let userArticles=articles.filter(a=>a.author===u.email && a.status==='approved').length;
+    let views=(u.views||0);
+    let div=document.createElement('div');
+    div.className='box gold-frame';
+    div.innerHTML=`<b>${u.name||u.email}</b> - Artikel: ${userArticles}, Aufrufe: ${views}`;
+    el.appendChild(div);
+  });
+}
+
+// Autorenprofil Detailansicht
+function viewAuthor(email){
+  let user=users.find(u=>u.email===email);
+  if(!user) return alert('Autor nicht gefunden');
+  let el=document.getElementById('authorView');
+  if(!el) return;
+  el.innerHTML=`
+    <h2>${user.name||user.email}</h2>
+    <img src="${user.avatar||'default-avatar.png'}" style="width:120px;height:120px;border-radius:50%;">
+    <p>${user.bio||'Keine Beschreibung'}</p>
+    <h4>Artikel:</h4>
+    <div id="authorArticlesDetail"></div>
+  `;
+  let container=document.getElementById('authorArticlesDetail');
+  let userArticles=articles.filter(a=>a.author===email && a.status==='approved');
+  userArticles.forEach(a=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.style.margin='4px 0';
+    d.innerHTML=`<button onclick="viewArticle(${a.id})">${a.title}</button>`;
+    container.appendChild(d);
+  });
+}
+
+// Initialisierung Autorenprofile
+document.addEventListener('DOMContentLoaded',()=>{
+  renderAuthorProfiles();
+  renderAuthorStats();
+});
+</script>

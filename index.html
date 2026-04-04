@@ -24,31 +24,45 @@
   header {
     background: #111;
     color: #f5f0e6;
-    padding: 10px 20px;
+    padding: 15px 20px;
+    text-align: center;
   }
 
   header h1 {
     margin: 0;
-    font-size: 1.4rem;
+    font-size: 1.8rem;
+    letter-spacing: 0.1em;
   }
 
-  .top-menu {
+  nav {
     background: #222;
-    color: #eee;
-    padding: 8px 20px;
     display: flex;
-    gap: 15px;
-    font-size: 0.9rem;
+    justify-content: center;
+    gap: 20px;
+    padding: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 
-  .top-menu a {
+  nav button {
+    background: none;
+    border: none;
     color: #eee;
-    text-decoration: none;
+    font-size: 1rem;
     cursor: pointer;
+    padding: 8px 12px;
+    transition: 0.2s;
   }
 
-  .top-menu a:hover {
+  nav button:hover {
+    color: #fff;
     text-decoration: underline;
+  }
+
+  nav button.active {
+    border-bottom: 2px solid #fff;
+    font-weight: bold;
   }
 
   .page {
@@ -57,6 +71,11 @@
     padding: 30px;
     background: #fffdf6;
     border: 1px solid #333;
+    display: none;
+  }
+
+  .page.active {
+    display: block;
   }
 
   .masthead {
@@ -83,27 +102,17 @@
     text-align: justify;
   }
 
-  .image-placeholder {
-    background: #eee;
-    border: 1px solid #555;
-    height: 150px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .image {
+    height: 180px;
     margin: 15px 0;
-  }
-
-  .issue {
-    display: none;
-  }
-
-  .issue.active {
-    display: block;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #555;
   }
 
   .editor-link {
     text-align: center;
-    margin-bottom: 10px;
+    margin: 10px 0;
   }
 
   .editor-link a {
@@ -111,47 +120,289 @@
     text-decoration: none;
     font-weight: bold;
   }
+
+  /* Rätsel-Styling */
+  .riddle-block {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px dashed #999;
+    background: #fdf7e8;
+  }
+
+  .riddle-solution {
+    margin-top: 10px;
+    padding: 8px;
+    border-top: 1px solid #ccc;
+    font-size: 0.9rem;
+    color: #444;
+  }
+
+  .riddle-grid {
+    font-family: monospace;
+    white-space: pre;
+    border: 1px solid #ccc;
+    padding: 8px;
+    display: inline-block;
+    background: #fff;
+  }
+
+  .r3-columns {
+    display: flex;
+    gap: 40px;
+  }
+
+  .r3-columns ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .dragdrop-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .drag-items, .drop-zones {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .drag-item {
+    padding: 6px 8px;
+    margin: 4px 0;
+    background: #fff;
+    border: 1px solid #aaa;
+    cursor: grab;
+  }
+
+  .drop-zone {
+    min-height: 40px;
+    padding: 6px;
+    margin: 4px 0;
+    border: 1px dashed #aaa;
+    background: #fff;
+  }
+
+  .sudoku-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 30px);
+    gap: 4px;
+  }
+
+  .sudoku-grid input {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+  }
 </style>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  // Styles laden
-  const text = localStorage.getItem("textColor");
-  const bg = localStorage.getItem("bgColor");
-  const size = localStorage.getItem("fontSize");
-  const width = localStorage.getItem("pageWidth");
+  // Basis-Stile laden
+  const text = localStorage.getItem("style_textColor");
+  const bg = localStorage.getItem("style_bgColor");
+  const size = localStorage.getItem("style_fontSize");
+  const width = localStorage.getItem("style_pageWidth");
 
   if (text) document.documentElement.style.setProperty("--text", text);
   if (bg) document.documentElement.style.setProperty("--bg", bg);
   if (size) document.documentElement.style.setProperty("--fontSize", size + "px");
   if (width) document.documentElement.style.setProperty("--width", width + "px");
 
-  // Texte laden
-  document.querySelectorAll("[data-id]").forEach(el => {
-    const saved = localStorage.getItem(el.dataset.id);
-    if (saved) el.innerText = saved;
+  // Inhalte laden
+  const fields = ["title","subtitle","headline","leftText","rightText","news","interview","projects","riddleIntro"];
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    const val = localStorage.getItem("content_" + id);
+    if (el && val) el.innerText = val;
   });
 
-  // Bilder laden
-  document.querySelectorAll("[data-img]").forEach(el => {
-    const url = localStorage.getItem(el.dataset.img);
-    if (url) {
-      el.style.backgroundImage = `url(${url})`;
-      el.style.backgroundSize = "cover";
-      el.style.backgroundPosition = "center";
-      el.innerText = "";
-    }
-  });
+  // Bild laden
+  const imgUrl = localStorage.getItem("content_image");
+  if (imgUrl) {
+    document.getElementById("mainImage").style.backgroundImage = `url(${imgUrl})`;
+  }
 
-  // Ausgabe 1 als Standard
-  showIssue('issue1');
+  // Schriftstile anwenden
+  fields.forEach(id => applyTextStyle(id));
+
+  // Rätsel laden
+  loadRiddles();
+
+  // Standardseite
+  showPage('home');
 });
 
-function showIssue(id) {
-  document.querySelectorAll(".issue").forEach(i => i.classList.remove("active"));
+function applyTextStyle(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const font = localStorage.getItem("style_font_" + id);
+  const size = localStorage.getItem("style_size_" + id);
+  const color = localStorage.getItem("style_color_" + id);
+  const deco = localStorage.getItem("style_deco_" + id);
+
+  if (font) el.style.fontFamily = font;
+  if (size) el.style.fontSize = size + "px";
+  if (color) el.style.color = color;
+
+  if (deco) {
+    const d = JSON.parse(deco);
+    el.style.fontWeight = d.bold ? "bold" : "normal";
+    el.style.fontStyle = d.italic ? "italic" : "normal";
+    el.style.textTransform = d.upper ? "uppercase" : "none";
+    el.style.borderBottom = d.underline ? "1px solid #000" : "none";
+  }
+}
+
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
+
+  document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+  document.getElementById("btn_" + id).classList.add("active");
+}
+
+function loadRiddles() {
+  // Rätsel 1 – Quiz
+  const r1q = localStorage.getItem("r1_question");
+  const r1a1 = localStorage.getItem("r1_a1");
+  const r1a2 = localStorage.getItem("r1_a2");
+  const r1a3 = localStorage.getItem("r1_a3");
+  const r1sol = localStorage.getItem("r1_solutionText");
+  const r1show = localStorage.getItem("r1_showSolution") === "1";
+
+  if (r1q) document.getElementById("r1_question").innerText = r1q;
+  const ul1 = document.getElementById("r1_options");
+  ul1.innerHTML = "";
+  [r1a1, r1a2, r1a3].forEach(txt => {
+    if (!txt) return;
+    const li = document.createElement("li");
+    li.innerHTML = `<label><input type="radio" name="r1"> ${txt}</label>`;
+    ul1.appendChild(li);
+  });
+  if (r1sol) document.getElementById("r1_solution").innerText = "Lösung: " + r1sol;
+  if (r1show) document.getElementById("r1_solution").style.display = "block";
+
+  // Rätsel 2 – Suchsel
+  const r2title = localStorage.getItem("r2_title");
+  const r2grid = localStorage.getItem("r2_grid");
+  const r2words = localStorage.getItem("r2_words");
+  const r2sol = localStorage.getItem("r2_solutionText");
+  const r2show = localStorage.getItem("r2_showSolution") === "1";
+
+  if (r2title) document.getElementById("r2_title").innerText = r2title;
+  if (r2grid) document.getElementById("r2_grid").innerText = r2grid;
+  if (r2words) document.getElementById("r2_words").innerText = r2words;
+  if (r2sol) document.getElementById("r2_solution").innerText = "Lösung: " + r2sol;
+  if (r2show) document.getElementById("r2_solution").style.display = "block";
+
+  // Rätsel 3 – Verbinde die Paare
+  const r3title = localStorage.getItem("r3_title");
+  const r3left = localStorage.getItem("r3_left");
+  const r3right = localStorage.getItem("r3_right");
+  const r3sol = localStorage.getItem("r3_solutionText");
+  const r3show = localStorage.getItem("r3_showSolution") === "1";
+
+  if (r3title) document.getElementById("r3_title").innerText = r3title;
+  const ulL = document.getElementById("r3_left");
+  const ulR = document.getElementById("r3_right");
+  ulL.innerHTML = "";
+  ulR.innerHTML = "";
+  if (r3left) {
+    r3left.split("\n").forEach(line => {
+      if (!line.trim()) return;
+      const li = document.createElement("li");
+      li.innerText = line;
+      ulL.appendChild(li);
+    });
+  }
+  if (r3right) {
+    r3right.split("\n").forEach(line => {
+      if (!line.trim()) return;
+      const li = document.createElement("li");
+      li.innerText = line;
+      ulR.appendChild(li);
+    });
+  }
+  if (r3sol) document.getElementById("r3_solution").innerText = "Lösung: " + r3sol;
+  if (r3show) document.getElementById("r3_solution").style.display = "block";
+
+  // Rätsel 4 – Drag & Drop
+  const r4title = localStorage.getItem("r4_title");
+  const r4items = localStorage.getItem("r4_items");
+  const r4zones = localStorage.getItem("r4_zones");
+  const r4sol = localStorage.getItem("r4_solutionText");
+  const r4show = localStorage.getItem("r4_showSolution") === "1";
+
+  if (r4title) document.getElementById("r4_title").innerText = r4title;
+  const itemsContainer = document.getElementById("r4_items");
+  const zonesContainer = document.getElementById("r4_zones");
+  itemsContainer.innerHTML = "";
+  zonesContainer.innerHTML = "";
+  if (r4items) {
+    r4items.split("\n").forEach(line => {
+      if (!line.trim()) return;
+      const div = document.createElement("div");
+      div.className = "drag-item";
+      div.draggable = true;
+      div.innerText = line;
+      div.addEventListener("dragstart", dragStart);
+      itemsContainer.appendChild(div);
+    });
+  }
+  if (r4zones) {
+    r4zones.split("\n").forEach(line => {
+      if (!line.trim()) return;
+      const div = document.createElement("div");
+      div.className = "drop-zone";
+      div.innerText = line;
+      div.addEventListener("dragover", dragOver);
+      div.addEventListener("drop", dropItem);
+      zonesContainer.appendChild(div);
+    });
+  }
+  if (r4sol) document.getElementById("r4_solution").innerText = "Lösung: " + r4sol;
+  if (r4show) document.getElementById("r4_solution").style.display = "block";
+
+  // Rätsel 5 – Sudoku/Nummern
+  const r5title = localStorage.getItem("r5_title");
+  const r5grid = localStorage.getItem("r5_grid");
+  const r5sol = localStorage.getItem("r5_solutionText");
+  const r5show = localStorage.getItem("r5_showSolution") === "1";
+
+  if (r5title) document.getElementById("r5_title").innerText = r5title;
+  const gridContainer = document.getElementById("r5_grid");
+  gridContainer.innerHTML = "";
+  // 4x4 Grid
+  const preset = (r5grid || "").split("");
+  for (let i = 0; i < 16; i++) {
+    const inp = document.createElement("input");
+    inp.maxLength = 1;
+    inp.value = preset[i] && preset[i] !== "." ? preset[i] : "";
+    gridContainer.appendChild(inp);
+  }
+  if (r5sol) document.getElementById("r5_solution").innerText = "Lösung: " + r5sol;
+  if (r5show) document.getElementById("r5_solution").style.display = "block";
+}
+
+// Drag & Drop (nur zum Spielen, keine Auswertung)
+let draggedItem = null;
+function dragStart(e) {
+  draggedItem = e.target;
+}
+function dragOver(e) {
+  e.preventDefault();
+}
+function dropItem(e) {
+  e.preventDefault();
+  if (draggedItem) {
+    e.target.appendChild(draggedItem);
+    draggedItem = null;
+  }
 }
 </script>
+
 </head>
 <body>
 
@@ -159,64 +410,131 @@ function showIssue(id) {
   <h1>Retro Gazette – Schulzeitung</h1>
 </header>
 
-<div class="top-menu">
-  <a onclick="showIssue('issue1')">Ausgabe 1</a>
-  <a onclick="showIssue('issue2')">Ausgabe 2</a>
-  <a href="editor.html">Editor</a>
-</div>
+<nav>
+  <button id="btn_home" onclick="showPage('home')">Titelseite</button>
+  <button id="btn_news" onclick="showPage('newsPage')">News</button>
+  <button id="btn_interview" onclick="showPage('interviewPage')">Interviews</button>
+  <button id="btn_projects" onclick="showPage('projectsPage')">Projekte</button>
+  <button id="btn_riddlePage" onclick="showPage('riddlePage')">Rätsel</button>
+  <button onclick="window.location.href='editor.html'">Editor</button>
+</nav>
 
 <div class="editor-link">
-  <a href="editor.html">→ Zum Editor (Code 13243)</a>
+  <a href="editor.html">→ Editor öffnen</a>
 </div>
 
-<!-- AUSGABE 1 -->
-<div class="issue" id="issue1">
-  <div class="page">
-    <div class="masthead">
-      <h2 data-id="a1_titel">Retro Gazette</h2>
-      <p data-id="a1_untertitel">Ausgabe 1 – 2026</p>
+<!-- TITELSEITE -->
+<div class="page" id="home">
+  <div class="masthead">
+    <h2 id="title">Retro Gazette</h2>
+    <p id="subtitle">Ausgabe 1 – 2026</p>
+  </div>
+
+  <h3 id="headline">Neue Ideen verändern unsere Schule</h3>
+  <div class="image" id="mainImage"></div>
+
+  <div class="columns">
+    <div class="col" id="leftText">
+      Unsere Schule befindet sich im Wandel: Neue Projekte, digitale Werkzeuge
+      und kreative AGs sorgen dafür, dass Lernen moderner wird.
     </div>
-
-    <h3 data-id="a1_headline">Neue Ideen verändern unsere Schule</h3>
-    <div class="image-placeholder" data-img="a1_titelbild">Titelbild</div>
-
-    <div class="columns">
-      <div class="col" data-id="a1_text1">
-        Unsere Schule befindet sich im Wandel: Neue Projekte, digitale Werkzeuge
-        und kreative AGs sorgen dafür, dass Lernen moderner wird.
-      </div>
-      <div class="col" data-id="a1_text2">
-        Von der Entwicklung einer eigenen Schul-App bis hin zu Umweltprojekten –
-        überall entstehen Ideen, die den Alltag verändern.
-      </div>
+    <div class="col" id="rightText">
+      Von der Entwicklung einer eigenen Schul-App bis hin zu Umweltprojekten –
+      überall entstehen Ideen, die den Alltag verändern.
     </div>
   </div>
 </div>
 
-<!-- AUSGABE 2 -->
-<div class="issue" id="issue2">
-  <div class="page">
-    <div class="masthead">
-      <h2 data-id="a2_titel">Retro Gazette – Spezial</h2>
-      <p data-id="a2_untertitel">Ausgabe 2 – Projektwoche</p>
-    </div>
+<!-- NEWS -->
+<div class="page" id="newsPage">
+  <h2>News</h2>
+  <p id="news">Hier stehen die neuesten Nachrichten.</p>
+</div>
 
-    <h3 data-id="a2_headline">Projektwoche: Kreativität ohne Grenzen</h3>
-    <div class="image-placeholder" data-img="a2_titelbild">Titelbild</div>
+<!-- INTERVIEWS -->
+<div class="page" id="interviewPage">
+  <h2>Interviews</h2>
+  <p id="interview">Hier stehen Interviews.</p>
+</div>
 
-    <div class="columns">
-      <div class="col" data-id="a2_text1">
-        In der Projektwoche arbeiten Schülerinnen und Schüler an eigenen Ideen:
-        Kunst, Technik, Musik, Theater und mehr.
+<!-- PROJEKTE -->
+<div class="page" id="projectsPage">
+  <h2>Projekte & AGs</h2>
+  <p id="projects">Hier stehen Projekte.</p>
+</div>
+
+<!-- RÄTSEL -->
+<div class="page" id="riddlePage">
+  <h2>Rätsel & Spaß</h2>
+  <p id="riddleIntro">Hier findest du verschiedene Rätsel. Die Lösungen stehen in der nächsten Ausgabe.</p>
+
+  <!-- Rätsel 1: Quiz -->
+  <div class="riddle-block">
+    <h3 id="r1_question">Quiz-Frage</h3>
+    <ul id="r1_options">
+      <li><label><input type="radio" name="r1"> Antwort A</label></li>
+      <li><label><input type="radio" name="r1"> Antwort B</label></li>
+      <li><label><input type="radio" name="r1"> Antwort C</label></li>
+    </ul>
+    <div id="r1_solution" class="riddle-solution" style="display:none;"></div>
+  </div>
+
+  <!-- Rätsel 2: Suchsel -->
+  <div class="riddle-block">
+    <h3 id="r2_title">Suchsel</h3>
+    <div id="r2_grid" class="riddle-grid">
+Z B A L L
+A U T O X
+H A U S Y
+    </div>
+    <p><strong>Gesuchte Wörter:</strong> <span id="r2_words">BALL, AUTO, HAUS</span></p>
+    <div id="r2_solution" class="riddle-solution" style="display:none;"></div>
+  </div>
+
+  <!-- Rätsel 3: Verbinde die Paare -->
+  <div class="riddle-block">
+    <h3 id="r3_title">Verbinde die Paare</h3>
+    <div class="r3-columns">
+      <ul id="r3_left">
+        <li>Links 1</li>
+        <li>Links 2</li>
+        <li>Links 3</li>
+      </ul>
+      <ul id="r3_right">
+        <li>Rechts A</li>
+        <li>Rechts B</li>
+        <li>Rechts C</li>
+      </ul>
+    </div>
+    <p style="font-size:0.9rem;">Ziehe in Gedanken Linien oder notiere dir die Paare – die Lösung steht in der nächsten Ausgabe.</p>
+    <div id="r3_solution" class="riddle-solution" style="display:none;"></div>
+  </div>
+
+  <!-- Rätsel 4: Drag & Drop -->
+  <div class="riddle-block">
+    <h3 id="r4_title">Drag-&-Drop-Rätsel</h3>
+    <div class="dragdrop-container">
+      <div class="drag-items" id="r4_items">
+        <!-- Wörter -->
       </div>
-      <div class="col" data-id="a2_text2">
-        Diese Ausgabe sammelt die spannendsten Projekte und zeigt, wie viel
-        Kreativität in unserer Schule steckt.
+      <div class="drop-zones" id="r4_zones">
+        <!-- Kategorien -->
       </div>
     </div>
+    <p style="font-size:0.9rem;">Ziehe die Begriffe in passende Felder. Die Lösung steht in der nächsten Ausgabe.</p>
+    <div id="r4_solution" class="riddle-solution" style="display:none;"></div>
+  </div>
+
+  <!-- Rätsel 5: Sudoku/Nummern -->
+  <div class="riddle-block">
+    <h3 id="r5_title">Mini-Sudoku</h3>
+    <div class="sudoku-grid" id="r5_grid">
+      <!-- 4x4 Inputs -->
+    </div>
+    <p style="font-size:0.9rem;">Fülle die Zahlen ein. Die Lösung steht in der nächsten Ausgabe.</p>
+    <div id="r5_solution" class="riddle-solution" style="display:none;"></div>
   </div>
 </div>
 
 </body>
 </html>
-

@@ -2,34 +2,22 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Schülerzeitung Plattform</title>
+<title>Schulzeitung Interaktiv</title>
 <style>
-/* ================== ALTmodisches Zeitungslayout ================== */
 body { margin:0; font-family: 'Times New Roman', serif; background:#fdf8f0; color:#222; }
 nav { background:#3a2c1b; color:#fff; padding:10px; display:flex; gap:12px; border-bottom:3px solid gold; }
 nav button { background:#5b482b; color:#fff; border:none; padding:8px 16px; cursor:pointer; border-radius:4px; font-weight:bold; border:1px solid #d4af37; }
 nav button:hover { background:#7c5e3e; }
 .box { background:#fffaf0; border:2px solid #d4af37; margin:12px; padding:12px; box-shadow:3px 3px 10px #aaa; border-radius:6px; }
 .hidden { display:none; }
-input, textarea, select { width:100%; margin:5px 0; padding:6px; font-family:'Times New Roman', serif; border-radius:4px; border:1px solid #aaa; }
+input, textarea { width:100%; margin:5px 0; padding:6px; font-family:'Times New Roman', serif; border-radius:4px; border:1px solid #aaa; }
 textarea { min-height:120px; }
-.article-page { perspective:1200px; margin:12px; }
-.page { width:100%; height:600px; transform-style:preserve-3d; transition: transform 1s; border:3px solid #d4af37; background:#fff8e1; padding:12px; box-sizing:border-box; border-radius:6px; box-shadow:2px 2px 12px #999; }
-.page-content { backface-visibility:hidden; font-size:16px; line-height:1.6em; }
-.page-back { transform: rotateY(180deg); }
-.toolbar button { margin-right:6px; font-weight:bold; border:1px solid #d4af37; border-radius:4px; background:#f0e0c6; }
-.toolbar button:hover { background:#f8e5b3; }
-.editor-box { border:2px solid #d4af37; padding:8px; min-height:400px; margin-top:6px; border-radius:6px; box-shadow:inset 0 0 8px #ccc; }
-#animationList { margin-top:10px; }
 h2, h3 { text-shadow: 1px 1px 2px #ccc; color:#4b3e2b; }
-article { margin-bottom:20px; padding:10px; border-bottom:1px solid #d4af37; }
-label { font-weight:bold; }
-.gold-frame { border:2px solid #d4af37; padding:8px; border-radius:6px; box-shadow:1px 1px 6px #aaa; margin-bottom:10px; }
-.quiz-box { border:2px solid #d4af37; padding:10px; background:#fff8e1; border-radius:6px; }
+.gold-frame { border:2px solid #d4af37; padding:8px; border-radius:6px; box-shadow:1px 1px 6px #aaa; transition:transform 0.5s; }
+.gold-frame:hover { transform:scale(1.02); }
 </style>
 </head>
 <body>
-
 <nav>
 <b>Schulzeitung</b>
 <button onclick="show('home')">Start</button>
@@ -47,64 +35,1371 @@ label { font-weight:bold; }
 </div>
 
 <div id="home" class="box"></div>
-<div id="archive" class="hidden scroll-section box"></div>
+<div id="archive" class="hidden box"></div>
 <div id="editor" class="hidden box"></div>
 <div id="admin" class="hidden box"></div>
 <div id="articleView" class="hidden box"></div>
-<div id="quiz" class="hidden box"></div>
 
 <script>
-// ================== STATE ==================
-let articles = [];
-let submissions = [];
-let approvedEmails = [];
-let users = [];
-let currentUser = null;
-let currentPage = 0;
-let flipState = 0;
+let articles=[];
+let submissions=[];
+let approvedEmails=[];
+let users=[];
+let currentUser=null;
 
-// ================== NAVIGATION ==================
-function show(id){['home','archive','editor','admin','articleView','quiz'].forEach(x=>document.getElementById(x).classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
-function showLogin(){ document.getElementById('loginBox').classList.toggle('hidden'); }
-function login(){ let email=document.getElementById('email').value; let approved=approvedEmails.find(e=>e.email===email); if(!approved){ alert('Email nicht freigegeben'); return; } currentUser=approved; alert('Eingeloggt als '+approved.role); if(approved.role==='admin'){ renderAdmin(); show('admin'); } else if(approved.role==='editor'){ renderEditor(); show('editor'); } else{ show('home'); }}
-function adminAccess(){ let code=prompt('Admin-Code:'); if(code==='13243!'){ currentUser={role:'admin'}; renderAdmin(); show('admin'); } else{ alert('Falscher Code'); }}
-function saveAll(){ localStorage.setItem('articles',JSON.stringify(articles)); localStorage.setItem('submissions',JSON.stringify(submissions)); localStorage.setItem('approvedEmails',JSON.stringify(approvedEmails)); localStorage.setItem('users',JSON.stringify(users));}
+function show(id){
+  ['home','archive','editor','admin','articleView'].forEach(x=>document.getElementById(x).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
 
-// ================== ARTICLES ==================
-function createArticle(title,content,cat){ articles.push({id:Date.now(), title, content, category:cat, pages:[content], approved:true, animations:[]}); saveAll(); renderAll(); }
-function submitArticle(title,content,cat){ submissions.push({id:Date.now(), title, content, category:cat, status:'pending', animations:[]}); saveAll(); }
+function showLogin(){
+  document.getElementById('loginBox').classList.toggle('hidden');
+}
 
-// ================== RENDER FUNCTIONS ==================
-function renderAll(){ renderHome(); renderArchive(); }
-function renderHome(){ let el=document.getElementById('home'); el.innerHTML='<h2>Neueste Artikel</h2>'; articles.slice(-5).reverse().forEach(a=>el.appendChild(articleBox(a))); }
-function renderArchive(){ let el=document.getElementById('archive'); el.innerHTML='<h2>Archiv</h2>'; articles.forEach(a=>el.appendChild(articleBox(a))); }
-function articleBox(a){ let d=document.createElement('div'); d.className='box article-box gold-frame'; let html=`<article><h3>${a.title}</h3><small>${a.category}</small><p>${a.pages[0]}</p><button onclick='showArticlePageById(${a.id})'>Artikel anzeigen</button></article>`; d.innerHTML=html; return d; }
+function login(){
+  let email=document.getElementById('email').value;
+  let approved=approvedEmails.find(e=>e.email===email);
+  if(!approved){alert('Email nicht freigegeben'); return;}
+  currentUser=approved;
+  alert('Eingeloggt als '+approved.role);
+  if(approved.role==='admin'){renderAdmin(); show('admin');}
+  else if(approved.role==='editor'){renderEditor(); show('editor');}
+  else{show('home');}
+}
 
-// ================== EDITOR ==================
-function renderEditor(){ let el=document.getElementById('editor'); el.innerHTML=`<h2>Editor</h2><div class='toolbar'><button onclick="document.execCommand('bold',false,null)">B</button><button onclick="document.execCommand('italic',false,null)">I</button><button onclick="document.execCommand('insertUnorderedList',false,null)">Liste</button><button onclick="insertImage()">Bild</button><button onclick="insertLink()">Link</button><button onclick="insertTable()">Tabelle</button></div><div id='editorBox' class='editor-box' contenteditable='true'></div><label>Animation:</label><select id='animationList'><option value='none'>Keine</option><option value='fade'>Fade</option><option value='slide'>Slide</option><option value='bounce'>Bounce</option><option value='zoom'>Zoom</option></select><button onclick='saveRichText()'>Speichern</button>`; }
-function saveRichText(){ let content=document.getElementById('editorBox').innerHTML; let title=prompt('Titel'); let category=prompt('Kategorie'); let animation=document.getElementById('animationList').value; createArticle(title, content, category); articles[articles.length-1].animations.push(animation); saveAll(); alert('Artikel gespeichert'); }
-function insertImage(){ let url=prompt('Bild URL'); document.execCommand('insertImage',false,url); }
-function insertLink(){ let url=prompt('Link URL'); document.execCommand('createLink',false,url); }
-function insertTable(){ let rows=prompt('Anzahl Reihen'); let cols=prompt('Anzahl Spalten'); let html='<table border="1" style="border-collapse:collapse;width:100%;">'; for(let r=0;r<rows;r++){ html+='<tr>'; for(let c=0;c<cols;c++){ html+='<td>Text</td>'; } html+='</tr>'; } html+='</table>'; document.execCommand('insertHTML',false,html); }
+function adminAccess(){
+  let code=prompt('Admin-Code:');
+  if(code==='13243!'){currentUser={role:'admin'}; renderAdmin(); show('admin');}
+  else{alert('Falscher Code');}
+}
 
-// ================== ADMIN PANEL ==================
-function renderAdmin(){ let el=document.getElementById('admin'); el.innerHTML=`<h2>Admin Panel</h2><h3>Email freigeben</h3><input id='newEmail'><select id='role'><option>reader</option><option>editor</option><option>admin</option></select><button onclick='approveEmail()'>Freigeben</button><h3>Submissions</h3><div id='subs'></div>`; renderSubs(); }
-function approveEmail(){ let email=document.getElementById('newEmail').value; let role=document.getElementById('role').value; approvedEmails.push({email,role}); saveAll(); alert('Email freigegeben'); }
-function renderSubs(){ let el=document.getElementById('subs'); el.innerHTML=''; submissions.forEach(s=>{ let d=document.createElement('div'); d.className='box gold-frame'; d.innerHTML=`${s.title} <button onclick='approveSub(${s.id})'>Freigeben</button>`; el.appendChild(d); }); }
-function approveSub(id){ let s=submissions.find(x=>x.id===id); createArticle(s.title,s.content,s.category); submissions=submissions.filter(x=>x.id!==id); saveAll(); renderAdmin(); }
+function saveAll(){
+  localStorage.setItem('articles',JSON.stringify(articles));
+  localStorage.setItem('submissions',JSON.stringify(submissions));
+  localStorage.setItem('approvedEmails',JSON.stringify(approvedEmails));
+  localStorage.setItem('users',JSON.stringify(users));
+}
 
-// ================== PAGE-FLIP ==================
-function showArticlePageById(id){ let index=articles.findIndex(a=>a.id===id); showArticlePage(index); }
-function showArticlePage(index){ if(!articles[index]) return; currentPage=index; let el=document.getElementById('articleView'); el.innerHTML=''; let a=articles[index]; let d=document.createElement('div'); d.className='article-page'; d.innerHTML=`<div class='page'><div class='page-content'>${a.pages[0]}<br><button onclick='prevPage()'>Zurück</button><button onclick='nextPage()'>Vor</button></div></div>`; el.appendChild(d); show('articleView'); }
-function nextPage(){ if(currentPage+1<articles.length){ flipState+=180; showArticlePage(currentPage+1); } }
-function prevPage(){ if(currentPage-1>=0){ flipState-=180; showArticlePage(currentPage-1); }}
+function createArticle(title,content,cat){
+  articles.push({id:Date.now(),title,content,category:cat,approved:true});
+  saveAll();
+  renderHome();
+}
 
-// ================== QUIZ ==================
-function renderQuiz(){ let el=document.getElementById('quiz'); el.innerHTML=`<div class='quiz-box'><h3>Rätsel</h3><p>Wie viele Artikel sind freigegeben?</p><input id='ans'><button onclick='checkQuiz()'>Antwort prüfen</button></div>`; }
-function checkQuiz(){ let a=document.getElementById('ans').value; let count=articles.length; if(parseInt(a)===count) alert('Richtig'); else alert('Falsch, richtig: '+count); }
+function renderHome(){
+  let el=document.getElementById('home');
+  el.innerHTML='<h2>Neueste Artikel</h2>';
+  articles.slice(-5).reverse().forEach(a=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<h3>${a.title}</h3><small>${a.category}</small><p>${a.content.substring(0,200)}...</p><button onclick="showArticle(${a.id})">Artikel anzeigen</button>`;
+    el.appendChild(d);
+  });
+}
 
-// ================== INIT ==================
-renderAll(); renderEditor(); renderQuiz();
+function showArticle(id){
+  let a=articles.find(x=>x.id===id);
+  if(!a) return;
+  let el=document.getElementById('articleView');
+  el.innerHTML=`<h2>${a.title}</h2><h4>${a.category}</h4><p>${a.content}</p><button onclick="show('home')">Zurück</button>`;
+  show('articleView');
+}
+
+renderHome();
 </script>
 </body>
 </html>
+<script>
+// Archiv rendern und Artikel-Boxen
+function renderArchive(){
+  let el=document.getElementById('archive');
+  el.innerHTML='<h2>Archiv</h2>';
+  articles.forEach(a=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<h3>${a.title}</h3><small>${a.category}</small>
+      <p>${a.content.substring(0,150)}...</p>
+      <button onclick="showArticlePageById(${a.id})">Artikel anzeigen</button>`;
+    el.appendChild(d);
+  });
+}
+
+// Page-Flip Grundstruktur
+function showArticlePageById(id){
+  let index=articles.findIndex(a=>a.id===id);
+  showArticlePage(index);
+}
+
+let currentPageIndex=0;
+
+function showArticlePage(index){
+  if(!articles[index]) return;
+  currentPageIndex=index;
+  let article=articles[index];
+  let el=document.getElementById('articleView');
+  el.innerHTML='';
+
+  // Page-Flip Container
+  let pageContainer=document.createElement('div');
+  pageContainer.className='article-page';
+  
+  article.content.match(/.{1,500}/g).forEach((chunk,i)=>{
+    let page=document.createElement('div');
+    page.className='page';
+    page.innerHTML=`<div class="page-content">${chunk}</div>
+      <div style="margin-top:10px;">
+      <button onclick="prevArticlePage()">Zurück</button>
+      <button onclick="nextArticlePage()">Vor</button>
+      </div>`;
+    pageContainer.appendChild(page);
+  });
+
+  el.appendChild(pageContainer);
+  show('articleView');
+}
+
+function nextArticlePage(){
+  if(currentPageIndex+1<articles.length){
+    currentPageIndex++;
+    showArticlePage(currentPageIndex);
+  }
+}
+
+function prevArticlePage(){
+  if(currentPageIndex-1>=0){
+    currentPageIndex--;
+    showArticlePage(currentPageIndex);
+  }
+}
+
+// Animation für Page-Flip (einfacher Effekt)
+function addFlipAnimation(page){
+  page.style.transition='transform 0.8s';
+  page.style.transform='rotateY(180deg)';
+}
+
+// Archiv-Filter nach Kategorie
+function filterArchive(cat){
+  let filtered=articles.filter(a=>a.category===cat);
+  let el=document.getElementById('archive');
+  el.innerHTML=`<h2>Archiv - ${cat}</h2>`;
+  filtered.forEach(a=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<h3>${a.title}</h3><small>${a.category}</small>
+      <p>${a.content.substring(0,150)}...</p>
+      <button onclick="showArticlePageById(${a.id})">Artikel anzeigen</button>`;
+    el.appendChild(d);
+  });
+}
+
+// Initial render Archive
+renderArchive();
+</script>
+<script>
+// Editor rendern
+function renderEditor(){
+  let el=document.getElementById('editor');
+  el.innerHTML=`
+    <h2>Editor</h2>
+    <div class="toolbar">
+      <button onclick="document.execCommand('bold',false,null)">B</button>
+      <button onclick="document.execCommand('italic',false,null)">I</button>
+      <button onclick="document.execCommand('insertUnorderedList',false,null)">Liste</button>
+      <button onclick="insertLink()">Link</button>
+      <button onclick="insertImage()">Bild</button>
+      <button onclick="insertTable()">Tabelle</button>
+    </div>
+    <div id="editorBox" class="editor-box" contenteditable="true"></div>
+    <label>Animation:</label>
+    <select id="animationList">
+      <option value="none">Keine</option>
+      <option value="fade">Fade</option>
+      <option value="slide">Slide</option>
+      <option value="bounce">Bounce</option>
+      <option value="zoom">Zoom</option>
+    </select>
+    <button onclick="saveRichText()">Speichern</button>
+  `;
+}
+
+// Editor Funktionen
+function insertImage(){
+  let url=prompt('Bild URL:');
+  if(url) document.execCommand('insertImage',false,url);
+}
+
+function insertLink(){
+  let url=prompt('Link URL:');
+  if(url) document.execCommand('createLink',false,url);
+}
+
+function insertTable(){
+  let rows=parseInt(prompt('Anzahl Reihen:'));
+  let cols=parseInt(prompt('Anzahl Spalten:'));
+  if(!rows || !cols) return;
+  let html='<table class="table-editor">';
+  for(let r=0;r<rows;r++){
+    html+='<tr>';
+    for(let c=0;c<cols;c++){ html+='<td>Text</td>'; }
+    html+='</tr>';
+  }
+  html+='</table>';
+  document.execCommand('insertHTML',false,html);
+}
+
+function saveRichText(){
+  let content=document.getElementById('editorBox').innerHTML;
+  let title=prompt('Titel des Artikels:');
+  let category=prompt('Kategorie:');
+  let animation=document.getElementById('animationList').value;
+  if(title && category && content){
+    createArticle(title,content,category);
+    articles[articles.length-1].animations=[animation];
+    saveAll();
+    alert('Artikel gespeichert!');
+  }
+}
+
+// Editor initial render
+renderEditor();
+</script>
+<script>
+// Erweiterte Animationen beim Speichern
+function applyAnimation(el,animation){
+  switch(animation){
+    case 'fade': el.style.transition='opacity 1s'; el.style.opacity=0; setTimeout(()=>el.style.opacity=1,10); break;
+    case 'slide': el.style.transition='transform 0.5s'; el.style.transform='translateX(-100%)'; setTimeout(()=>el.style.transform='translateX(0)',10); break;
+    case 'bounce': el.style.animation='bounceAnim 1s'; break;
+    case 'zoom': el.style.transition='transform 0.5s'; el.style.transform='scale(0)'; setTimeout(()=>el.style.transform='scale(1)',10); break;
+  }
+}
+
+// Drag & Drop Editor
+function enableDragDrop(){
+  let editorBox=document.getElementById('editorBox');
+  editorBox.addEventListener('dragstart',e=>{ e.dataTransfer.setData('text/html',e.target.outerHTML); });
+  editorBox.addEventListener('dragover',e=>e.preventDefault());
+  editorBox.addEventListener('drop',e=>{
+    e.preventDefault();
+    let data=e.dataTransfer.getData('text/html');
+    let range=document.caretRangeFromPoint(e.clientX,e.clientY);
+    if(range) { range.insertNode(new DOMParser().parseFromString(data,'text/html').body.firstChild); }
+  });
+}
+
+// Key Shortcuts
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey && e.key==='b'){ document.execCommand('bold'); e.preventDefault(); }
+  if(e.ctrlKey && e.key==='i'){ document.execCommand('italic'); e.preventDefault(); }
+  if(e.ctrlKey && e.key==='l'){ document.execCommand('insertUnorderedList'); e.preventDefault(); }
+});
+
+// Animation CSS Keyframes
+let style=document.createElement('style');
+style.innerHTML=`
+@keyframes bounceAnim{
+  0%{transform:translateY(0);}
+  30%{transform:translateY(-20px);}
+  50%{transform:translateY(0);}
+  70%{transform:translateY(-10px);}
+  100%{transform:translateY(0);}
+}
+.table-editor td{border:1px solid #d4af37; padding:4px;}
+.editor-box{border:2px solid #d4af37; min-height:300px; padding:8px; margin-top:8px;}
+`;
+document.head.appendChild(style);
+
+// Editor Erweiterung: Vorschau
+function previewArticle(){
+  let content=document.getElementById('editorBox').innerHTML;
+  let win=window.open('','_blank','width=600,height=800');
+  win.document.write('<html><head><title>Vorschau</title></head><body>'+content+'</body></html>');
+  win.document.close();
+}
+
+// Erweiterte Tabellen-Optionen
+function insertAdvancedTable(){
+  let rows=parseInt(prompt('Reihen:'));
+  let cols=parseInt(prompt('Spalten:'));
+  let table='<table class="table-editor">';
+  for(let r=0;r<rows;r++){
+    table+='<tr>';
+    for(let c=0;c<cols;c++){
+      table+='<td style="padding:6px;border:1px solid #d4af37;">Zelle</td>';
+    }
+    table+='</tr>';
+  }
+  table+='</table>';
+  document.execCommand('insertHTML',false,table);
+}
+
+enableDragDrop();
+</script>
+<script>
+// Admin Panel rendern
+function renderAdmin(){
+  let el=document.getElementById('admin');
+  el.innerHTML=`
+    <h2>Admin Panel</h2>
+    <div class="box gold-frame">
+      <h3>Email-Freigabe</h3>
+      <input id="newEmail" placeholder="Email hinzufügen">
+      <select id="roleSelect">
+        <option value="editor">Editor</option>
+        <option value="reader">Leser</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button onclick="addApprovedEmail()">Freigeben</button>
+      <div id="approvedList"></div>
+    </div>
+    <div class="box gold-frame">
+      <h3>Eingereichte Artikel</h3>
+      <div id="submissionsList"></div>
+    </div>
+  `;
+  renderApprovedEmails();
+  renderSubmissions();
+}
+
+// Freigeben von Emails
+function addApprovedEmail(){
+  let email=document.getElementById('newEmail').value;
+  let role=document.getElementById('roleSelect').value;
+  if(!email) return alert('Email fehlt!');
+  if(!approvedEmails.find(e=>e.email===email)){
+    approvedEmails.push({email,role});
+    saveAll();
+    renderApprovedEmails();
+    alert(email+' freigegeben als '+role);
+  } else { alert('Email bereits freigegeben'); }
+}
+
+// Anzeige der freigegebenen Emails
+function renderApprovedEmails(){
+  let el=document.getElementById('approvedList');
+  el.innerHTML='<ul>'+approvedEmails.map(e=>`<li>${e.email} - ${e.role} <button onclick="removeApprovedEmail('${e.email}')">Entfernen</button></li>`).join('')+'</ul>';
+}
+
+function removeApprovedEmail(email){
+  approvedEmails=approvedEmails.filter(e=>e.email!==email);
+  saveAll();
+  renderApprovedEmails();
+}
+
+// Submission Verwaltung
+function renderSubmissions(){
+  let el=document.getElementById('submissionsList');
+  if(submissions.length===0){ el.innerHTML='<p>Keine neuen Einreichungen</p>'; return; }
+  el.innerHTML='';
+  submissions.forEach((s,i)=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<h4>${s.title}</h4><small>${s.category}</small><p>${s.content.substring(0,200)}...</p>
+      <button onclick="approveSubmission(${i})">Freigeben</button>
+      <button onclick="rejectSubmission(${i})">Ablehnen</button>`;
+    el.appendChild(d);
+  });
+}
+
+function approveSubmission(i){
+  let s=submissions[i];
+  createArticle(s.title,s.content,s.category);
+  submissions.splice(i,1);
+  saveAll();
+  renderSubmissions();
+}
+
+function rejectSubmission(i){
+  submissions.splice(i,1);
+  saveAll();
+  renderSubmissions();
+}
+</script>
+<script>
+// Submission Panel rendern (für Leser oder Redakteure)
+function renderSubmissionPanel(){
+  let el=document.getElementById('editor');
+  el.innerHTML=`
+    <h2>Artikel einreichen</h2>
+    <div class="box gold-frame">
+      <input id="subTitle" placeholder="Titel">
+      <textarea id="subContent" placeholder="Artikelinhalt"></textarea>
+      <input id="subCategory" placeholder="Kategorie">
+      <button onclick="submitArticle()">Einreichen</button>
+    </div>
+    <h3>Eingereichte Artikel (Status)</h3>
+    <div id="mySubmissions"></div>
+  `;
+  renderMySubmissions();
+}
+
+// Submission einreichen
+function submitArticle(){
+  let title=document.getElementById('subTitle').value;
+  let content=document.getElementById('subContent').value;
+  let category=document.getElementById('subCategory').value;
+  if(!title||!content||!category){ alert('Bitte alle Felder ausfüllen'); return; }
+  submissions.push({title,content,category,author:currentUser.email});
+  saveAll();
+  alert('Artikel eingereicht und wartet auf Freigabe');
+  renderMySubmissions();
+}
+
+// Eigene Submissions anzeigen
+function renderMySubmissions(){
+  let el=document.getElementById('mySubmissions');
+  let mySubs=submissions.filter(s=>s.author===currentUser.email);
+  if(mySubs.length===0){ el.innerHTML='<p>Keine Einreichungen</p>'; return; }
+  el.innerHTML='';
+  mySubs.forEach((s,i)=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<h4>${s.title}</h4><small>${s.category}</small>
+      <p>${s.content.substring(0,150)}...</p>`;
+    el.appendChild(d);
+  });
+}
+
+// Admin Approval System (Zusatz)
+function checkPendingSubmissions(){
+  if(currentUser?.role==='admin'){
+    renderSubmissions();
+  }
+}
+
+// Einreichung automatisch in Approval Queue speichern
+function submitToAdminQueue(sub){
+  submissions.push(sub);
+  saveAll();
+  checkPendingSubmissions();
+}
+
+// Beispiel: Automatische Freigabe bei Editor
+function autoApproveSubmission(sub){
+  if(currentUser?.role==='editor'){
+    createArticle(sub.title,sub.content,sub.category);
+    saveAll();
+    alert('Artikel direkt veröffentlicht');
+  } else {
+    submitToAdminQueue(sub);
+  }
+}
+</script>
+<script>
+// Mehrseitige Artikelseiten rendern mit Page-Flip
+function renderArticlePages(article){
+  let el=document.getElementById('articleView');
+  el.innerHTML='';
+  let container=document.createElement('div');
+  container.className='article-pages-container';
+  
+  // Splitte Artikel in Seiten à 400 Zeichen
+  let pages=article.content.match(/.{1,400}/g);
+  pages.forEach((text,i)=>{
+    let page=document.createElement('div');
+    page.className='article-page gold-frame';
+    page.style.minHeight='200px';
+    page.innerHTML=`<div class="page-text">${text}</div>
+      <div style="margin-top:10px;">
+        <button onclick="prevArticlePage()">Zurück</button>
+        <button onclick="nextArticlePage()">Vor</button>
+      </div>`;
+    container.appendChild(page);
+  });
+  el.appendChild(container);
+  show('articleView');
+  applyPageFlip(container);
+}
+
+// Page-Flip Effekt
+function applyPageFlip(container){
+  let pages=container.children;
+  for(let i=0;i<pages.length;i++){
+    pages[i].style.transition='transform 0.6s';
+    pages[i].style.transform='rotateY(0deg)';
+    pages[i].style.backfaceVisibility='hidden';
+    if(i>0) pages[i].style.transform='rotateY(180deg)';
+  }
+}
+
+// Navigation durch Seiten
+function nextArticlePage(){
+  let container=document.querySelector('.article-pages-container');
+  if(!container) return;
+  let pages=container.children;
+  for(let i=0;i<pages.length;i++){
+    let deg=parseInt(pages[i].style.transform.replace('rotateY(','').replace('deg)',''));
+    if(deg===0 && i<pages.length-1){
+      pages[i].style.transform='rotateY(-180deg)';
+      pages[i+1].style.transform='rotateY(0deg)';
+      break;
+    }
+  }
+}
+
+function prevArticlePage(){
+  let container=document.querySelector('.article-pages-container');
+  if(!container) return;
+  let pages=container.children;
+  for(let i=pages.length-1;i>=0;i--){
+    let deg=parseInt(pages[i].style.transform.replace('rotateY(','').replace('deg)',''));
+    if(deg===0 && i>0){
+      pages[i].style.transform='rotateY(180deg)';
+      pages[i-1].style.transform='rotateY(0deg)';
+      break;
+    }
+  }
+}
+</script>
+<script>
+// Quiz und Rätsel Container
+function renderQuiz(){
+  let el=document.getElementById('editor');
+  el.innerHTML=`
+    <h2>Rätsel / Quiz erstellen</h2>
+    <div class="box gold-frame">
+      <input id="quizQuestion" placeholder="Frage">
+      <input id="quizAnswer" placeholder="Antwort">
+      <button onclick="addQuiz()">Hinzufügen</button>
+    </div>
+    <h3>Rätsel</h3>
+    <div id="quizList"></div>
+  `;
+  renderQuizList();
+}
+
+let quizzes=[];
+
+// Quiz hinzufügen
+function addQuiz(){
+  let question=document.getElementById('quizQuestion').value;
+  let answer=document.getElementById('quizAnswer').value;
+  if(!question || !answer){ alert('Frage und Antwort erforderlich'); return; }
+  quizzes.push({question,answer});
+  saveAll();
+  renderQuizList();
+}
+
+// Quiz Liste rendern
+function renderQuizList(){
+  let el=document.getElementById('quizList');
+  el.innerHTML='';
+  quizzes.forEach((q,i)=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<p>${q.question}</p>
+      <input id="quizInput${i}" placeholder="Antwort">
+      <button onclick="checkQuiz(${i})">Prüfen</button>
+      <span id="quizResult${i}"></span>`;
+    el.appendChild(d);
+  });
+}
+
+// Quiz prüfen
+function checkQuiz(i){
+  let userAns=document.getElementById(`quizInput${i}`).value.toLowerCase();
+  let correctAns=quizzes[i].answer.toLowerCase();
+  let res=document.getElementById(`quizResult${i}`);
+  if(userAns===correctAns) res.innerHTML='<b>✅ Richtig!</b>';
+  else res.innerHTML=`<b>❌ Falsch! Richtige Antwort: ${quizzes[i].answer}</b>`;
+}
+
+// Quiz Anzeige im Artikel
+function renderQuizInArticle(article){
+  let el=document.getElementById('articleView');
+  el.innerHTML='<h2>Rätsel / Quiz</h2>';
+  quizzes.forEach((q,i)=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<p>${q.question}</p>
+      <input id="quizInputView${i}" placeholder="Antwort">
+      <button onclick="checkQuizView(${i})">Prüfen</button>
+      <span id="quizResultView${i}"></span>`;
+    el.appendChild(d);
+  });
+}
+
+// Prüfung im Artikel-View
+function checkQuizView(i){
+  let userAns=document.getElementById(`quizInputView${i}`).value.toLowerCase();
+  let correctAns=quizzes[i].answer.toLowerCase();
+  let res=document.getElementById(`quizResultView${i}`);
+  if(userAns===correctAns) res.innerHTML='<b>✅ Richtig!</b>';
+  else res.innerHTML=`<b>❌ Falsch! Richtige Antwort: ${quizzes[i].answer}</b>`;
+}
+</script>
+<script>
+// Archiv Scroll-Effekte
+function enableScrollAnimations(){
+  let archive=document.getElementById('archive');
+  archive.addEventListener('scroll',()=>{
+    let boxes=archive.querySelectorAll('.box');
+    boxes.forEach(b=>{
+      let rect=b.getBoundingClientRect();
+      if(rect.top < window.innerHeight && rect.bottom > 0){
+        b.style.transform='translateY(0px)';
+        b.style.opacity='1';
+        b.style.transition='all 0.8s ease-out';
+      } else {
+        b.style.transform='translateY(20px)';
+        b.style.opacity='0.5';
+      }
+    });
+  });
+}
+
+// Goldrahmen Hover Effekt
+function applyGoldHover(){
+  document.querySelectorAll('.gold-frame').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{
+      el.style.boxShadow='0 0 20px gold';
+      el.style.transform='scale(1.03)';
+    });
+    el.addEventListener('mouseleave',()=>{
+      el.style.boxShadow='3px 3px 10px #aaa';
+      el.style.transform='scale(1)';
+    });
+  });
+}
+
+// Archiv Artikel-Filter Buttons
+function renderArchiveFilters(){
+  let el=document.getElementById('archive');
+  let categories=[...new Set(articles.map(a=>a.category))];
+  let btnContainer=document.createElement('div');
+  btnContainer.style.marginBottom='8px';
+  categories.forEach(c=>{
+    let btn=document.createElement('button');
+    btn.innerText=c;
+    btn.onclick=()=>filterArchive(c);
+    btnContainer.appendChild(btn);
+  });
+  el.prepend(btnContainer);
+}
+
+// Artikel Hover Animation
+function applyArticleHover(){
+  document.querySelectorAll('.article-page').forEach(page=>{
+    page.addEventListener('mouseenter',()=>page.style.transform='scale(1.02)');
+    page.addEventListener('mouseleave',()=>page.style.transform='scale(1)');
+  });
+}
+
+// Initialisierung aller Effekte
+function initVisualEffects(){
+  enableScrollAnimations();
+  applyGoldHover();
+  applyArticleHover();
+}
+
+// Effekte nach Rendering anwenden
+document.addEventListener('DOMContentLoaded',initVisualEffects);
+</script>
+<script>
+// Archiv Scroll-Effekte
+function enableScrollAnimations(){
+  let archive=document.getElementById('archive');
+  archive.addEventListener('scroll',()=>{
+    let boxes=archive.querySelectorAll('.box');
+    boxes.forEach(b=>{
+      let rect=b.getBoundingClientRect();
+      if(rect.top < window.innerHeight && rect.bottom > 0){
+        b.style.transform='translateY(0px)';
+        b.style.opacity='1';
+        b.style.transition='all 0.8s ease-out';
+      } else {
+        b.style.transform='translateY(20px)';
+        b.style.opacity='0.5';
+      }
+    });
+  });
+}
+
+// Goldrahmen Hover Effekt
+function applyGoldHover(){
+  document.querySelectorAll('.gold-frame').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{
+      el.style.boxShadow='0 0 20px gold';
+      el.style.transform='scale(1.03)';
+    });
+    el.addEventListener('mouseleave',()=>{
+      el.style.boxShadow='3px 3px 10px #aaa';
+      el.style.transform='scale(1)';
+    });
+  });
+}
+
+// Archiv Artikel-Filter Buttons
+function renderArchiveFilters(){
+  let el=document.getElementById('archive');
+  let categories=[...new Set(articles.map(a=>a.category))];
+  let btnContainer=document.createElement('div');
+  btnContainer.style.marginBottom='8px';
+  categories.forEach(c=>{
+    let btn=document.createElement('button');
+    btn.innerText=c;
+    btn.onclick=()=>filterArchive(c);
+    btnContainer.appendChild(btn);
+  });
+  el.prepend(btnContainer);
+}
+
+// Artikel Hover Animation
+function applyArticleHover(){
+  document.querySelectorAll('.article-page').forEach(page=>{
+    page.addEventListener('mouseenter',()=>page.style.transform='scale(1.02)');
+    page.addEventListener('mouseleave',()=>page.style.transform='scale(1)');
+  });
+}
+
+// Initialisierung aller Effekte
+function initVisualEffects(){
+  enableScrollAnimations();
+  applyGoldHover();
+  applyArticleHover();
+}
+
+// Effekte nach Rendering anwenden
+document.addEventListener('DOMContentLoaded',initVisualEffects);
+</script>
+<script>
+// Multimedia Integration im Artikel
+function insertMedia(type){
+  let url=prompt(type+' URL:');
+  if(!url) return;
+  let html='';
+  if(type==='video'){
+    html=`<video controls width="100%" style="border:2px solid gold;margin:8px 0;">
+      <source src="${url}" type="video/mp4">Ihr Browser unterstützt kein Video.
+      </video>`;
+  }
+  if(type==='audio'){
+    html=`<audio controls style="margin:8px 0;">
+      <source src="${url}" type="audio/mpeg">Ihr Browser unterstützt kein Audio.
+      </audio>`;
+  }
+  document.execCommand('insertHTML',false,html);
+}
+
+// Animierte Coverseiten
+function renderAnimatedCover(article){
+  let el=document.getElementById('articleView');
+  el.innerHTML=`<div class="cover-page gold-frame" style="text-align:center;padding:40px;">
+      <h1 style="font-size:2em;">${article.title}</h1>
+      <h3>${article.category}</h3>
+      <p>Autor: ${article.author}</p>
+    </div>`;
+  let cover=document.querySelector('.cover-page');
+  cover.style.animation='coverFade 2s ease-in-out';
+}
+
+let styleAnim=document.createElement('style');
+styleAnim.innerHTML=`
+@keyframes coverFade{
+  0%{opacity:0; transform:scale(0.8);}
+  50%{opacity:1; transform:scale(1.05);}
+  100%{opacity:1; transform:scale(1);}
+}
+.cover-page{border:4px solid gold; margin:16px;}
+`;
+document.head.appendChild(styleAnim);
+
+// Interaktive Effekte für Artikelbilder
+function applyInteractiveImages(){
+  document.querySelectorAll('img').forEach(img=>{
+    img.style.transition='transform 0.5s, box-shadow 0.5s';
+    img.addEventListener('mouseenter',()=>{img.style.transform='scale(1.05)'; img.style.boxShadow='0 0 15px gold';});
+    img.addEventListener('mouseleave',()=>{img.style.transform='scale(1)'; img.style.boxShadow='none';});
+  });
+}
+
+// Multimedia Toolbar Buttons
+function addMediaToolbar(){
+  let toolbar=document.querySelector('.toolbar');
+  if(!toolbar) return;
+  let videoBtn=document.createElement('button');
+  videoBtn.innerText='Video';
+  videoBtn.onclick=()=>insertMedia('video');
+  let audioBtn=document.createElement('button');
+  audioBtn.innerText='Audio';
+  audioBtn.onclick=()=>insertMedia('audio');
+  toolbar.appendChild(videoBtn);
+  toolbar.appendChild(audioBtn);
+}
+
+addMediaToolbar();
+</script>
+<script>
+// Suchfeld rendern
+function renderSearchBar(){
+  let container=document.getElementById('archive');
+  let searchDiv=document.createElement('div');
+  searchDiv.style.margin='12px 0';
+  searchDiv.innerHTML=`<input id="searchInput" placeholder="Artikel suchen..." style="padding:6px;width:80%;">
+    <button onclick="performSearch()">Suchen</button>`;
+  container.prepend(searchDiv);
+}
+
+// Live Suche
+function performSearch(){
+  let term=document.getElementById('searchInput').value.toLowerCase();
+  let results=articles.filter(a=>a.title.toLowerCase().includes(term) || a.content.toLowerCase().includes(term));
+  renderSearchResults(results);
+}
+
+function renderSearchResults(results){
+  let container=document.getElementById('archive');
+  let resultsDiv=document.getElementById('searchResults');
+  if(!resultsDiv){
+    resultsDiv=document.createElement('div');
+    resultsDiv.id='searchResults';
+    container.appendChild(resultsDiv);
+  }
+  resultsDiv.innerHTML='';
+  if(results.length===0){ resultsDiv.innerHTML='<p>Keine Ergebnisse</p>'; return; }
+  results.forEach(a=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<h4>${a.title}</h4><p>${a.content.substring(0,100)}...</p>
+      <button onclick="showArticlePageById(${a.id})">Anzeigen</button>`;
+    resultsDiv.appendChild(d);
+  });
+}
+
+// Dynamische Highlights (Top Artikel)
+function renderHighlights(){
+  let container=document.getElementById('highlights');
+  if(!container) return;
+  container.innerHTML='<h2>Top Artikel</h2>';
+  let topArticles=articles.slice(-5).reverse();
+  topArticles.forEach(a=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<h4>${a.title}</h4><p>${a.content.substring(0,80)}...</p>
+      <button onclick="showArticlePageById(${a.id})">Anzeigen</button>`;
+    container.appendChild(d);
+  });
+}
+
+// Highlight Animation
+function applyHighlightAnimation(){
+  document.querySelectorAll('#highlights .box').forEach((b,i)=>{
+    b.style.transition=`transform 0.5s ease ${i*0.1}s`;
+    b.style.transform='translateY(20px)';
+    setTimeout(()=>b.style.transform='translateY(0)',50);
+  });
+}
+
+// Initialisierung Suche & Highlights
+function initSearchAndHighlights(){
+  renderSearchBar();
+  renderHighlights();
+  applyHighlightAnimation();
+}
+
+document.addEventListener('DOMContentLoaded',initSearchAndHighlights);
+</script>
+<script>
+// Kommentare global speichern
+let comments=[];
+
+// Kommentare rendern (für Kommentare-Seite)
+function renderComments(){
+  let el=document.getElementById('commentsSection');
+  el.innerHTML='<h2>Kommentare</h2>';
+  if(comments.length===0){ el.innerHTML+='<p>Keine Kommentare bisher</p>'; return; }
+  comments.forEach((c,i)=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<p><b>${c.user}</b> schrieb:</p><p>${c.text}</p>
+      <small>${new Date(c.date).toLocaleString()}</small>`;
+    if(currentUser?.role==='admin'){
+      d.innerHTML+=` <button onclick="deleteComment(${i})">Löschen</button>`;
+    }
+    el.appendChild(d);
+  });
+}
+
+// Kommentar hinzufügen
+function addComment(articleId){
+  let text=document.getElementById('commentInput').value;
+  if(!text) return alert('Bitte Kommentar eingeben');
+  comments.push({user:currentUser?.email||'Gast',text,articleId,date:new Date()});
+  saveAll();
+  document.getElementById('commentInput').value='';
+  renderComments();
+}
+
+// Kommentar löschen (Admin)
+function deleteComment(i){
+  if(confirm('Kommentar wirklich löschen?')){
+    comments.splice(i,1);
+    saveAll();
+    renderComments();
+  }
+}
+
+// Kommentare zu Artikel rendern
+function renderCommentsForArticle(articleId){
+  let el=document.getElementById('articleComments');
+  el.innerHTML='<h3>Kommentare</h3>';
+  let articleComments=comments.filter(c=>c.articleId===articleId);
+  if(articleComments.length===0){ el.innerHTML+='<p>Keine Kommentare bisher</p>'; return; }
+  articleComments.forEach((c,i)=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<p><b>${c.user}</b>: ${c.text}</p>
+      <small>${new Date(c.date).toLocaleString()}</small>`;
+    if(currentUser?.role==='admin'){ d.innerHTML+=` <button onclick="deleteComment(${i})">Löschen</button>`; }
+    el.appendChild(d);
+  });
+}
+
+// Kommentar Eingabe Formular rendern
+function renderCommentForm(articleId){
+  let el=document.getElementById('articleComments');
+  let form=document.createElement('div');
+  form.innerHTML=`<textarea id="commentInput" placeholder="Kommentar schreiben..." style="width:100%;height:60px;"></textarea>
+    <button onclick="addComment(${articleId})">Absenden</button>`;
+  el.appendChild(form);
+}
+</script>
+<script>
+// WYSIWYG Editor initialisieren
+function initEditor(){
+  let editor=document.getElementById('editor');
+  editor.innerHTML=`
+    <h2>Artikel Editor</h2>
+    <div class="toolbar box gold-frame" style="margin-bottom:6px;">
+      <button onclick="formatText('bold')">Fett</button>
+      <button onclick="formatText('italic')">Kursiv</button>
+      <button onclick="formatText('underline')">Unterstrichen</button>
+      <button onclick="insertTable()">Tabelle</button>
+      <button onclick="insertMedia('image')">Bild</button>
+      <button onclick="insertMedia('audio')">Audio</button>
+      <button onclick="insertMedia('video')">Video</button>
+    </div>
+    <div id="editorContent" contenteditable="true" class="editor-box box gold-frame" style="min-height:200px;"></div>
+    <button onclick="saveEditorContent()">Speichern</button>
+  `;
+}
+
+// Text formatieren
+function formatText(cmd){
+  document.execCommand(cmd,false,null);
+}
+
+// Tabelle einfügen
+function insertTable(){
+  let rows=parseInt(prompt('Anzahl Zeilen?','2'));
+  let cols=parseInt(prompt('Anzahl Spalten?','2'));
+  if(isNaN(rows)||isNaN(cols)) return;
+  let table='<table border="1" style="border-collapse:collapse;margin:8px 0;">';
+  for(let r=0;r<rows;r++){
+    table+='<tr>';
+    for(let c=0;c<cols;c++){
+      table+='<td>Text</td>';
+    }
+    table+='</tr>';
+  }
+  table+='</table>';
+  document.execCommand('insertHTML',false,table);
+}
+
+// Medien einfügen (Bild/Audio/Video)
+function insertMedia(type){
+  let url=prompt('URL für '+type);
+  if(!url) return;
+  let html='';
+  if(type==='image') html=`<img src="${url}" style="width:100%;margin:6px 0;border:2px solid gold;">`;
+  if(type==='audio') html=`<audio controls style="margin:6px 0;"><source src="${url}" type="audio/mpeg">Ihr Browser unterstützt kein Audio.</audio>`;
+  if(type==='video') html=`<video controls width="100%" style="margin:6px 0;"><source src="${url}" type="video/mp4">Ihr Browser unterstützt kein Video.</video>`;
+  document.execCommand('insertHTML',false,html);
+}
+
+// Drag & Drop Media im Editor
+function enableDragDrop(){
+  let editorContent=document.getElementById('editorContent');
+  editorContent.addEventListener('dragover',e=>e.preventDefault());
+  editorContent.addEventListener('drop',e=>{
+    e.preventDefault();
+    let files=e.dataTransfer.files;
+    for(let f of files){
+      let reader=new FileReader();
+      reader.onload=function(evt){
+        let img=`<img src="${evt.target.result}" style="width:100%;margin:6px 0;border:2px solid gold;">`;
+        document.execCommand('insertHTML',false,img);
+      };
+      if(f.type.startsWith('image/')) reader.readAsDataURL(f);
+    }
+  });
+}
+
+// Editor-Inhalt speichern
+function saveEditorContent(){
+  let content=document.getElementById('editorContent').innerHTML;
+  currentArticle.content=content;
+  saveAll();
+  alert('Artikel gespeichert');
+}
+
+initEditor();
+enableDragDrop();
+</script>
+<script>
+// Admin Panel initialisieren
+function initAdminPanel(){
+  let el=document.getElementById('adminPanel');
+  el.innerHTML=`<h2>Admin Panel</h2>
+    <div id="adminArticles" class="box gold-frame"></div>
+    <div id="adminUsers" class="box gold-frame" style="margin-top:12px;"></div>
+    <div id="adminAds" class="box gold-frame" style="margin-top:12px;"></div>`;
+  renderAdminArticles();
+  renderAdminUsers();
+  renderAdminAds();
+}
+
+// Artikel-Freigabe
+function renderAdminArticles(){
+  let el=document.getElementById('adminArticles');
+  el.innerHTML='<h3>Artikel Freigabe</h3>';
+  articles.forEach((a,i)=>{
+    if(a.status!=='pending') return;
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<h4>${a.title}</h4><p>${a.content.substring(0,100)}...</p>
+      <button onclick="approveArticle(${i})">Freigeben</button>
+      <button onclick="rejectArticle(${i})">Ablehnen</button>`;
+    el.appendChild(d);
+  });
+}
+
+function approveArticle(i){ articles[i].status='approved'; saveAll(); renderAdminArticles(); }
+function rejectArticle(i){ articles[i].status='rejected'; saveAll(); renderAdminArticles(); }
+
+// User Management
+function renderAdminUsers(){
+  let el=document.getElementById('adminUsers');
+  el.innerHTML='<h3>Benutzerverwaltung</h3>';
+  users.forEach((u,i)=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<b>${u.email}</b> (${u.role}) 
+      <button onclick="promoteUser(${i})">Admin</button>
+      <button onclick="demoteUser(${i})">Redakteur</button>
+      <button onclick="deleteUser(${i})">Löschen</button>`;
+    el.appendChild(d);
+  });
+}
+
+function promoteUser(i){ users[i].role='admin'; saveAll(); renderAdminUsers(); }
+function demoteUser(i){ users[i].role='editor'; saveAll(); renderAdminUsers(); }
+function deleteUser(i){ users.splice(i,1); saveAll(); renderAdminUsers(); }
+
+// Anzeigenfreigabe
+function renderAdminAds(){
+  let el=document.getElementById('adminAds');
+  el.innerHTML='<h3>Anzeigen Freigabe</h3>';
+  ads.forEach((ad,i)=>{
+    if(ad.status!=='pending') return;
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<p><b>${ad.title}</b> von ${ad.user}</p>
+      <button onclick="approveAd(${i})">Freigeben</button>
+      <button onclick="rejectAd(${i})">Ablehnen</button>`;
+    el.appendChild(d);
+  });
+}
+
+function approveAd(i){ ads[i].status='approved'; saveAll(); renderAdminAds(); }
+function rejectAd(i){ ads[i].status='rejected'; saveAll(); renderAdminAds(); }
+</script><script>
+// Admin Panel initialisieren
+function initAdminPanel(){
+  let el=document.getElementById('adminPanel');
+  el.innerHTML=`<h2>Admin Panel</h2>
+    <div id="adminArticles" class="box gold-frame"></div>
+    <div id="adminUsers" class="box gold-frame" style="margin-top:12px;"></div>
+    <div id="adminAds" class="box gold-frame" style="margin-top:12px;"></div>`;
+  renderAdminArticles();
+  renderAdminUsers();
+  renderAdminAds();
+}
+
+// Artikel-Freigabe
+function renderAdminArticles(){
+  let el=document.getElementById('adminArticles');
+  el.innerHTML='<h3>Artikel Freigabe</h3>';
+  articles.forEach((a,i)=>{
+    if(a.status!=='pending') return;
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<h4>${a.title}</h4><p>${a.content.substring(0,100)}...</p>
+      <button onclick="approveArticle(${i})">Freigeben</button>
+      <button onclick="rejectArticle(${i})">Ablehnen</button>`;
+    el.appendChild(d);
+  });
+}
+
+function approveArticle(i){ articles[i].status='approved'; saveAll(); renderAdminArticles(); }
+function rejectArticle(i){ articles[i].status='rejected'; saveAll(); renderAdminArticles(); }
+
+// User Management
+function renderAdminUsers(){
+  let el=document.getElementById('adminUsers');
+  el.innerHTML='<h3>Benutzerverwaltung</h3>';
+  users.forEach((u,i)=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<b>${u.email}</b> (${u.role}) 
+      <button onclick="promoteUser(${i})">Admin</button>
+      <button onclick="demoteUser(${i})">Redakteur</button>
+      <button onclick="deleteUser(${i})">Löschen</button>`;
+    el.appendChild(d);
+  });
+}
+
+function promoteUser(i){ users[i].role='admin'; saveAll(); renderAdminUsers(); }
+function demoteUser(i){ users[i].role='editor'; saveAll(); renderAdminUsers(); }
+function deleteUser(i){ users.splice(i,1); saveAll(); renderAdminUsers(); }
+
+// Anzeigenfreigabe
+function renderAdminAds(){
+  let el=document.getElementById('adminAds');
+  el.innerHTML='<h3>Anzeigen Freigabe</h3>';
+  ads.forEach((ad,i)=>{
+    if(ad.status!=='pending') return;
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<p><b>${ad.title}</b> von ${ad.user}</p>
+      <button onclick="approveAd(${i})">Freigeben</button>
+      <button onclick="rejectAd(${i})">Ablehnen</button>`;
+    el.appendChild(d);
+  });
+}
+
+function approveAd(i){ ads[i].status='approved'; saveAll(); renderAdminAds(); }
+function rejectAd(i){ ads[i].status='rejected'; saveAll(); renderAdminAds(); }
+</script>
+<script>
+// Redakteur Panel initialisieren
+function initEditorPanel(){
+  let el=document.getElementById('editorPanel');
+  el.innerHTML=`<h2>Redakteur Panel</h2>
+    <div id="editorTasks" class="box gold-frame" style="margin-bottom:12px;"></div>
+    <div id="editorWrite" class="box gold-frame"></div>`;
+  renderEditorTasks();
+  renderEditorWrite();
+}
+
+// Aufgabenliste für Redakteur
+function renderEditorTasks(){
+  let el=document.getElementById('editorTasks');
+  el.innerHTML='<h3>Aufgabenliste</h3>';
+  let assigned=articles.filter(a=>a.assignedTo===currentUser.email && a.status!=='approved');
+  if(assigned.length===0){ el.innerHTML+='<p>Keine Aufgaben</p>'; return; }
+  assigned.forEach((a,i)=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<h4>${a.title}</h4><p>${a.content.substring(0,100)}...</p>
+      <button onclick="editArticle(${a.id})">Bearbeiten</button>`;
+    el.appendChild(d);
+  });
+}
+
+// Artikel schreiben
+function renderEditorWrite(){
+  let el=document.getElementById('editorWrite');
+  el.innerHTML=`<h3>Neuen Artikel schreiben</h3>
+    <input id="newArticleTitle" placeholder="Titel" style="width:100%;margin-bottom:6px;">
+    <textarea id="newArticleContent" placeholder="Inhalt" style="width:100%;height:120px;"></textarea>
+    <button onclick="submitNewArticle()">Artikel einreichen</button>
+    <div id="editorPreview" class="box gold-frame" style="margin-top:12px;min-height:100px;"></div>`;
+  let contentEl=document.getElementById('newArticleContent');
+  contentEl.addEventListener('input',()=>document.getElementById('editorPreview').innerHTML=contentEl.value);
+}
+
+// Artikel einreichen
+function submitNewArticle(){
+  let title=document.getElementById('newArticleTitle').value;
+  let content=document.getElementById('newArticleContent').value;
+  if(!title || !content) return alert('Titel und Inhalt erforderlich');
+  let newArt={id:articles.length, title, content, author:currentUser.email, status:'pending', assignedTo:currentUser.email};
+  articles.push(newArt);
+  saveAll();
+  document.getElementById('newArticleTitle').value='';
+  document.getElementById('newArticleContent').value='';
+  renderEditorTasks();
+  alert('Artikel eingereicht');
+}
+
+// Artikel bearbeiten
+function editArticle(id){
+  let a=articles.find(x=>x.id===id);
+  if(!a) return alert('Artikel nicht gefunden');
+  document.getElementById('newArticleTitle').value=a.title;
+  document.getElementById('newArticleContent').value=a.content;
+  document.getElementById('editorPreview').innerHTML=a.content;
+  a.status='pending';
+  saveAll();
+  renderEditorTasks();
+}
+</script>
+<script>
+// Zeitschriften-Ausgaben initialisieren
+function initMagazinePanel(){
+  let el=document.getElementById('magazinePanel');
+  el.innerHTML=`<h2>Zeitschriften Ausgaben</h2>
+    <div id="issueList" class="box gold-frame"></div>
+    <div id="issueEditor" class="box gold-frame" style="margin-top:12px;"></div>`;
+  renderIssueList();
+  renderIssueEditor();
+}
+
+// Ausgabe-Liste rendern
+function renderIssueList(){
+  let el=document.getElementById('issueList');
+  el.innerHTML='<h3>Vorhandene Ausgaben</h3>';
+  if(!issues || issues.length===0){ el.innerHTML+='<p>Keine Ausgaben vorhanden</p>'; return; }
+  issues.forEach((iss,i)=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.innerHTML=`<h4>${iss.title}</h4><p>${iss.date}</p>
+      <button onclick="viewIssue(${i})">Anzeigen</button>
+      <button onclick="editIssue(${i})">Bearbeiten</button>`;
+    el.appendChild(d);
+  });
+}
+
+// Neue Ausgabe erstellen
+function renderIssueEditor(){
+  let el=document.getElementById('issueEditor');
+  el.innerHTML=`<h3>Neue Ausgabe erstellen</h3>
+    <input id="newIssueTitle" placeholder="Titel" style="width:100%;margin-bottom:6px;">
+    <input id="newIssueDate" type="date" style="width:100%;margin-bottom:6px;">
+    <select id="newIssueArticles" multiple style="width:100%;height:120px;margin-bottom:6px;"></select>
+    <button onclick="createNewIssue()">Ausgabe erstellen</button>`;
+  let sel=document.getElementById('newIssueArticles');
+  sel.innerHTML='';
+  articles.filter(a=>a.status==='approved').forEach(a=>{
+    let opt=document.createElement('option');
+    opt.value=a.id;
+    opt.innerText=a.title;
+    sel.appendChild(opt);
+  });
+}
+
+// Ausgabe erstellen
+function createNewIssue(){
+  let title=document.getElementById('newIssueTitle').value;
+  let date=document.getElementById('newIssueDate').value;
+  let sel=document.getElementById('newIssueArticles');
+  let articleIds=[...sel.selectedOptions].map(o=>parseInt(o.value));
+  if(!title || !date || articleIds.length===0) return alert('Alle Felder ausfüllen');
+  let newIssue={id:issues.length,title,date,articles:articleIds};
+  issues.push(newIssue);
+  saveAll();
+  renderIssueList();
+  alert('Neue Ausgabe erstellt');
+}
+
+// Ausgabe anzeigen (blätterbar)
+function viewIssue(index){
+  let iss=issues[index];
+  let el=document.getElementById('issueView');
+  if(!el) return alert('Issue View fehlt');
+  el.innerHTML=`<h2>${iss.title}</h2><h4>${iss.date}</h4><div id="pagesContainer"></div>`;
+  let container=document.getElementById('pagesContainer');
+  container.innerHTML='';
+  iss.articles.forEach((id,i)=>{
+    let a=articles.find(x=>x.id===id);
+    let d=document.createElement('div');
+    d.className='page box gold-frame';
+    d.style.margin='12px 0';
+    d.innerHTML=`<h3>Seite ${i+1}: ${a.title}</h3><p>${a.content}</p>`;
+    container.appendChild(d);
+  });
+  applyPageFlip(container);
+}
+
+// Seiten-Flip Animation
+function applyPageFlip(container){
+  let pages=container.querySelectorAll('.page');
+  pages.forEach((p,i)=>{
+    p.style.transition='transform 0.6s, opacity 0.6s';
+    p.style.transform='rotateY(0deg)';
+    p.style.opacity='1';
+    p.addEventListener('click',()=>{p.style.transform='rotateY(180deg)'; p.style.opacity='0.7';});
+  });
+}
+</script>
+<script>
+// Rätsel/Quiz hinzufügen
+function insertQuiz(){
+  let question=prompt('Frage für das Quiz:');
+  if(!question) return;
+  let options=[];
+  for(let i=0;i<4;i++){
+    let opt=prompt('Option '+(i+1));
+    if(!opt) return;
+    options.push(opt);
+  }
+  let correct=parseInt(prompt('Nummer der richtigen Antwort (1-4)'))-1;
+  if(isNaN(correct) || correct<0 || correct>3) return alert('Ungültige Antwort');
+  let html='<div class="quiz box gold-frame" style="margin:8px 0;padding:6px;">';
+  html+=`<p>${question}</p>`;
+  options.forEach((o,i)=>{
+    html+=`<button class="quizOption" onclick="checkAnswer(this,${i},${correct})">${o}</button>`;
+  });
+  html+='</div>';
+  document.execCommand('insertHTML',false,html);
+}
+
+// Quiz prüfen
+function checkAnswer(btn,index,correct){
+  if(index===correct){
+    btn.style.background='gold';
+    btn.style.color='black';
+    alert('Richtig!');
+  } else{
+    btn.style.background='gray';
+    btn.style.color='white';
+    alert('Falsch! Richtig war Option '+(correct+1));
+  }
+}
+
+// Quiz Animation
+function animateQuiz(){
+  document.querySelectorAll('.quiz').forEach((q,i)=>{
+    q.style.transform='translateY(-20px)';
+    q.style.opacity='0';
+    q.style.transition=`transform 0.5s ease ${i*0.1}s, opacity 0.5s ease ${i*0.1}s`;
+    setTimeout(()=>{q.style.transform='translateY(0)'; q.style.opacity='1';},50);
+  });
+}
+
+// Toolbar Button für Quiz
+function addQuizToolbar(){
+  let toolbar=document.querySelector('.toolbar');
+  if(!toolbar) return;
+  let quizBtn=document.createElement('button');
+  quizBtn.innerText='Quiz/Rätsel';
+  quizBtn.onclick=insertQuiz;
+  toolbar.appendChild(quizBtn);
+}
+
+// Initialisierung Quiz
+document.addEventListener('DOMContentLoaded',()=>{
+  addQuizToolbar();
+  animateQuiz();
+});
+
+// Quiz speichern mit Artikel
+function saveQuizContent(articleId){
+  let article=articles.find(a=>a.id===articleId);
+  if(!article) return;
+  article.quiz=document.querySelector('#editorContent').innerHTML;
+  saveAll();
+}
+</script>

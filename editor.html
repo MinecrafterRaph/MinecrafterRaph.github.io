@@ -2,12 +2,13 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Retro Gazette – Editor</title>
+<title>Editor Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
     body {
         font-family: Arial, sans-serif;
-        background: #f0f0f0;
+        background: #eaeaea;
         padding: 40px;
     }
 
@@ -20,11 +21,9 @@
         box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
 
-    #editorBox {
-        display: none;
-    }
+    #editorBox { display: none; }
 
-    input, select {
+    input {
         width: 100%;
         padding: 10px;
         margin-top: 10px;
@@ -39,49 +38,41 @@
         border: none;
         cursor: pointer;
     }
-
-    button:hover {
-        background: #333;
-    }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginBox">
     <h2>Editor Login</h2>
-    <p>Bitte Code eingeben:</p>
-    <input type="password" id="codeInput" placeholder="Code eingeben">
-    <button onclick="checkCode()">Login</button>
+    <input type="password" id="code" placeholder="Code eingeben">
+    <button onclick="login()">Login</button>
     <p id="error" style="color:red; display:none;">Falscher Code!</p>
 </div>
 
-<!-- EDITOR -->
 <div id="editorBox">
-    <h2>Editor – Live Anpassungen</h2>
+    <h2>Editor</h2>
 
     <label>Textfarbe:</label>
-    <input type="color" id="textColor" onchange="updateStyle()">
+    <input type="color" id="textColor" onchange="save()">
 
     <label>Hintergrundfarbe:</label>
-    <input type="color" id="bgColor" onchange="updateStyle()">
+    <input type="color" id="bgColor" onchange="save()">
 
     <label>Schriftgröße (px):</label>
-    <input type="number" id="fontSize" value="16" onchange="updateStyle()">
+    <input type="number" id="fontSize" value="16" onchange="save()">
 
     <label>Seitenbreite (px):</label>
-    <input type="number" id="pageWidth" value="900" onchange="updateStyle()">
+    <input type="number" id="pageWidth" value="900" onchange="save()">
 
-    <label>Eigener Text (Titel):</label>
-    <input type="text" id="customTitle" placeholder="Neuer Titel" onchange="updateTitle()">
+    <label>Titel ändern:</label>
+    <input type="text" id="customTitle" placeholder="Neuer Titel" onchange="save()">
 
-    <button onclick="window.location.href='index.html'">Zurück zur Zeitung</button>
+    <button onclick="window.location.href='index.html'">Zur Zeitung</button>
 </div>
 
 <script>
-function checkCode() {
-    const input = document.getElementById("codeInput").value;
-    if (input === "13243") {
+function login() {
+    if (document.getElementById("code").value === "13243") {
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("editorBox").style.display = "block";
     } else {
@@ -89,23 +80,15 @@ function checkCode() {
     }
 }
 
-function updateStyle() {
-    const textColor = document.getElementById("textColor").value;
-    const bgColor = document.getElementById("bgColor").value;
-    const fontSize = document.getElementById("fontSize").value;
-    const pageWidth = document.getElementById("pageWidth").value;
-
-    localStorage.setItem("textColor", textColor);
-    localStorage.setItem("bgColor", bgColor);
-    localStorage.setItem("fontSize", fontSize);
-    localStorage.setItem("pageWidth", pageWidth);
-}
-
-function updateTitle() {
-    const title = document.getElementById("customTitle").value;
-    localStorage.setItem("customTitle", title);
+function save() {
+    localStorage.setItem("textColor", document.getElementById("textColor").value);
+    localStorage.setItem("bgColor", document.getElementById("bgColor").value);
+    localStorage.setItem("fontSize", document.getElementById("fontSize").value);
+    localStorage.setItem("pageWidth", document.getElementById("pageWidth").value);
+    localStorage.setItem("customTitle", document.getElementById("customTitle").value);
 }
 </script>
 
 </body>
 </html>
+

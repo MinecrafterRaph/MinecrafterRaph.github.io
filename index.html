@@ -2364,3 +2364,685 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderPopularArticles();
 });
 </script>
+<script>
+// Initialisierung von Video/Audio Sektion
+function initMediaSection(){
+  let el=document.getElementById('mediaSection');
+  if(!el){
+    el=document.createElement('div');
+    el.id='mediaSection';
+    el.className='box gold-frame';
+    el.style.margin='12px 0';
+    document.getElementById('mainContent').appendChild(el);
+  }
+  el.innerHTML=`<h3>Multimedia</h3>
+    <div id="videoContainer" class="box gold-frame" style="margin:6px 0; padding:6px;">
+      <h4>Redaktionelles Video</h4>
+      <video width="320" height="240" controls>
+        <source src="media/sample-video.mp4" type="video/mp4">
+        Dein Browser unterstützt das Video-Tag nicht.
+      </video>
+    </div>
+    <div id="audioContainer" class="box gold-frame" style="margin:6px 0; padding:6px;">
+      <h4>Redaktioneller Podcast</h4>
+      <audio controls>
+        <source src="media/sample-audio.mp3" type="audio/mpeg">
+        Dein Browser unterstützt das Audio-Tag nicht.
+      </audio>
+    </div>`;
+  animateMediaSection();
+}
+
+// Kleine Animationen für Medien-Boxen
+function animateMediaSection(){
+  document.querySelectorAll('#mediaSection .box').forEach(b=>{
+    b.style.transition='transform 0.3s ease';
+    b.onmouseenter=()=>{ b.style.transform='scale(1.02)'; b.style.boxShadow='4px 4px 12px rgba(0,0,0,0.3)'; };
+    b.onmouseleave=()=>{ b.style.transform='scale(1)'; b.style.boxShadow='2px 2px 8px rgba(0,0,0,0.2)'; };
+  });
+}
+
+// Direktes Abspielen/Stoppen per Button (optional)
+function addMediaControls(){
+  let videos=document.querySelectorAll('#videoContainer video');
+  videos.forEach(v=>{
+    let playBtn=document.createElement('button'); playBtn.innerText='Play'; playBtn.style.marginRight='4px';
+    playBtn.onclick=()=>{ v.play(); };
+    let pauseBtn=document.createElement('button'); pauseBtn.innerText='Pause';
+    pauseBtn.onclick=()=>{ v.pause(); };
+    v.parentNode.appendChild(playBtn);
+    v.parentNode.appendChild(pauseBtn);
+  });
+}
+
+// Initialisierung Multimedia
+document.addEventListener('DOMContentLoaded',()=>{
+  initMediaSection();
+  addMediaControls();
+});
+</script>
+<script>
+// Interaktive Highlight-Boxen für Artikel
+function initHighlights(){
+  let el=document.getElementById('highlightSection');
+  if(!el){
+    el=document.createElement('div');
+    el.id='highlightSection';
+    el.className='box gold-frame';
+    el.style.margin='12px 0';
+    document.getElementById('mainContent').appendChild(el);
+  }
+  el.innerHTML='<h3>Top Highlights</h3>';
+  articles.slice(0,5).forEach(a=>{
+    let div=document.createElement('div');
+    div.className='highlight box gold-frame';
+    div.style.margin='4px 0';
+    div.style.padding='6px';
+    div.innerHTML=`<b>${a.title}</b> von ${a.author}<button onclick="viewArticle(${a.id})">Lesen</button>`;
+    el.appendChild(div);
+  });
+  animateHighlights();
+}
+
+// Hover-Animation für Highlights
+function animateHighlights(){
+  document.querySelectorAll('.highlight').forEach(h=>{
+    h.style.transition='all 0.3s ease';
+    h.onmouseenter=()=>{ h.style.transform='scale(1.02)'; h.style.background='lightgoldenrodyellow'; };
+    h.onmouseleave=()=>{ h.style.transform='scale(1)'; h.style.background='transparent'; };
+  });
+}
+
+// Easter Egg: versteckter Hinweis bei Klick auf Überschrift
+function initTitleEasterEgg(){
+  let title=document.getElementById('siteTitle');
+  if(!title) return;
+  let clickCount=0;
+  title.onclick=()=>{
+    clickCount++;
+    if(clickCount===7){
+      alert('Geheime Redaktion entdeckt! Mehr interaktive Features folgen.');
+      clickCount=0;
+    }
+  };
+}
+
+// Optische Verzierungen für alle Boxen
+function applyFinalDecorations(){
+  document.querySelectorAll('.box').forEach(b=>{
+    b.style.border='2px solid gold';
+    b.style.borderRadius='6px';
+    b.style.boxShadow='2px 2px 8px rgba(0,0,0,0.2)';
+    b.style.padding='6px';
+    b.style.margin='6px 0';
+  });
+}
+
+// Initialisierung aller Startseiten-Feinschliffe
+document.addEventListener('DOMContentLoaded',()=>{
+  initHighlights();
+  initTitleEasterEgg();
+  applyFinalDecorations();
+});
+</script>
+<script>
+// Footer Initialisierung
+function initFooter(){
+  let el=document.getElementById('footer');
+  if(!el){
+    el=document.createElement('footer');
+    el.id='footer';
+    el.className='box gold-frame';
+    el.style.textAlign='center';
+    el.style.padding='12px';
+    el.style.marginTop='20px';
+    document.body.appendChild(el);
+  }
+  el.innerHTML=`<p>© Schulzeitung 2026 | Alle Rechte vorbehalten</p>
+                <p id="footerEaster">Klicke hier für ein Geheimnis</p>`;
+  initFooterEasterEgg();
+}
+
+// Footer Easter Egg
+function initFooterEasterEgg(){
+  let f=document.getElementById('footerEaster');
+  if(!f) return;
+  let clicks=0;
+  f.onclick=()=>{
+    clicks++;
+    if(clicks===5){
+      alert('Du hast das geheime Archiv der Redaktion gefunden!');
+      clicks=0;
+    }
+  };
+}
+
+// Mini-Animationen für Index Boxen
+function animateAllBoxes(){
+  document.querySelectorAll('.box').forEach(b=>{
+    b.style.transition='all 0.4s ease';
+    b.onmouseenter=()=>{ b.style.transform='scale(1.01)'; b.style.boxShadow='4px 4px 12px rgba(0,0,0,0.3)'; };
+    b.onmouseleave=()=>{ b.style.transform='scale(1)'; b.style.boxShadow='2px 2px 8px rgba(0,0,0,0.2)'; };
+  });
+}
+
+// Altmodische Zeitung-Highlights kleine Effekte
+function initAltStyleEffects(){
+  document.querySelectorAll('h2,h3,h4').forEach(h=>{
+    h.style.fontFamily='Georgia, serif';
+    h.style.color='darkgoldenrod';
+    h.style.textShadow='1px 1px 1px rgba(0,0,0,0.2)';
+  });
+}
+
+// Initialisierung Startseiten Feinschliff
+document.addEventListener('DOMContentLoaded',()=>{
+  initFooter();
+  animateAllBoxes();
+  initAltStyleEffects();
+});
+</script>
+<script>
+// Editor Initialisierung
+function initEditor(articleId){
+  let el=document.getElementById('editorSection');
+  if(!el){
+    el=document.createElement('div');
+    el.id='editorSection';
+    el.className='box gold-frame';
+    el.style.margin='12px 0';
+    el.style.padding='6px';
+    document.getElementById('mainContent').appendChild(el);
+  }
+  el.innerHTML=`<h3>Artikel Editor</h3>
+    <input type="text" id="editorTitle" placeholder="Titel" style="width:80%; margin-bottom:4px;"><br>
+    <textarea id="editorContent" placeholder="Inhalt hier..." style="width:100%; height:120px;"></textarea><br>
+    <button onclick="saveArticle(${articleId})">Speichern</button>
+    <h4>Live Vorschau</h4>
+    <div id="editorPreview" class="box gold-frame" style="padding:6px;"></div>`;
+  
+  document.getElementById('editorContent').addEventListener('input', updateLivePreview);
+  document.getElementById('editorTitle').addEventListener('input', updateLivePreview);
+  if(articleId!==undefined && articles[articleId]){
+    document.getElementById('editorTitle').value=articles[articleId].title;
+    document.getElementById('editorContent').value=articles[articleId].content;
+    updateLivePreview();
+  }
+}
+
+// Live Preview aktualisieren
+function updateLivePreview(){
+  let title=document.getElementById('editorTitle').value;
+  let content=document.getElementById('editorContent').value;
+  let preview=document.getElementById('editorPreview');
+  preview.innerHTML=`<h2>${title}</h2><p>${content}</p>`;
+  animatePreview(preview);
+}
+
+// Animation für Vorschau
+function animatePreview(el){
+  el.style.transition='all 0.3s ease';
+  el.style.transform='scale(1.01)';
+  setTimeout(()=>{ el.style.transform='scale(1)'; },300);
+}
+
+// Artikel speichern
+function saveArticle(articleId){
+  let title=document.getElementById('editorTitle').value.trim();
+  let content=document.getElementById('editorContent').value.trim();
+  if(!title || !content) return alert('Titel und Inhalt müssen ausgefüllt sein');
+  if(!articles[articleId]){
+    articles.push({id:articles.length, title, content, author:currentUser||'Redakteur'});
+  }else{
+    articles[articleId].title=title;
+    articles[articleId].content=content;
+  }
+  saveAll();
+  alert('Artikel erfolgreich gespeichert');
+  updateLivePreview();
+}
+
+// Initialisierung Editor
+document.addEventListener('DOMContentLoaded',()=>{
+  initEditor();
+});
+</script>
+<script>
+// Editor Erweiterungen Initialisierung
+function initAdvancedEditor(articleId){
+  let el=document.getElementById('editorAdvancedSection');
+  if(!el){
+    el=document.createElement('div');
+    el.id='editorAdvancedSection';
+    el.className='box gold-frame';
+    el.style.margin='12px 0';
+    el.style.padding='6px';
+    document.getElementById('mainContent').appendChild(el);
+  }
+  el.innerHTML=`<h3>Erweiterter Editor</h3>
+    <div id="editorToolbar" style="margin-bottom:4px;">
+      <button onclick="formatText('bold')">Fett</button>
+      <button onclick="formatText('italic')">Kursiv</button>
+      <button onclick="formatText('h2')">Überschrift</button>
+      <button onclick="insertImage()">Bild einfügen</button>
+    </div>
+    <textarea id="editorAdvancedContent" style="width:100%; height:120px;"></textarea>
+    <button onclick="saveAdvancedArticle(${articleId})">Speichern</button>
+    <h4>Live Vorschau</h4>
+    <div id="editorAdvancedPreview" class="box gold-frame" style="padding:6px;"></div>`;
+  
+  document.getElementById('editorAdvancedContent').addEventListener('input', updateAdvancedPreview);
+  if(articleId!==undefined && articles[articleId]){
+    document.getElementById('editorAdvancedContent').value=articles[articleId].content;
+    updateAdvancedPreview();
+  }
+}
+
+// Textformatierung
+function formatText(type){
+  let textarea=document.getElementById('editorAdvancedContent');
+  let start=textarea.selectionStart, end=textarea.selectionEnd;
+  if(start===end) return;
+  let selected=textarea.value.substring(start,end);
+  let replacement=selected;
+  switch(type){
+    case 'bold': replacement='**'+selected+'**'; break;
+    case 'italic': replacement='*'+selected+'*'; break;
+    case 'h2': replacement='## '+selected; break;
+  }
+  textarea.value=textarea.value.substring(0,start)+replacement+textarea.value.substring(end);
+  updateAdvancedPreview();
+}
+
+// Bild einfügen
+function insertImage(){
+  let url=prompt('Bild-URL eingeben');
+  if(!url) return;
+  let textarea=document.getElementById('editorAdvancedContent');
+  textarea.value+=`\n![Bild](${url})\n`;
+  updateAdvancedPreview();
+}
+
+// Live Vorschau für erweiterten Editor
+function updateAdvancedPreview(){
+  let content=document.getElementById('editorAdvancedContent').value;
+  let preview=document.getElementById('editorAdvancedPreview');
+  let html=content.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')
+                  .replace(/\*(.*?)\*/g,'<i>$1</i>')
+                  .replace(/## (.*?)(\n|$)/g,'<h2>$1</h2>')
+                  .replace(/!\[Bild\]\((.*?)\)/g,'<img src="$1" style="max-width:100%; margin:6px 0;">');
+  preview.innerHTML=html;
+  animatePreview(preview);
+}
+
+// Speichern erweiterter Artikel
+function saveAdvancedArticle(articleId){
+  let content=document.getElementById('editorAdvancedContent').value;
+  if(!content.trim()) return alert('Inhalt darf nicht leer sein');
+  if(!articles[articleId]){
+    articles.push({id:articles.length, title:'Unbenannter Artikel', content, author:currentUser||'Redakteur'});
+  }else{
+    articles[articleId].content=content;
+  }
+  saveAll();
+  alert('Artikel erfolgreich gespeichert');
+  updateAdvancedPreview();
+}
+
+// Initialisierung
+document.addEventListener('DOMContentLoaded',()=>{
+  initAdvancedEditor();
+});
+</script>
+<script>
+// Erweiterter Layout-Editor Initialisierung
+function initLayoutEditor(){
+  let el=document.getElementById('layoutEditorSection');
+  if(!el){
+    el=document.createElement('div');
+    el.id='layoutEditorSection';
+    el.className='box gold-frame';
+    el.style.margin='12px 0';
+    el.style.padding='6px';
+    document.getElementById('mainContent').appendChild(el);
+  }
+  el.innerHTML=`<h3>Layout Editor (Canva-ähnlich)</h3>
+    <div id="layoutToolbar" style="margin-bottom:6px;">
+      <button onclick="addBox()">Neue Box</button>
+      <button onclick="clearBoxes()">Alle Boxen löschen</button>
+    </div>
+    <div id="layoutCanvas" class="box gold-frame" style="min-height:200px; position:relative;"></div>`;
+}
+
+// Neue Box hinzufügen
+function addBox(){
+  let canvas=document.getElementById('layoutCanvas');
+  let box=document.createElement('div');
+  box.className='layoutBox box gold-frame';
+  box.style.width='120px';
+  box.style.height='80px';
+  box.style.position='absolute';
+  box.style.top='10px';
+  box.style.left='10px';
+  box.style.padding='4px';
+  box.style.cursor='move';
+  box.innerText='Box';
+  enableDrag(box);
+  canvas.appendChild(box);
+}
+
+// Drag & Drop Funktion
+function enableDrag(el){
+  let posX=0,posY=0,mouseX=0,mouseY=0;
+  el.onmousedown=function(e){
+    e.preventDefault();
+    mouseX=e.clientX; mouseY=e.clientY;
+    document.onmousemove=dragMouseMove;
+    document.onmouseup=closeDrag;
+  };
+  function dragMouseMove(e){
+    posX=mouseX-e.clientX;
+    posY=mouseY-e.clientY;
+    mouseX=e.clientX; mouseY=e.clientY;
+    el.style.top=(el.offsetTop - posY)+'px';
+    el.style.left=(el.offsetLeft - posX)+'px';
+  }
+  function closeDrag(){ document.onmousemove=null; document.onmouseup=null; }
+}
+
+// Alle Boxen löschen
+function clearBoxes(){
+  let canvas=document.getElementById('layoutCanvas');
+  canvas.innerHTML='';
+}
+
+// Initialisierung Layout-Editor
+document.addEventListener('DOMContentLoaded',()=>{
+  initLayoutEditor();
+});
+</script>
+<script>
+// Box Stiländerungen
+function applyBoxStyles(box){
+  box.style.border='2px solid gold';
+  box.style.borderRadius='6px';
+  box.style.background='lightyellow';
+  box.style.padding='4px';
+  box.style.margin='4px';
+  box.style.cursor='move';
+  animateBox(box);
+}
+
+// Box Farben ändern
+function changeBoxColor(box){
+  let color=prompt('Neue Hintergrundfarbe (z.B. lightblue, #FFD700):', box.style.background);
+  if(color) box.style.background=color;
+}
+
+// Box Größe ändern
+function resizeBox(box){
+  let width=prompt('Breite in px:', box.offsetWidth);
+  let height=prompt('Höhe in px:', box.offsetHeight);
+  if(width) box.style.width=width+'px';
+  if(height) box.style.height=height+'px';
+  animateBox(box);
+}
+
+// Kontextmenü für Boxen
+function enableBoxContextMenu(box){
+  box.oncontextmenu=function(e){
+    e.preventDefault();
+    let action=prompt('Option: color, size, image');
+    if(action==='color') changeBoxColor(box);
+    if(action==='size') resizeBox(box);
+    if(action==='image') insertImageInBox(box);
+  };
+}
+
+// Alle existierenden Boxen für Kontextmenü aktivieren
+function initBoxContextMenus(){
+  document.querySelectorAll('.layoutBox').forEach(box=>{
+    enableBoxContextMenu(box);
+  });
+}
+
+// Initialisierung Layout Editor Feinschliff
+document.addEventListener('DOMContentLoaded',()=>{
+  initBoxContextMenus();
+});
+</script>
+<script>
+// Optimiertes Drag & Drop für flüssiges Bewegen
+function enableSmoothDrag(el){
+  let offsetX=0, offsetY=0, mouseX=0, mouseY=0;
+  el.onmousedown=function(e){
+    e.preventDefault();
+    mouseX=e.clientX; mouseY=e.clientY;
+    document.onmousemove=dragMove;
+    document.onmouseup=dragEnd;
+  };
+  function dragMove(e){
+    offsetX=mouseX-e.clientX;
+    offsetY=mouseY-e.clientY;
+    mouseX=e.clientX; mouseY=e.clientY;
+    el.style.left=(el.offsetLeft - offsetX)+'px';
+    el.style.top=(el.offsetTop - offsetY)+'px';
+    el.style.transition='none';
+  }
+  function dragEnd(){
+    el.style.transition='all 0.2s ease';
+    document.onmousemove=null;
+    document.onmouseup=null;
+  }
+}
+
+// Text + Bild in Box formatieren
+function formatBoxContent(box, text, imageUrl){
+  let html='';
+  if(imageUrl) html+=`<img src="${imageUrl}" style="max-width:100%; margin:4px 0;"><br>`;
+  if(text) html+=`<p>${text}</p>`;
+  box.innerHTML=html;
+  animateBox(box);
+}
+
+// Box initialisieren für Editor
+function initEditorBoxes(){
+  document.querySelectorAll('.layoutBox').forEach(box=>{
+    enableSmoothDrag(box);
+    enableBoxEditing(box);
+    enableBoxContextMenu(box);
+  });
+}
+
+// Neue Box erstellen mit optionalem Text/Bild
+function addAdvancedBox(text='', imageUrl=''){
+  let canvas=document.getElementById('layoutCanvas');
+  if(!canvas) return;
+  let box=document.createElement('div');
+  box.className='layoutBox box gold-frame';
+  box.style.width='120px'; box.style.height='80px';
+  box.style.position='absolute'; box.style.top='10px'; box.style.left='10px';
+  box.style.padding='4px'; box.style.cursor='move';
+  formatBoxContent(box, text, imageUrl);
+  canvas.appendChild(box);
+  initEditorBoxes();
+}
+
+// Initialisierung nach DOM geladen
+document.addEventListener('DOMContentLoaded',()=>{
+  initEditorBoxes();
+});
+</script>
+<script>
+// Textformatierung innerhalb der Box
+function formatTextInBox(box){
+  let text=prompt('Text eingeben oder bearbeiten:', box.innerText);
+  if(!text) return;
+  let style=prompt('Format: normal, bold, italic, h2', 'normal');
+  switch(style){
+    case 'bold': box.innerHTML=`<b>${text}</b>`; break;
+    case 'italic': box.innerHTML=`<i>${text}</i>`; break;
+    case 'h2': box.innerHTML=`<h2>${text}</h2>`; break;
+    default: box.innerHTML=`<p>${text}</p>`;
+  }
+  animateBox(box);
+}
+
+// Box Layering ändern (vorne/hinten)
+function changeBoxLayer(box){
+  let action=prompt('Layer: vorne, hinten', 'vorne');
+  if(action==='vorne') box.style.zIndex=++maxZIndex;
+  if(action==='hinten') box.style.zIndex=--minZIndex;
+}
+
+// Globale Layer-Indizes
+let maxZIndex=100;
+let minZIndex=0;
+
+// Kontextmenü erweitern
+function extendBoxContextMenu(box){
+  box.oncontextmenu=function(e){
+    e.preventDefault();
+    let action=prompt('Option: color, size, image, text, layer');
+    if(action==='color') changeBoxColor(box);
+    if(action==='size') resizeBox(box);
+    if(action==='image') insertImageInBox(box);
+    if(action==='text') formatTextInBox(box);
+    if(action==='layer') changeBoxLayer(box);
+  };
+}
+
+// Alle Boxen für erweitertes Kontextmenü aktivieren
+function initExtendedBoxMenus(){
+  document.querySelectorAll('.layoutBox').forEach(box=>{
+    extendBoxContextMenu(box);
+  });
+}
+
+// Initialisierung Layout-Editor Erweiterungen
+document.addEventListener('DOMContentLoaded',()=>{
+  initExtendedBoxMenus();
+});
+</script>
+<script>
+// Endgültiger Layout-Editor Feinschliff
+function initFinalLayoutEditor(){
+  document.querySelectorAll('.layoutBox').forEach(box=>{
+    enableSmoothDrag(box);
+    enableBoxEditing(box);
+    extendBoxContextMenu(box);
+    applyBoxStyles(box);
+  });
+}
+
+// Drag & Drop sanfte Animationen
+function animateAllBoxes(){
+  document.querySelectorAll('.layoutBox').forEach(box=>{
+    box.style.transition='all 0.2s ease';
+    box.onmouseenter=()=>{ box.style.transform='scale(1.02)'; box.style.boxShadow='5px 5px 12px rgba(0,0,0,0.3)'; };
+    box.onmouseleave=()=>{ box.style.transform='scale(1)'; box.style.boxShadow='3px 3px 8px rgba(0,0,0,0.2)'; };
+  });
+}
+
+// Box mit Text + Bild erstellen und direkt zentrieren
+function createCenteredBox(text='', imageUrl=''){
+  let canvas=document.getElementById('layoutCanvas');
+  if(!canvas) return;
+  let box=document.createElement('div');
+  box.className='layoutBox box gold-frame';
+  box.style.width='150px'; box.style.height='100px';
+  box.style.position='absolute';
+  box.style.top='50%'; box.style.left='50%';
+  box.style.transform='translate(-50%, -50%)';
+  box.style.padding='6px';
+  box.style.cursor='move';
+  formatBoxContent(box, text, imageUrl);
+  canvas.appendChild(box);
+  initFinalLayoutEditor();
+}
+
+// Live Box-Hover Effekte für alle Boxen
+function initBoxHoverEffects(){
+  document.querySelectorAll('.layoutBox').forEach(box=>{
+    box.addEventListener('mouseenter',()=>{ box.style.borderColor='darkgoldenrod'; });
+    box.addEventListener('mouseleave',()=>{ box.style.borderColor='gold'; });
+  });
+}
+
+// Initialisierung nach DOM geladen
+document.addEventListener('DOMContentLoaded',()=>{
+  initFinalLayoutEditor();
+  animateAllBoxes();
+  initBoxHoverEffects();
+});
+
+// Optional: Test-Boxen für fertige Schulzeitung
+document.addEventListener('DOMContentLoaded',()=>{
+  createCenteredBox('Überschrift', '');
+  createCenteredBox('Artikeltext hier...', '');
+  createCenteredBox('Bildbox', 'https://via.placeholder.com/120x80');
+});
+</script>
+<script>
+// Interaktive Umblätter-Animation für Artikel
+function addPageFlipEffect(articleDiv){
+  articleDiv.style.transition='transform 0.6s ease';
+  articleDiv.style.transformStyle='preserve-3d';
+  articleDiv.onmouseenter=()=>{ articleDiv.style.transform='rotateY(5deg)'; };
+  articleDiv.onmouseleave=()=>{ articleDiv.style.transform='rotateY(0deg)'; };
+}
+
+// Automatische Artikel Boxen erstellen
+function createArticleBox(title, content){
+  let canvas=document.getElementById('mainContent');
+  if(!canvas) return;
+  let box=document.createElement('div');
+  box.className='articleBox box gold-frame';
+  box.style.width='90%';
+  box.style.margin='12px auto';
+  box.style.padding='8px';
+  box.style.background='ivory';
+  box.innerHTML=`<h2>${title}</h2><p>${content}</p>`;
+  addPageFlipEffect(box);
+  canvas.appendChild(box);
+}
+
+// Interaktive Scroll-Effekte für Artikel
+function enableScrollAnimation(){
+  window.addEventListener('scroll',()=>{
+    document.querySelectorAll('.articleBox').forEach(box=>{
+      let rect=box.getBoundingClientRect();
+      if(rect.top<window.innerHeight && rect.bottom>0){
+        box.style.transform='translateY(0)';
+        box.style.opacity=1;
+        box.style.transition='all 0.6s ease';
+      } else {
+        box.style.transform='translateY(20px)';
+        box.style.opacity=0.6;
+      }
+    });
+  });
+}
+
+// Initial Artikel generieren (Beispiel)
+document.addEventListener('DOMContentLoaded',()=>{
+  createArticleBox('Schulzeitung Ausgabe April', 'Willkommen zur neuen Ausgabe unserer Schulzeitung. Hier gibt es spannende Artikel über Sport, Kultur und die neuesten Events an unserer Schule.');
+  createArticleBox('Interview mit dem Schulleiter', 'Wir haben Herrn Müller zu aktuellen Themen befragt und spannende Einblicke bekommen.');
+  createArticleBox('Rätsel Ecke', 'Teste dein Wissen mit unseren kniffligen Rätseln und Denksportaufgaben!');
+  enableScrollAnimation();
+});
+
+// Artikel Layout-Anpassung
+function adjustArticleLayout(){
+  document.querySelectorAll('.articleBox').forEach(box=>{
+    box.style.boxShadow='3px 3px 10px rgba(0,0,0,0.2)';
+    box.style.borderRadius='6px';
+    box.style.transition='all 0.3s ease';
+  });
+}
+
+// Initial Layout fixen
+document.addEventListener('DOMContentLoaded',()=>{
+  adjustArticleLayout();
+});
+</script>

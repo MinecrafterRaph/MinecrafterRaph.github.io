@@ -1722,3 +1722,645 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderAuthorStats();
 });
 </script>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Schulzeitung Kommentare</title>
+<style>
+body{font-family:sans-serif;background:#f9f6f1;color:#333;padding:12px;}
+h2,h3{color:#bfa23c;}
+.box{border:2px solid gold;padding:8px;margin:8px 0;background:#fff;}
+button{background:gold;color:#000;border:none;padding:4px 8px;margin:2px;cursor:pointer;}
+button:hover{background:#cfa11f;}
+textarea,input{width:100%;margin:4px 0;padding:4px;}
+.comment-approved{border-left:4px solid green;}
+.comment-pending{border-left:4px solid orange;}
+.comment-rejected{border-left:4px solid red;}
+</style>
+</head>
+<body>
+<h2>Kommentare</h2>
+<div id="commentsContainer" class="box"></div>
+<h3>Neuen Kommentar hinzufügen</h3>
+<input type="text" id="commentName" placeholder="Name">
+<textarea id="commentContent" placeholder="Kommentar"></textarea>
+<button onclick="submitComment()">Kommentar senden</button>
+
+<script>
+// Kommentar-Daten simuliert
+let comments=[];
+
+// Kommentar rendern
+function renderComments(){
+  let el=document.getElementById('commentsContainer');
+  el.innerHTML='';
+  if(comments.length===0){ el.innerHTML='<p>Keine Kommentare vorhanden</p>'; return; }
+  comments.forEach((c,i)=>{
+    let d=document.createElement('div');
+    d.className='box comment-'+c.status;
+    d.innerHTML=`<b>${c.name}</b> (${c.status})<p>${c.content}</p>`;
+    if(c.status==='pending'){
+      let approveBtn=document.createElement('button');
+      approveBtn.innerText='Freigeben';
+      approveBtn.onclick=()=>{c.status='approved'; renderComments();};
+      let rejectBtn=document.createElement('button');
+      rejectBtn.innerText='Ablehnen';
+      rejectBtn.onclick=()=>{c.status='rejected'; renderComments();};
+      d.appendChild(approveBtn);
+      d.appendChild(rejectBtn);
+    }
+    el.appendChild(d);
+  });
+}
+
+// Kommentar einreichen
+function submitComment(){
+  let name=document.getElementById('commentName').value.trim();
+  let content=document.getElementById('commentContent').value.trim();
+  if(!name || !content) return alert('Name und Kommentar erforderlich');
+  comments.push({name,content,status:'pending'});
+  document.getElementById('commentName').value='';
+  document.getElementById('commentContent').value='';
+  renderComments();
+}
+
+// Initialisierung
+document.addEventListener('DOMContentLoaded',()=>{ renderComments(); });
+</script>
+</body>
+</html>
+<script>
+// Anzeige einer Ausgabe mit blätterbaren Seiten
+function viewIssue(issueIndex){
+  let issue=issues[issueIndex];
+  if(!issue) return alert('Ausgabe nicht gefunden');
+  let el=document.getElementById('mainContent');
+  el.innerHTML=`<h2>${issue.title} (${issue.date})</h2>
+    <div id="issuePages" class="box gold-frame" style="overflow-x:auto; white-space:nowrap; padding:8px;"></div>
+    <button onclick="initIndexPage()">Zurück</button>`;
+  let pagesEl=document.getElementById('issuePages');
+  issue.articles.forEach((artId,i)=>{
+    let art=articles.find(a=>a.id===artId);
+    if(!art) return;
+    let page=document.createElement('div');
+    page.className='page box gold-frame';
+    page.style.display='inline-block';
+    page.style.width='250px';
+    page.style.height='350px';
+    page.style.marginRight='12px';
+    page.style.verticalAlign='top';
+    page.style.padding='6px';
+    page.style.cursor='pointer';
+    page.innerHTML=`<h4>${art.title}</h4><p>${art.content.substring(0,200)}...</p>
+      <button onclick="viewArticle(${art.id})">Vollständig lesen</button>`;
+    pagesEl.appendChild(page);
+  });
+  enhancePageFlip(); // bereits definiert in Teil 20 für Animation
+}
+
+// Detail-Artikel-Ansicht
+function viewArticle(articleId){
+  let art=articles.find(a=>a.id===articleId);
+  if(!art) return alert('Artikel nicht gefunden');
+  let el=document.getElementById('mainContent');
+  el.innerHTML=`<h2>${art.title}</h2>
+    <p>${art.content}</p>
+    <p><b>Autor:</b> ${art.author}</p>
+    <button onclick="initIndexPage()">Zurück zur Startseite</button>`;
+  animateArticleLoad(); // Artikel-Load Animation aus Teil 20
+  renderCommentsForArticle(articleId); // Kommentare, wenn aktiviert
+}
+
+// Kommentare für Artikel rendern
+function renderCommentsForArticle(articleId){
+  if(!document.getElementById('articleComments')) {
+    let cDiv=document.createElement('div');
+    cDiv.id='articleComments';
+    cDiv.className='box gold-frame';
+    cDiv.style.marginTop='12px';
+    document.getElementById('mainContent').appendChild(cDiv);
+  }
+  let commentsEl=document.getElementById('articleComments');
+  commentsEl.innerHTML='<h3>Kommentare</h3>';
+  let artComments=comments.filter(c=>c.articleId===articleId && c.status==='approved');
+  if(artComments.length===0){ commentsEl.innerHTML+='<p>Keine Kommentare vorhanden</p>'; return; }
+  artComments.forEach(c=>{
+    let d=document.createElement('div');
+    d.className='box';
+    d.style.margin='4px 0';
+    d.innerHTML=`<b>${c.name}</b>: ${c.content}`;
+    commentsEl.appendChild(d);
+  });
+}
+
+// Initialisierung Detailansicht (falls direkt geladen)
+document.addEventListener('DOMContentLoaded',()=>{
+  if(window.location.hash.startsWith('#issue')){
+    let idx=parseInt(window.location.hash.replace('#issue',''));
+    if(!isNaN(idx)) viewIssue(idx);
+  }
+});
+</script>
+<script>
+// Editor Initialisierung
+function initEditor(){
+  let el=document.getElementById('editorContent');
+  if(!el) return;
+  el.innerHTML=`<div id="editorToolbar" class="toolbar box gold-frame" style="margin-bottom:6px;">
+    <button onclick="addTextBox()">Text hinzufügen</button>
+    <button onclick="addImage()">Bild hinzufügen</button>
+    <button onclick="addAnimation()">Animation hinzufügen</button>
+  </div>
+  <div id="editorCanvas" class="box gold-frame" style="min-height:300px;padding:6px;"></div>`;
+}
+
+// Textbox hinzufügen
+function addTextBox(){
+  let txt=prompt('Text eingeben:');
+  if(!txt) return;
+  let tb=document.createElement('div');
+  tb.className='editorItem box gold-frame';
+  tb.style.padding='4px';
+  tb.style.margin='4px';
+  tb.style.cursor='move';
+  tb.contentEditable=true;
+  tb.innerText=txt;
+  makeDraggable(tb);
+  document.getElementById('editorCanvas').appendChild(tb);
+}
+
+// Bild hinzufügen
+function addImage(){
+  let url=prompt('Bild URL eingeben:');
+  if(!url) return;
+  let img=document.createElement('img');
+  img.src=url;
+  img.style.width='200px';
+  img.style.cursor='move';
+  makeDraggable(img);
+  document.getElementById('editorCanvas').appendChild(img);
+}
+
+// Animation hinzufügen
+function addAnimation(){
+  let el=document.getElementById('editorCanvas');
+  let animBox=document.createElement('div');
+  animBox.className='editorItem box gold-frame';
+  animBox.style.padding='4px';
+  animBox.style.margin='4px';
+  animBox.style.background='lightgoldenrodyellow';
+  animBox.innerText='✨ Animationsbox ✨';
+  animBox.style.cursor='move';
+  animBox.style.transition='all 0.5s ease';
+  animBox.onclick=()=>{ animBox.style.transform='rotateY(180deg)'; setTimeout(()=>{animBox.style.transform='rotateY(0deg)';},500); };
+  makeDraggable(animBox);
+  el.appendChild(animBox);
+}
+
+// Drag & Drop Funktion
+function makeDraggable(el){
+  let pos={x:0,y:0,dx:0,dy:0};
+  el.onmousedown=function(e){
+    e.preventDefault();
+    pos.dx=e.clientX-el.offsetLeft;
+    pos.dy=e.clientY-el.offsetTop;
+    document.onmousemove=dragMove;
+    document.onmouseup=stopDrag;
+  };
+  function dragMove(e){
+    el.style.position='absolute';
+    el.style.left=(e.clientX-pos.dx)+'px';
+    el.style.top=(e.clientY-pos.dy)+'px';
+  }
+  function stopDrag(){ document.onmousemove=null; document.onmouseup=null; }
+}
+
+// Editor Initialisierung
+document.addEventListener('DOMContentLoaded',()=>{ initEditor(); });
+</script>
+<script>
+// Artikel speichern
+function saveArticle(){
+  let canvas=document.getElementById('editorCanvas');
+  if(!canvas) return alert('Editor nicht gefunden');
+  let content='';
+  canvas.querySelectorAll('.editorItem').forEach(el=>{
+    if(el.tagName==='DIV') content+=el.innerText+'\n';
+    if(el.tagName==='IMG') content+=`[Bild: ${el.src}]\n`;
+  });
+  let title=prompt('Titel des Artikels:');
+  if(!title) return alert('Titel erforderlich');
+  let category=prompt('Kategorie (Lokales/Sport/Kultur/Meinungen):');
+  if(!category) category='Allgemein';
+  let issueIndex=parseInt(prompt('Zu welcher Ausgabe? (Nummer)'));
+  if(isNaN(issueIndex) || !issues[issueIndex]) return alert('Ungültige Ausgabe');
+  let newId=articles.length;
+  let author=prompt('Dein Name oder Email:') || 'Unbekannt';
+  let article={id:newId,title,content,category,author,status:'pending'};
+  articles.push(article);
+  issues[issueIndex].articles.push(newId);
+  alert('Artikel gespeichert und zur Freigabe eingereicht!');
+  saveAll(); // Funktion zum Speichern aller Daten
+  renderIssueList();
+}
+
+// Live-Vorschau
+function previewArticle(){
+  let canvas=document.getElementById('editorCanvas');
+  if(!canvas) return;
+  let preview=document.getElementById('editorPreview');
+  if(!preview){
+    preview=document.createElement('div');
+    preview.id='editorPreview';
+    preview.className='box gold-frame';
+    preview.style.marginTop='12px';
+    document.getElementById('editorContent').appendChild(preview);
+  }
+  let content='';
+  canvas.querySelectorAll('.editorItem').forEach(el=>{
+    if(el.tagName==='DIV') content+='<p>'+el.innerText+'</p>';
+    if(el.tagName==='IMG') content+='<img src="'+el.src+'" style="max-width:200px;"><br>';
+  });
+  preview.innerHTML='<h3>Live-Vorschau</h3>'+content;
+}
+
+// Editor-Toolbar um Buttons erweitern
+function extendEditorToolbar(){
+  let toolbar=document.getElementById('editorToolbar');
+  if(!toolbar) return;
+  let btnSave=document.createElement('button');
+  btnSave.innerText='Artikel speichern';
+  btnSave.onclick=saveArticle;
+  let btnPreview=document.createElement('button');
+  btnPreview.innerText='Vorschau';
+  btnPreview.onclick=previewArticle;
+  toolbar.appendChild(btnPreview);
+  toolbar.appendChild(btnSave);
+}
+
+// Initialisierung Editor erweitern
+document.addEventListener('DOMContentLoaded',()=>{ extendEditorToolbar(); });
+</script>
+<script>
+// Admin-Panel Initialisierung
+function initAdminPanel(){
+  let el=document.getElementById('adminContent');
+  if(!el) return;
+  el.innerHTML=`<h2>Admin-Bereich</h2>
+    <div id="pendingArticles" class="box gold-frame" style="margin-bottom:12px;"></div>
+    <div id="manageIssues" class="box gold-frame" style="margin-bottom:12px;"></div>
+    <div id="manageAds" class="box gold-frame" style="margin-bottom:12px;"></div>`;
+  renderPendingArticles();
+  renderManageIssues();
+  renderManageAds();
+}
+
+// Artikel freigeben / ablehnen
+function renderPendingArticles(){
+  let el=document.getElementById('pendingArticles');
+  el.innerHTML='<h3>Artikel freigeben/ablehnen</h3>';
+  let pending=articles.filter(a=>a.status==='pending');
+  if(pending.length===0){ el.innerHTML+='<p>Keine ausstehenden Artikel</p>'; return; }
+  pending.forEach(a=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.style.margin='4px 0';
+    d.innerHTML=`<b>${a.title}</b> von ${a.author}<p>${a.content.substring(0,100)}...</p>`;
+    let approveBtn=document.createElement('button');
+    approveBtn.innerText='Freigeben';
+    approveBtn.onclick=()=>{a.status='approved'; renderPendingArticles();};
+    let rejectBtn=document.createElement('button');
+    rejectBtn.innerText='Ablehnen';
+    rejectBtn.onclick=()=>{a.status='rejected'; renderPendingArticles();};
+    d.appendChild(approveBtn);
+    d.appendChild(rejectBtn);
+    el.appendChild(d);
+  });
+}
+
+// Ausgaben verwalten
+function renderManageIssues(){
+  let el=document.getElementById('manageIssues');
+  el.innerHTML='<h3>Ausgaben verwalten</h3>';
+  issues.forEach((iss,i)=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.style.margin='4px 0';
+    d.innerHTML=`<b>${iss.title}</b> (${iss.date})`;
+    let delBtn=document.createElement('button');
+    delBtn.innerText='Löschen';
+    delBtn.onclick=()=>{ if(confirm('Ausgabe löschen?')) {issues.splice(i,1); renderManageIssues();} };
+    d.appendChild(delBtn);
+    el.appendChild(d);
+  });
+  let addBtn=document.createElement('button');
+  addBtn.innerText='Neue Ausgabe hinzufügen';
+  addBtn.onclick=()=>{
+    let title=prompt('Titel der Ausgabe:');
+    let date=prompt('Datum (JJJJ-MM-TT):');
+    if(!title || !date) return alert('Titel und Datum erforderlich');
+    issues.push({title,date,articles:[]});
+    renderManageIssues();
+  };
+  el.appendChild(addBtn);
+}
+
+// Anzeigen verwalten
+function renderManageAds(){
+  let el=document.getElementById('manageAds');
+  el.innerHTML='<h3>Anzeigen verwalten</h3>';
+  if(!ads) ads=[];
+  ads.forEach((ad,i)=>{
+    let d=document.createElement('div');
+    d.className='box gold-frame';
+    d.style.margin='4px 0';
+    d.innerHTML=`<b>${ad.title}</b> von ${ad.contact}<p>${ad.description}</p>`;
+    let approveBtn=document.createElement('button');
+    approveBtn.innerText='Freigeben';
+    approveBtn.onclick=()=>{ad.status='approved'; renderManageAds();};
+    let rejectBtn=document.createElement('button');
+    rejectBtn.innerText='Ablehnen';
+    rejectBtn.onclick=()=>{ad.status='rejected'; renderManageAds();};
+    d.appendChild(approveBtn);
+    d.appendChild(rejectBtn);
+    el.appendChild(d);
+  });
+}
+
+// Admin-Panel Initialisierung
+document.addEventListener('DOMContentLoaded',()=>{ initAdminPanel(); });
+</script>
+<script>
+// Easter Egg: versteckter Hinweis bei Klick auf Logo
+function initEasterEgg(){
+  let logo=document.getElementById('logo');
+  if(!logo) return;
+  let clickCount=0;
+  logo.onclick=()=>{
+    clickCount++;
+    if(clickCount===5) alert('Du hast das geheime Redaktions-Easter Egg gefunden! Gehe zu minecrafterraph.github.io/easteregg-found ');
+  };
+}
+
+// Interaktives Rätsel im Editor oder auf Startseite
+function initPuzzle(){
+  let el=document.getElementById('mainContent');
+  if(!el) return;
+  let puzzleDiv=document.createElement('div');
+  puzzleDiv.className='box gold-frame';
+  puzzleDiv.style.marginTop='12px';
+  puzzleDiv.innerHTML=`<h3>Redaktionsrätsel</h3>
+    <p>Löse das Rätsel: Was ist die Hauptstadt von Deutschland?</p>
+    <input type="text" id="puzzleAnswer" placeholder="Antwort">
+    <button onclick="checkPuzzle()">Prüfen</button>
+    <div id="puzzleResult" style="margin-top:6px;"></div>`;
+  el.appendChild(puzzleDiv);
+}
+
+// Rätsel prüfen
+function checkPuzzle(){
+  let ans=document.getElementById('puzzleAnswer').value.trim().toLowerCase();
+  let res=document.getElementById('puzzleResult');
+  if(ans==='berlin') res.innerHTML='<span style="color:green;">Richtig! </span>';
+  else res.innerHTML='<span style="color:red;">Falsch, versuche es erneut.</span>';
+}
+
+// Animation für Boxen
+function animateBoxes(){
+  document.querySelectorAll('.box').forEach(b=>{
+    b.style.transition='transform 0.3s ease';
+    b.onmouseenter=()=>{ b.style.transform='scale(1.03)'; };
+    b.onmouseleave=()=>{ b.style.transform='scale(1)'; };
+  });
+}
+
+// Optische Verzierungen
+function applyDecorations(){
+  document.querySelectorAll('.gold-frame').forEach(el=>{
+    el.style.border='2px solid gold';
+    el.style.boxShadow='2px 2px 8px rgba(0,0,0,0.2)';
+    el.style.borderRadius='6px';
+    el.style.padding='6px';
+  });
+}
+
+// Initialisierung Easter Egg, Puzzle, Animationen, Verzierungen
+document.addEventListener('DOMContentLoaded',()=>{
+  initEasterEgg();
+  initPuzzle();
+  animateBoxes();
+  applyDecorations();
+});
+</script>
+<script>
+// Interaktive Seitenumblätterung für aktuelle Ausgabe
+function initPageFlip(issueIndex){
+  let issue=issues[issueIndex];
+  if(!issue) return;
+  let el=document.getElementById('mainContent');
+  el.innerHTML=`<h2>${issue.title} (${issue.date})</h2>
+    <div id="flipContainer" class="box gold-frame" style="position:relative; width:400px; height:300px; overflow:hidden; margin:12px 0;"></div>
+    <button onclick="initIndexPage()">Zurück</button>`;
+  let container=document.getElementById('flipContainer');
+  let currentPage=0;
+  function renderPage(idx){
+    container.innerHTML='';
+    if(!issue.articles[idx]) return;
+    let art=articles.find(a=>a.id===issue.articles[idx]);
+    let page=document.createElement('div');
+    page.className='page box gold-frame';
+    page.style.width='100%';
+    page.style.height='100%';
+    page.style.padding='8px';
+    page.style.position='absolute';
+    page.style.left='0';
+    page.style.top='0';
+    page.style.transition='all 0.5s ease';
+    page.innerHTML=`<h3>${art.title}</h3><p>${art.content.substring(0,400)}...</p>
+      <button onclick="viewArticle(${art.id})">Vollständig lesen</button>`;
+    container.appendChild(page);
+  }
+  renderPage(currentPage);
+  // Umblätter-Buttons
+  let prev=document.createElement('button'); prev.innerText='◀'; prev.style.position='absolute'; prev.style.top='50%'; prev.style.left='0';
+  let next=document.createElement('button'); next.innerText='▶'; next.style.position='absolute'; next.style.top='50%'; next.style.right='0';
+  prev.onclick=()=>{ if(currentPage>0) currentPage--; renderPage(currentPage); };
+  next.onclick=()=>{ if(currentPage<issue.articles.length-1) currentPage++; renderPage(currentPage); };
+  container.appendChild(prev); container.appendChild(next);
+}
+
+// Lesezeichen für Artikel
+function addBookmark(articleId){
+  if(!window.bookmarks) window.bookmarks=[];
+  if(bookmarks.includes(articleId)) return alert('Bereits als Lesezeichen markiert');
+  bookmarks.push(articleId);
+  alert('Artikel als Lesezeichen gespeichert');
+  saveAll();
+}
+
+// Mini-Grafiken / kleine Icons zu Artikeln
+function renderMiniGraphics(){
+  document.querySelectorAll('.page').forEach(p=>{
+    let icon=document.createElement('span');
+    icon.innerText='📰';
+    icon.style.position='absolute';
+    icon.style.top='4px';
+    icon.style.right='6px';
+    p.appendChild(icon);
+  });
+}
+
+// Animation für Seiten beim Umblättern
+function animateFlip(){
+  let pages=document.querySelectorAll('.page');
+  pages.forEach(p=>{
+    p.style.transform='rotateY(0deg)';
+    p.onmouseenter=()=>{ p.style.transform='rotateY(10deg)'; };
+    p.onmouseleave=()=>{ p.style.transform='rotateY(0deg)'; };
+  });
+}
+
+// Initialisierung interaktive Ausgabe
+document.addEventListener('DOMContentLoaded',()=>{
+  if(issues.length>0) initPageFlip(0);
+  renderMiniGraphics();
+  animateFlip();
+});
+</script>
+<script>
+// Suchbereich auf der Startseite oder überall
+function initSearch(){
+  let el=document.getElementById('searchSection');
+  if(!el){
+    el=document.createElement('div');
+    el.id='searchSection';
+    el.className='box gold-frame';
+    el.style.margin='12px 0';
+    document.getElementById('mainContent').prepend(el);
+  }
+  el.innerHTML=`<h3>Artikel & Ausgaben durchsuchen</h3>
+    <input type="text" id="searchInput" placeholder="Suche nach Titel, Autor, Kategorie..." style="width:80%;">
+    <div id="searchResults" class="box gold-frame" style="margin-top:6px; max-height:200px; overflow:auto;"></div>`;
+  document.getElementById('searchInput').addEventListener('input',filterSearch);
+}
+
+// Filterfunktion
+function filterSearch(){
+  let query=document.getElementById('searchInput').value.toLowerCase();
+  let results=document.getElementById('searchResults');
+  results.innerHTML='';
+  if(!query) return;
+  // Suche in Artikeln
+  articles.forEach(a=>{
+    if(a.title.toLowerCase().includes(query) ||
+       a.author.toLowerCase().includes(query) ||
+       a.category.toLowerCase().includes(query)){
+      let div=document.createElement('div');
+      div.className='box gold-frame';
+      div.style.margin='4px 0';
+      div.innerHTML=`<b>${a.title}</b> (${a.category}) von ${a.author} 
+        <button onclick="viewArticle(${a.id})">Anzeigen</button>`;
+      results.appendChild(div);
+    }
+  });
+  // Suche in Ausgaben
+  issues.forEach((iss,i)=>{
+    if(iss.title.toLowerCase().includes(query) ||
+       iss.date.toLowerCase().includes(query)){
+      let div=document.createElement('div');
+      div.className='box gold-frame';
+      div.style.margin='4px 0';
+      div.innerHTML=`<b>${iss.title}</b> (${iss.date}) 
+        <button onclick="viewIssue(${i})">Öffnen</button>`;
+      results.appendChild(div);
+    }
+  });
+}
+
+// Initialisierung der Suche
+document.addEventListener('DOMContentLoaded',()=>{ initSearch(); });
+</script>
+<script>
+// Newsletter Anmeldung
+function initNewsletter(){
+  let el=document.getElementById('newsletterSection');
+  if(!el){
+    el=document.createElement('div');
+    el.id='newsletterSection';
+    el.className='box gold-frame';
+    el.style.margin='12px 0';
+    document.getElementById('mainContent').appendChild(el);
+  }
+  el.innerHTML=`<h3>Newsletter anmelden</h3>
+    <input type="email" id="newsletterEmail" placeholder="Deine Email" style="width:70%;">
+    <button onclick="subscribeNewsletter()">Anmelden</button>
+    <div id="newsletterMsg" style="margin-top:6px;"></div>`;
+}
+
+// Newsletter abonnieren
+function subscribeNewsletter(){
+  let email=document.getElementById('newsletterEmail').value.trim();
+  if(!email || !email.includes('@')) return alert('Bitte gültige Email eingeben');
+  if(!window.newsletterSubscribers) window.newsletterSubscribers=[];
+  if(newsletterSubscribers.includes(email)){
+    document.getElementById('newsletterMsg').innerText='Email bereits angemeldet';
+    return;
+  }
+  newsletterSubscribers.push(email);
+  document.getElementById('newsletterMsg').innerText='Anmeldung erfolgreich';
+  saveAll();
+}
+
+// Artikelaufrufe zählen
+function trackArticleViews(articleId){
+  if(!window.articleViews) window.articleViews={};
+  if(!articleViews[articleId]) articleViews[articleId]=0;
+  articleViews[articleId]++;
+  saveAll();
+}
+
+// Artikel anzeigen mit Statistik
+function viewArticle(articleId){
+  let art=articles.find(a=>a.id===articleId);
+  if(!art) return alert('Artikel nicht gefunden');
+  trackArticleViews(articleId);
+  let el=document.getElementById('mainContent');
+  el.innerHTML=`<h2>${art.title}</h2>
+    <p>${art.content}</p>
+    <p><b>Autor:</b> ${art.author}</p>
+    <p><b>Aufrufe:</b> ${articleViews[articleId]}</p>
+    <button onclick="initIndexPage()">Zurück</button>`;
+  renderCommentsForArticle(articleId);
+}
+
+// Beliebte Artikel
+function renderPopularArticles(){
+  let el=document.getElementById('popularArticles');
+  if(!el){
+    el=document.createElement('div');
+    el.id='popularArticles';
+    el.className='box gold-frame';
+    el.style.marginTop='12px';
+    document.getElementById('mainContent').appendChild(el);
+  }
+  el.innerHTML='<h3>Beliebte Artikel</h3>';
+  let popular=articles.slice().sort((a,b)=>{
+    let aCount=articleViews[a.id]||0;
+    let bCount=articleViews[b.id]||0;
+    return bCount-aCount;
+  }).slice(0,5);
+  popular.forEach(a=>{
+    let div=document.createElement('div');
+    div.innerHTML=`<b>${a.title}</b> von ${a.author} (${articleViews[a.id]||0} Aufrufe) 
+      <button onclick="viewArticle(${a.id})">Anzeigen</button>`;
+    el.appendChild(div);
+  });
+}
+
+// Initialisierung Newsletter & beliebte Artikel
+document.addEventListener('DOMContentLoaded',()=>{
+  initNewsletter();
+  renderPopularArticles();
+});
+</script>

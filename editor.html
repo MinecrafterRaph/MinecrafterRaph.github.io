@@ -6,23 +6,71 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+  * { box-sizing: border-box; }
+
   body {
-    font-family: Arial, sans-serif;
-    background: #eaeaea;
     margin: 0;
-    padding: 20px;
+    font-family: Arial, sans-serif;
+    background: #e0ddd2;
+    color: #222;
   }
 
   #loginBox, #editorBox {
     max-width: 1200px;
-    margin: auto;
+    margin: 30px auto;
     padding: 20px;
-    background: white;
+    background: #ffffff;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    box-shadow: 0 0 12px rgba(0,0,0,0.25);
   }
 
   #editorBox { display: none; }
+
+  h2 {
+    margin-top: 0;
+  }
+
+  label {
+    font-size: 0.9rem;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    padding: 6px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    font-size: 0.9rem;
+  }
+
+  textarea {
+    min-height: 70px;
+  }
+
+  button {
+    padding: 8px 12px;
+    margin-top: 5px;
+    cursor: pointer;
+    border-radius: 3px;
+    border: 1px solid #444;
+    background: #f0e6c8;
+  }
+
+  button:hover {
+    background: #e3d7b0;
+  }
+
+  .error {
+    color: red;
+    font-size: 0.85rem;
+    display: none;
+  }
+
+  .mode-options label {
+    display: block;
+    margin-bottom: 4px;
+  }
 
   .layout {
     display: flex;
@@ -30,12 +78,10 @@
     flex-wrap: wrap;
   }
 
-  .preview {
+  .preview-wrapper {
     flex: 2;
     min-width: 320px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    background: #fdfaf2;
+    position: relative;
   }
 
   .controls {
@@ -43,12 +89,22 @@
     min-width: 280px;
   }
 
-  .page {
+  .section-title {
+    margin-top: 10px;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 4px;
+    font-size: 0.95rem;
+  }
+
+  .page-preview {
     max-width: 800px;
     margin: auto;
     padding: 20px;
-    background: #fffdf6;
+    background: #fdf7e3;
     border: 1px solid #333;
+    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    font-family: "Georgia", "Times New Roman", serif;
   }
 
   .masthead {
@@ -61,8 +117,14 @@
   .masthead h2 {
     margin: 0;
     font-size: 2rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
+  }
+
+  .masthead p {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
   }
 
   .columns {
@@ -73,11 +135,14 @@
   .col {
     flex: 1;
     text-align: justify;
+    font-size: 0.95rem;
+    line-height: 1.5;
   }
 
   .image {
-    height: 120px;
+    height: 140px;
     margin: 10px 0;
+    background-image: linear-gradient(135deg, #c9b37a, #fdf7e3);
     background-size: cover;
     background-position: center;
     border: 1px solid #555;
@@ -91,28 +156,36 @@
     outline: 2px solid #0078d7;
   }
 
-  input, textarea, select {
-    width: 100%;
-    padding: 6px;
-    margin-top: 4px;
-    margin-bottom: 8px;
+  /* Editor-Modi */
+  body.mode-A #editorBox {
+    max-width: 1200px;
   }
 
-  textarea {
-    height: 80px;
+  body.mode-B .preview-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
   }
 
-  button {
-    padding: 8px 12px;
-    margin-top: 5px;
-    cursor: pointer;
+  body.mode-B .page-preview {
+    max-height: 90vh;
+    overflow: auto;
   }
 
-  .section-title {
-    margin-top: 10px;
-    font-weight: bold;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 4px;
+  body.mode-B .preview-wrapper {
+    display: none;
+  }
+
+  body.mode-C .layout {
+    flex-direction: row-reverse;
+  }
+
+  .preview-overlay {
+    display: none;
   }
 
   .riddle-section {
@@ -126,48 +199,71 @@
 
 <div id="loginBox">
   <h2>Editor Login</h2>
-  <input type="password" id="code" placeholder="Code eingeben">
+  <p>Gib den Code ein und wähle, wie der Editor aufgebaut sein soll.</p>
+
+  <label>Code:</label>
+  <input type="password" id="loginCode" placeholder="13243">
+
+  <div class="section-title">Editor-Modus wählen</div>
+  <div class="mode-options">
+    <label><input type="radio" name="mode" value="A" checked> A – Editor als eigene Seite (klassisch)</label>
+    <label><input type="radio" name="mode" value="B"> B – Editor mit Vorschau als Overlay</label>
+    <label><input type="radio" name="mode" value="C"> C – Editor mit Vorschau als Seitenleiste</label>
+  </div>
+
   <button onclick="login()">Login</button>
-  <p id="error" style="color:red; display:none;">Falscher Code!</p>
+  <p id="loginError" class="error">Falscher Code oder kein Modus gewählt.</p>
 </div>
 
 <div id="editorBox">
   <h2>Retro Gazette – Editor</h2>
+  <p style="font-size:0.85rem;">
+    Du bearbeitest hier die Inhalte der Zeitung. Änderungen werden im Browser gespeichert
+    und in <code>index.html</code> angezeigt.
+  </p>
+
   <div class="layout">
     <!-- Vorschau -->
-    <div class="preview">
-      <div class="page" id="previewPage">
+    <div class="preview-wrapper">
+      <div class="page-preview" id="previewPage">
         <div class="masthead">
           <h2 id="p_title" class="selectable" data-field="title">Retro Gazette</h2>
-          <p id="p_subtitle" class="selectable" data-field="subtitle">Ausgabe 1 – 2026</p>
+          <p id="p_subtitle" class="selectable" data-field="subtitle">Die Zeitung unserer Schule</p>
         </div>
 
-        <h3 id="p_headline" class="selectable" data-field="headline">Neue Ideen verändern unsere Schule</h3>
+        <h3 class="selectable" data-field="lead1" id="p_lead1">
+          Unsere Schule verändert sich – neue Ideen, neue Projekte und eine eigene digitale Schulzeitung.
+        </h3>
         <div class="image selectable" id="p_image" data-field="image"></div>
 
         <div class="columns">
-          <div class="col selectable" id="p_leftText" data-field="leftText">
-            Unsere Schule befindet sich im Wandel: Neue Projekte, digitale Werkzeuge
-            und kreative AGs sorgen dafür, dass Lernen moderner wird.
+          <div class="col selectable" id="p_lead2" data-field="lead2">
+            Mit der Retro Gazette wollen wir zeigen, was bei uns alles passiert: von spannenden
+            Projekten über Interviews bis hin zu kreativen Rätseln, die du direkt in der Zeitung lösen kannst.
           </div>
-          <div class="col selectable" id="p_rightText" data-field="rightText">
-            Von der Entwicklung einer eigenen Schul-App bis hin zu Umweltprojekten –
-            überall entstehen Ideen, die den Alltag verändern.
+          <div class="col">
+            <p style="font-size:0.9rem;">
+              Dies ist nur eine Vorschau-Seite. Die eigentliche Zeitung hat mehrere Seiten
+              (Titelseite, News, Interviews, Projekte, Rätsel).
+            </p>
           </div>
         </div>
+      </div>
+    </div>
 
-        <hr>
-        <h4 class="selectable" id="p_news" data-field="news">News-Beispieltext</h4>
-        <h4 class="selectable" id="p_interview" data-field="interview">Interview-Beispieltext</h4>
-        <h4 class="selectable" id="p_projects" data-field="projects">Projekt-Beispieltext</h4>
-        <h4 class="selectable" id="p_riddleIntro" data-field="riddleIntro">Rätsel-Intro-Beispieltext</h4>
+    <!-- Overlay-Vorschau für Modus B -->
+    <div class="preview-overlay" id="previewOverlay">
+      <div class="page-preview" id="overlayPreview">
+        <!-- wird per JS geklont -->
       </div>
     </div>
 
     <!-- Steuerung -->
     <div class="controls">
       <div class="section-title">Ausgewähltes Element</div>
-      <p id="currentFieldLabel">Kein Element ausgewählt – klicke links auf einen Text oder das Bild.</p>
+      <p id="currentFieldLabel" style="font-size:0.85rem;">
+        Kein Element ausgewählt – klicke links auf einen Text oder das Bild.
+      </p>
 
       <label>Text:</label>
       <textarea id="fieldText" oninput="updateFieldText()"></textarea>
@@ -188,7 +284,7 @@
       <input type="color" id="fieldColor" onchange="updateFieldStyle()">
 
       <label>Verschnörkelungen:</label>
-      <div>
+      <div style="font-size:0.85rem;">
         <label><input type="checkbox" id="decBold" onchange="updateFieldStyle()"> Fett</label>
         <label><input type="checkbox" id="decItalic" onchange="updateFieldStyle()"> Kursiv</label><br>
         <label><input type="checkbox" id="decUpper" onchange="updateFieldStyle()"> Großbuchstaben</label>
@@ -199,27 +295,42 @@
       <label>Bild‑URL:</label>
       <input type="text" id="imageUrl" oninput="updateImage()">
 
-      <div class="section-title">Seiten‑Design</div>
-      <label>Grund‑Textfarbe:</label>
-      <input type="color" id="baseTextColor" onchange="saveBaseStyle()">
+      <div class="section-title">Texte der Seiten</div>
+      <label>Titelseite – Lead 1:</label>
+      <textarea id="e_lead1" oninput="syncSimple('lead1', this.value)"></textarea>
 
-      <label>Hintergrundfarbe:</label>
-      <input type="color" id="baseBgColor" onchange="saveBaseStyle()">
+      <label>Titelseite – Lead 2:</label>
+      <textarea id="e_lead2" oninput="syncSimple('lead2', this.value)"></textarea>
 
-      <label>Grund‑Schriftgröße (px):</label>
-      <input type="number" id="baseFontSize" value="16" onchange="saveBaseStyle()">
+      <label>News – Text 1:</label>
+      <textarea id="e_news1"></textarea>
 
-      <label>Seitenbreite (px):</label>
-      <input type="number" id="baseWidth" value="900" onchange="saveBaseStyle()">
+      <label>News – Text 2:</label>
+      <textarea id="e_news2"></textarea>
 
-      <button onclick="saveAll()">Texte & Styles speichern</button>
+      <label>Interviews – Text 1:</label>
+      <textarea id="e_interview1"></textarea>
+
+      <label>Interviews – Text 2:</label>
+      <textarea id="e_interview2"></textarea>
+
+      <label>Projekte – Text 1:</label>
+      <textarea id="e_projects1"></textarea>
+
+      <label>Projekte – Text 2:</label>
+      <textarea id="e_projects2"></textarea>
+
+      <label>Rätsel-Intro:</label>
+      <textarea id="e_riddleIntro"></textarea>
+
+      <button onclick="saveTexts()">Texte speichern</button>
       <button onclick="window.location.href='index.html'">Zur Zeitung</button>
 
       <!-- Rätsel-Editor -->
       <div class="riddle-section">
         <div class="section-title">Rätsel-Seite bearbeiten</div>
 
-        <h4>Rätsel 1 – Quiz</h4>
+        <h4 style="margin-bottom:4px;">Rätsel 1 – Quiz</h4>
         <label>Frage:</label>
         <textarea id="e_r1_question"></textarea>
 
@@ -237,12 +348,12 @@
 
         <hr>
 
-        <h4>Rätsel 2 – Suchsel</h4>
+        <h4 style="margin-bottom:4px;">Rätsel 2 – Suchsel</h4>
         <label>Titel:</label>
         <input type="text" id="e_r2_title">
 
         <label>Gitter (Zeilen, jeweils eine Zeile pro Reihe):</label>
-        <textarea id="e_r2_grid" placeholder="Z B A L L&#10;A U T O X&#10;H A U S Y"></textarea>
+        <textarea id="e_r2_grid" placeholder="S C H U L E&#10;Z E I T U N&#10;..."></textarea>
 
         <label>Gesuchte Wörter (durch Komma getrennt):</label>
         <input type="text" id="e_r2_words">
@@ -254,7 +365,7 @@
 
         <hr>
 
-        <h4>Rätsel 3 – Verbinde die Paare</h4>
+        <h4 style="margin-bottom:4px;">Rätsel 3 – Verbinde die Paare</h4>
         <label>Titel:</label>
         <input type="text" id="e_r3_title">
 
@@ -271,7 +382,7 @@
 
         <hr>
 
-        <h4>Rätsel 4 – Drag-&-Drop</h4>
+        <h4 style="margin-bottom:4px;">Rätsel 4 – Drag-&-Drop</h4>
         <label>Titel:</label>
         <input type="text" id="e_r4_title">
 
@@ -281,21 +392,21 @@
         <label>Drop-Zonen (jede Zeile eine Kategorie):</label>
         <textarea id="e_r4_zones"></textarea>
 
-        <label>Lösungstext (z.B. „Hund→Tiere, Rose→Pflanzen“):</label>
+        <label>Lösungstext:</label>
         <input type="text" id="e_r4_solutionText">
 
         <label><input type="checkbox" id="e_r4_showSolution"> Lösung anzeigen</label>
 
         <hr>
 
-        <h4>Rätsel 5 – Mini-Sudoku</h4>
+        <h4 style="margin-bottom:4px;">Rätsel 5 – Mini-Sudoku</h4>
         <label>Titel:</label>
         <input type="text" id="e_r5_title">
 
         <label>Start-Gitter (16 Zeichen, . für leer, z.B. „1..2....3...4...“):</label>
         <input type="text" id="e_r5_grid">
 
-        <label>Lösungstext (z.B. „1 2 3 4 / ...“):</label>
+        <label>Lösungstext:</label>
         <input type="text" id="e_r5_solutionText">
 
         <label><input type="checkbox" id="e_r5_showSolution"> Lösung anzeigen</label>
@@ -308,15 +419,28 @@
 
 <script>
 let currentField = null;
+let currentMode = "A";
 
 function login() {
-  if (document.getElementById("code").value === "13243") {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("editorBox").style.display = "block";
-    initEditor();
-  } else {
-    document.getElementById("error").style.display = "block";
+  const code = document.getElementById("loginCode").value.trim();
+  const modeInput = document.querySelector('input[name="mode"]:checked');
+  const error = document.getElementById("loginError");
+
+  if (code !== "13243" || !modeInput) {
+    error.style.display = "block";
+    return;
   }
+
+  currentMode = modeInput.value;
+  error.style.display = "none";
+
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("editorBox").style.display = "block";
+
+  document.body.classList.remove("mode-A","mode-B","mode-C");
+  document.body.classList.add("mode-" + currentMode);
+
+  initEditor();
 }
 
 function initEditor() {
@@ -324,29 +448,22 @@ function initEditor() {
     el.addEventListener("click", () => selectField(el));
   });
 
-  // Basis-Stile laden
-  const t = localStorage.getItem("style_textColor");
-  const b = localStorage.getItem("style_bgColor");
-  const s = localStorage.getItem("style_fontSize");
-  const w = localStorage.getItem("style_pageWidth");
+  // Texte laden
+  loadText("title", "p_title");
+  loadText("subtitle", "p_subtitle");
+  loadText("lead1", "p_lead1");
+  loadText("lead2", "p_lead2");
 
-  if (t) document.getElementById("baseTextColor").value = t;
-  if (b) document.getElementById("baseBgColor").value = b;
-  if (s) document.getElementById("baseFontSize").value = s;
-  if (w) document.getElementById("baseWidth").value = w;
+  document.getElementById("e_lead1").value = localStorage.getItem("content_lead1") || document.getElementById("p_lead1").textContent;
+  document.getElementById("e_lead2").value = localStorage.getItem("content_lead2") || document.getElementById("p_lead2").textContent;
 
-  applyBaseStyle();
-
-  // Inhalte laden
-  loadField("title", "p_title");
-  loadField("subtitle", "p_subtitle");
-  loadField("headline", "p_headline");
-  loadField("leftText", "p_leftText");
-  loadField("rightText", "p_rightText");
-  loadField("news", "p_news");
-  loadField("interview", "p_interview");
-  loadField("projects", "p_projects");
-  loadField("riddleIntro", "p_riddleIntro");
+  document.getElementById("e_news1").value = localStorage.getItem("content_news1") || "";
+  document.getElementById("e_news2").value = localStorage.getItem("content_news2") || "";
+  document.getElementById("e_interview1").value = localStorage.getItem("content_interview1") || "";
+  document.getElementById("e_interview2").value = localStorage.getItem("content_interview2") || "";
+  document.getElementById("e_projects1").value = localStorage.getItem("content_projects1") || "";
+  document.getElementById("e_projects2").value = localStorage.getItem("content_projects2") || "";
+  document.getElementById("e_riddleIntro").value = localStorage.getItem("content_riddleIntro") || "";
 
   const imgUrl = localStorage.getItem("content_image");
   if (imgUrl) {
@@ -355,28 +472,40 @@ function initEditor() {
   }
 
   loadRiddles();
+
+  if (currentMode === "B") {
+    const preview = document.getElementById("previewPage");
+    const overlay = document.getElementById("overlayPreview");
+    overlay.innerHTML = preview.innerHTML;
+    document.getElementById("previewOverlay").style.display = "flex";
+  }
+}
+
+function loadText(field, elementId) {
+  const el = document.getElementById(elementId);
+  const val = localStorage.getItem("content_" + field);
+  if (val) el.textContent = val;
 }
 
 function selectField(el) {
   document.querySelectorAll(".selectable").forEach(e => e.classList.remove("selected"));
   el.classList.add("selected");
   currentField = el.dataset.field;
-  document.getElementById("currentFieldLabel").innerText = "Ausgewählt: " + currentField;
+  document.getElementById("currentFieldLabel").textContent = "Ausgewählt: " + currentField;
 
   const key = "content_" + currentField;
-  const val = localStorage.getItem(key) || el.innerText;
+  const val = localStorage.getItem(key) || el.textContent;
   document.getElementById("fieldText").value = val;
 
   const font = localStorage.getItem("style_font_" + currentField);
   const size = localStorage.getItem("style_size_" + currentField);
   const color = localStorage.getItem("style_color_" + currentField);
   const deco = localStorage.getItem("style_deco_" + currentField);
+  const d = deco ? JSON.parse(deco) : {bold:false, italic:false, upper:false, underline:false};
 
   document.getElementById("fieldFont").value = font || "";
   document.getElementById("fieldSize").value = size || 16;
   document.getElementById("fieldColor").value = color || "#000000";
-
-  const d = deco ? JSON.parse(deco) : {bold:false, italic:false, upper:false, underline:false};
   document.getElementById("decBold").checked = d.bold;
   document.getElementById("decItalic").checked = d.italic;
   document.getElementById("decUpper").checked = d.upper;
@@ -388,8 +517,8 @@ function selectField(el) {
 function updateFieldText() {
   if (!currentField) return;
   const text = document.getElementById("fieldText").value;
-  const el = getPreviewElement(currentField);
-  if (el) el.innerText = text;
+  const el = document.querySelector(`[data-field="${currentField}"]`);
+  if (el) el.textContent = text;
 }
 
 function updateFieldStyle() {
@@ -403,7 +532,7 @@ function updateFieldStyle() {
     upper: document.getElementById("decUpper").checked,
     underline: document.getElementById("decUnderline").checked
   };
-  const el = getPreviewElement(currentField);
+  const el = document.querySelector(`[data-field="${currentField}"]`);
   applyFieldStyle(el, font, size, color, deco);
 }
 
@@ -418,16 +547,22 @@ function applyFieldStyle(el, font, size, color, deco) {
   el.style.borderBottom = deco.underline ? "1px solid #000" : "none";
 }
 
-function getPreviewElement(field) {
-  return document.querySelector(`[data-field="${field}"]`);
+function updateImage() {
+  const url = document.getElementById("imageUrl").value;
+  document.getElementById("p_image").style.backgroundImage = url ? `url(${url})` : "none";
 }
 
-function saveAll() {
-  const fields = ["title","subtitle","headline","leftText","rightText","news","interview","projects","riddleIntro"];
+function syncSimple(field, value) {
+  const el = document.querySelector(`[data-field="${field}"]`);
+  if (el) el.textContent = value;
+}
+
+function saveTexts() {
+  const fields = ["title","subtitle","lead1","lead2"];
   fields.forEach(f => {
-    const el = getPreviewElement(f);
+    const el = document.querySelector(`[data-field="${f}"]`);
     if (!el) return;
-    localStorage.setItem("content_" + f, el.innerText);
+    localStorage.setItem("content_" + f, el.textContent);
 
     const deco = {
       bold: el.style.fontWeight === "bold",
@@ -441,57 +576,20 @@ function saveAll() {
     localStorage.setItem("style_deco_" + f, JSON.stringify(deco));
   });
 
+  localStorage.setItem("content_lead1", document.getElementById("e_lead1").value);
+  localStorage.setItem("content_lead2", document.getElementById("e_lead2").value);
+  localStorage.setItem("content_news1", document.getElementById("e_news1").value);
+  localStorage.setItem("content_news2", document.getElementById("e_news2").value);
+  localStorage.setItem("content_interview1", document.getElementById("e_interview1").value);
+  localStorage.setItem("content_interview2", document.getElementById("e_interview2").value);
+  localStorage.setItem("content_projects1", document.getElementById("e_projects1").value);
+  localStorage.setItem("content_projects2", document.getElementById("e_projects2").value);
+  localStorage.setItem("content_riddleIntro", document.getElementById("e_riddleIntro").value);
+
   const imgUrl = document.getElementById("imageUrl").value;
   localStorage.setItem("content_image", imgUrl);
 
-  saveBaseStyle();
-
-  alert("Texte & Styles gespeichert! Öffne index.html, um die Zeitung zu sehen.");
-}
-
-function updateImage() {
-  const url = document.getElementById("imageUrl").value;
-  document.getElementById("p_image").style.backgroundImage = url ? `url(${url})` : "none";
-}
-
-function saveBaseStyle() {
-  const t = document.getElementById("baseTextColor").value || "#222222";
-  const b = document.getElementById("baseBgColor").value || "#f5f0e6";
-  const s = document.getElementById("baseFontSize").value || 16;
-  const w = document.getElementById("baseWidth").value || 900;
-
-  localStorage.setItem("style_textColor", t);
-  localStorage.setItem("style_bgColor", b);
-  localStorage.setItem("style_fontSize", s);
-  localStorage.setItem("style_pageWidth", w);
-
-  applyBaseStyle();
-}
-
-function applyBaseStyle() {
-  const t = localStorage.getItem("style_textColor") || "#222222";
-  const b = localStorage.getItem("style_bgColor") || "#f5f0e6";
-  const s = localStorage.getItem("style_fontSize") || 16;
-  const w = localStorage.getItem("style_pageWidth") || 900;
-
-  const page = document.getElementById("previewPage");
-  page.style.color = t;
-  page.style.backgroundColor = b;
-  page.style.maxWidth = w + "px";
-  page.style.fontSize = s + "px";
-}
-
-function loadField(field, elementId) {
-  const el = document.getElementById(elementId);
-  const val = localStorage.getItem("content_" + field);
-  if (val) el.innerText = val;
-
-  const font = localStorage.getItem("style_font_" + field);
-  const size = localStorage.getItem("style_size_" + field);
-  const color = localStorage.getItem("style_color_" + field);
-  const deco = localStorage.getItem("style_deco_" + field);
-  const d = deco ? JSON.parse(deco) : {bold:false, italic:false, upper:false, underline:false};
-  applyFieldStyle(el, font, size, color, d);
+  alert("Texte gespeichert! Öffne index.html, um die Zeitung zu sehen.");
 }
 
 // Rätsel laden/speichern
@@ -558,10 +656,9 @@ function saveRiddles() {
   localStorage.setItem("r5_solutionText", document.getElementById("e_r5_solutionText").value);
   localStorage.setItem("r5_showSolution", document.getElementById("e_r5_showSolution").checked ? "1" : "0");
 
-  alert("Rätsel gespeichert! Öffne index.html, um sie zu sehen.");
+  alert("Rätsel gespeichert! Öffne index.html, um sie in der Zeitung zu sehen.");
 }
 </script>
 
 </body>
 </html>
-

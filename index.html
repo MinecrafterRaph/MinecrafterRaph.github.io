@@ -2,909 +2,109 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Retro Gazette – Schulzeitung</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<title>Ultimative Schulzeitung Plattform</title>
 <style>
-/* ========================================================= */
-/* =====================   RETRO ZEITUNG   ================= */
-/* ========================================================= */
-
-/* === Grundlayout === */
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  font-family: "Georgia", "Times New Roman", serif;
-  background: #d8cfb6;
-  color: #222;
-  line-height: 1.6;
-}
-
-/* === Header === */
-header {
-  background: #111;
-  color: #f5f0e6;
-  text-align: center;
-  padding: 25px;
-  border-bottom: 4px double #c9b37a;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 2.8rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-}
-
-header p {
-  margin: 8px 0 0;
-  font-size: 1rem;
-  letter-spacing: 0.16em;
-}
-
-/* === Navigation === */
-nav {
-  background: #222;
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  padding: 14px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  border-bottom: 2px solid #000;
-}
-
-nav a {
-  color: #eee;
-  text-decoration: none;
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 4px 8px;
-}
-
-nav a:hover {
-  color: #fff;
-  text-decoration: underline;
-}
-
-/* === Seiten === */
-.page {
-  max-width: 1000px;
-  margin: 50px auto;
-  padding: 40px;
-  background: #fdf7e3;
-  border: 1px solid #333;
-  box-shadow: 0 0 12px rgba(0,0,0,0.25);
-}
-
-.page h2 {
-  text-align: center;
-  font-size: 2.2rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  border-bottom: 3px double #000;
-  padding-bottom: 12px;
-  margin-bottom: 25px;
-}
-
-/* === Spalten === */
-.columns {
-  display: flex;
-  gap: 25px;
-}
-
-.col {
-  flex: 1;
-  text-align: justify;
-  line-height: 1.7;
-  font-size: 1.05rem;
-}
-
-/* === Bilder === */
-.image {
-  height: 260px;
-  background: linear-gradient(135deg, #c9b37a, #fdf7e3);
-  border: 1px solid #555;
-  margin: 25px 0;
-}
-
-/* === Artikelüberschriften === */
-.page h3 {
-  font-size: 1.5rem;
-  margin-top: 30px;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  border-bottom: 1px solid #000;
-  padding-bottom: 6px;
-}
-
-/* === Rätsel === */
-.riddle-block {
-  background: #fffaf0;
-  border: 1px dashed #999;
-  padding: 20px;
-  margin-top: 30px;
-}
-
-.riddle-block h3 {
-  margin-top: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
-
-.riddle-solution {
-  margin-top: 12px;
-  padding-top: 8px;
-  border-top: 1px solid #ccc;
-  font-size: 0.9rem;
-  color: #444;
-}
-
-/* === Footer === */
-footer {
-  text-align: center;
-  padding: 25px;
-  font-size: 0.9rem;
-  color: #333;
-  margin-top: 80px;
-}
+/* ================== GENERAL ================== */
+body { font-family:'Times New Roman', serif; background:#e0e0d1; margin:0; }
+nav { background:#222; color:#fff; padding:10px; display:flex; gap:10px; }
+nav button { cursor:pointer; background:#444; color:#fff; border:none; padding:5px 10px; }
+button:hover { background:#666; }
+.box { background:#fff; border:2px solid #000; padding:10px; margin:10px; }
+.hidden { display:none; }
+input, textarea, select { width:100%; margin:5px 0; padding:5px; }
+.article-box { transition: transform 0.6s ease, opacity 0.5s ease; }
+.article-box:hover { transform: scale(1.02); opacity:0.9; }
+.scroll-section { scroll-behavior: smooth; }
+.quiz-box { border:2px dashed #444; padding:10px; margin:10px; background:#f5f5d5; }
+#editorBox { border:2px solid #000; padding:5px; min-height:200px; margin:5px 0; }
+.toolbar button { margin-right:5px; }
+.page-flip { perspective:1000px; }
+.page { width:100%; height:400px; transform-style:preserve-3d; transition: transform 0.8s; }
+.page-content { backface-visibility:hidden; padding:10px; border:1px solid #000; background:#fff; }
+.page-back { transform:rotateY(180deg); }
+.easter-egg { color: red; font-weight:bold; cursor:pointer; }
 </style>
-
-<script>
-/* ========================================================= */
-/* ==========   LADEN DER INHALTE AUS DEM EDITOR   ========= */
-/* ========================================================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-  const ids = [
-    "title","subtitle","lead1","lead2",
-    "news1","news2","interview1","interview2",
-    "projects1","projects2","riddleIntro"
-  ];
-
-  ids.forEach(id => {
-    const el = document.getElementById(id);
-    const val = localStorage.getItem("content_" + id);
-    if (el && val) el.textContent = val;
-  });
-
-  const img = localStorage.getItem("content_image");
-  if (img) document.getElementById("mainImage").style.backgroundImage = `url(${img})`;
-
-  loadRiddles();
-});
-
-/* ========================================================= */
-/* =====================   RÄTSEL LADEN   ================== */
-/* ========================================================= */
-
-function loadRiddles() {
-  // Kreuzwort
-  const cw = localStorage.getItem("r_cw_questions");
-  if (cw) document.getElementById("cw_questions").innerHTML = cw;
-  if (localStorage.getItem("r_cw_showSolution") === "1")
-    document.getElementById("cw_solution").style.display = "block";
-
-  // Suchsel
-  const ssGrid = localStorage.getItem("r_ss_grid");
-  const ssWords = localStorage.getItem("r_ss_words");
-  if (ssGrid) document.getElementById("ss_grid").textContent = ssGrid;
-  if (ssWords) document.getElementById("ss_words").textContent = ssWords;
-  if (localStorage.getItem("r_ss_showSolution") === "1")
-    document.getElementById("ss_solution").style.display = "block";
-
-  // Fehlerbild
-  if (localStorage.getItem("r_fb_showSolution") === "1")
-    document.getElementById("fb_solution").style.display = "block";
-
-  // Logik
-  const lg = localStorage.getItem("r_lg_text");
-  if (lg) document.getElementById("lg_text").innerHTML = lg;
-  if (localStorage.getItem("r_lg_showSolution") === "1")
-    document.getElementById("lg_solution").style.display = "block";
-
-  // Wörterschlange
-  const ws = localStorage.getItem("r_ws_text");
-  if (ws) document.getElementById("ws_text").textContent = ws;
-  if (localStorage.getItem("r_ws_showSolution") === "1")
-    document.getElementById("ws_solution").style.display = "block";
-
-  // Rebus
-  const rb = localStorage.getItem("r_rb_text");
-  if (rb) document.getElementById("rb_text").innerHTML = rb;
-  if (localStorage.getItem("r_rb_showSolution") === "1")
-    document.getElementById("rb_solution").style.display = "block";
-
-  // Silben
-  const sl = localStorage.getItem("r_sl_text");
-  if (sl) document.getElementById("sl_text").textContent = sl;
-  if (localStorage.getItem("r_sl_showSolution") === "1")
-    document.getElementById("sl_solution").style.display = "block";
-
-  // Wort passt nicht
-  const wn = localStorage.getItem("r_wn_text");
-  if (wn) document.getElementById("wn_text").textContent = wn;
-  if (localStorage.getItem("r_wn_showSolution") === "1")
-    document.getElementById("wn_solution").style.display = "block";
-
-  // Zahlenrätsel
-  const zr = localStorage.getItem("r_zr_text");
-  if (zr) document.getElementById("zr_text").textContent = zr;
-  if (localStorage.getItem("r_zr_showSolution") === "1")
-    document.getElementById("zr_solution").style.display = "block";
-}
-</script>
-
 </head>
 <body>
 
-<header>
-  <h1 id="title">RETRO GAZETTE</h1>
-  <p id="subtitle">SCHULZEITUNG · AUSGABE 1 · 2026</p>
-</header>
-
 <nav>
-  <a href="#titelseite">Titelseite</a>
-  <a href="#news">News</a>
-  <a href="#interviews">Interviews</a>
-  <a href="#projekte">Projekte</a>
-  <a href="#raetsel">Rätsel</a>
-  <a href="editor.html">Editor</a>
+<b>📜 Schulzeitung</b>
+<button onclick="show('home')">Start</button>
+<button onclick="show('archive')">Archiv</button>
+<button onclick="show('editor')">FreeEditor</button>
+<button onclick="showLogin()">Login</button>
+<button onclick="adminAccess()">Admin</button>
 </nav>
 
-<main>
-
-<!-- ========================================================= -->
-<!-- ======================= TITELSEITE ======================= -->
-<!-- ========================================================= -->
-
-<section id="titelseite" class="page">
-  <h2>Titelseite</h2>
-
-  <div class="image" id="mainImage"></div>
-
-  <div class="columns">
-    <div class="col">
-      <p id="lead1">
-        Willkommen zur ersten digitalen Ausgabe der <strong>Retro Gazette</strong> – unserer
-        neuen Schulzeitung im klassischen Zeitungsstil.
-      </p>
-      <p>
-        Hier findest du spannende Artikel, Interviews, Projekte und natürlich eine ganze Seite voller Rätsel.
-      </p>
-    </div>
-
-    <div class="col">
-      <p id="lead2">
-        Die Retro Gazette verbindet modernes Webdesign mit dem Charme alter Zeitungen.
-      </p>
-      <p>
-        Scrolle weiter nach unten oder nutze die Navigation oben, um direkt zu den Bereichen zu springen.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- ========================================================= -->
-<!-- ========================== NEWS ========================== -->
-<!-- ========================================================= -->
-
-<section id="news" class="page">
-  <h2>News</h2>
-
-  <h3>Schulhof wird neu gestaltet</h3>
-  <p id="news1">
-    Der Schulhof erhält in diesem Jahr eine umfassende Modernisierung.
-  </p>
-
-  <h3>Digitale Projekte starten durch</h3>
-  <p id="news2">
-    Neben der Retro Gazette entstehen derzeit mehrere digitale Projekte.
-  </p>
-</section>
-
-<!-- ========================================================= -->
-<!-- ======================== INTERVIEWS ====================== -->
-<!-- ========================================================= -->
-
-<section id="interviews" class="page">
-  <h2>Interviews</h2>
-
-  <h3>Interview mit der Schulleitung</h3>
-  <p id="interview1">
-    Wir haben mit der Schulleitung über die Zukunft unserer Schule gesprochen.
-  </p>
-
-  <h3>Schülerstimmen</h3>
-  <p id="interview2">
-    Was wünschen sich Schülerinnen und Schüler für die Zukunft?
-  </p>
-</section>
-
-<!-- ========================================================= -->
-<!-- ========================= PROJEKTE ======================= -->
-<!-- ========================================================= -->
-
-<section id="projekte" class="page">
-  <h2>Projekte</h2>
-
-  <h3>Die Zeitungs‑AG stellt sich vor</h3>
-  <p id="projects1">
-    Die Retro Gazette entsteht in einer neuen verfassung!
-   <!-- ========================================================= -->
-<!-- ========================= SPORT ========================== -->
-<!-- ========================================================= -->
-
-<section id="sport" class="page">
-  <h2>Sport</h2>
-
-  <h3>Fußballturnier der 8. Klassen</h3>
-  <p>
-    Das diesjährige Fußballturnier der 8. Klassen war ein voller Erfolg.
-    Insgesamt nahmen acht Teams teil, die in spannenden Spielen gegeneinander antraten.
-    Besonders beeindruckend war das Finale, in dem die Klasse 8B mit einem knappen 2:1 Sieg
-    gegen die 8D triumphierte.
-  </p>
-
-  <p>
-    Die Zuschauer feuerten ihre Teams lautstark an, und die Stimmung war großartig.
-    Auch das Lehrerteam war vertreten und spielte ein Freundschaftsspiel gegen die
-    Schülermannschaft der 9A – mit überraschendem Ausgang: Die Lehrer gewannen 3:2.
-  </p>
-
-  <h3>Leichtathletik‑Tag</h3>
-  <p>
-    Beim Leichtathletik‑Tag traten Schülerinnen und Schüler in Disziplinen wie Sprint,
-    Weitsprung, Kugelstoßen und Staffellauf an. Besonders hervorzuheben ist die Leistung
-    von Lara (7C), die im 100‑Meter‑Lauf einen neuen Schulrekord aufstellte.
-  </p>
-
-  <h3>Basketball‑AG stellt sich vor</h3>
-  <p>
-    Die Basketball‑AG trainiert zweimal pro Woche und nimmt regelmäßig an regionalen
-    Turnieren teil. Neue Mitglieder sind jederzeit willkommen – egal ob Anfänger oder Profi.
-  </p>
-</section>
-
-<!-- ========================================================= -->
-<!-- ========================= KULTUR ========================= -->
-<!-- ========================================================= -->
-
-<section id="kultur" class="page">
-  <h2>Kultur</h2>
-
-  <h3>Theateraufführung „Die Zeitreisenden“</h3>
-  <p>
-    Die Theater‑AG präsentierte ihr neues Stück „Die Zeitreisenden“, eine humorvolle
-    Geschichte über eine Gruppe Schüler, die versehentlich in verschiedene Epochen
-    geschleudert wird. Die Aufführung war ein voller Erfolg und wurde mit großem Applaus gefeiert.
-  </p>
-
-  <h3>Kunstprojekt: Farben der Zukunft</h3>
-  <p>
-    Im Kunstunterricht der 9. Klassen entstand ein beeindruckendes Projekt:
-    Schülerinnen und Schüler sollten ihre Vorstellung der Zukunft in Farben und Formen darstellen.
-    Die Ergebnisse reichen von futuristischen Stadtlandschaften bis hin zu abstrakten Farbexplosionen.
-  </p>
-
-  <h3>Musikabend der Talente</h3>
-  <p>
-    Beim Musikabend zeigten zahlreiche Schülerinnen und Schüler ihr Können.
-    Von Klavierstücken über Gesang bis hin zu Bandauftritten war alles dabei.
-    Besonders emotional wurde es, als die Schulband ihren neuen Song präsentierte.
-  </p>
-</section>
-
-<!-- ========================================================= -->
-<!-- ========================== WITZE ========================= -->
-<!-- ========================================================= -->
-
-<section id="witze" class="page">
-  <h2>Witze & Spaß</h2>
-
-  <h3>Schülerwitze</h3>
-  <ul>
-    <li>Lehrer: „Warum kommst du zu spät?“ – Schüler: „Weil der Weg länger war als sonst.“</li>
-    <li>Was macht ein Pirat am Computer? – Er drückt die Enter‑Taste.</li>
-    <li>Warum können Geister so schlecht lügen? – Weil man durch sie hindurchsehen kann.</li>
-  </ul>
-
-  <h3>Kurze Sprüche</h3>
-  <ul>
-    <li>„Ich lerne nicht für die Schule, ich lerne für die Pause.“</li>
-    <li>„Montag ist ein Fehler im System.“</li>
-    <li>„Wer zuletzt lacht, hat es nicht verstanden.“</li>
-  </ul>
-
-  <h3>Mini‑Comics</h3>
-  <p>
-    <img src="https://dummyimage.com/600x200/cccccc/000000&text=Comic+1" style="width:100%; border:1px solid #000;">
-  </p>
-  <p>
-    <img src="https://dummyimage.com/600x200/cccccc/000000&text=Comic+2" style="width:100%; border:1px solid #000;">
-  </p>
-</section>
-
-<!-- ========================================================= -->
-<!-- ========================= HOROSKOP ======================= -->
-<!-- ========================================================= -->
-
-<section id="horoskop" class="page">
-  <h2>Horoskop</h2>
-
-  <h3>Widder</h3>
-  <p>Du startest voller Energie in die Woche. Nutze sie für neue Projekte.</p>
-
-  <h3>Stier</h3>
-  <p>Ein ruhiger Moment hilft dir, Klarheit zu gewinnen.</p>
-
-  <h3>Zwillinge</h3>
-  <p>Du wirst überrascht – im positiven Sinne.</p>
-
-  <h3>Krebs</h3>
-  <p>Ein guter Zeitpunkt, um Freundschaften zu stärken.</p>
-
-  <h3>Löwe</h3>
-  <p>Du strahlst – und andere merken es.</p>
-
-  <h3>Jungfrau</h3>
-  <p>Ordnung bringt dir diese Woche Vorteile.</p>
-
-  <h3>Waage</h3>
-  <p>Ein kleines Abenteuer wartet auf dich.</p>
-
-  <h3>Skorpion</h3>
-  <p>Du findest eine Lösung für ein altes Problem.</p>
-
-  <h3>Schütze</h3>
-  <p>Neue Ideen kommen wie von selbst.</p>
-
-  <h3>Steinbock</h3>
-  <p>Du erreichst ein Ziel, das du dir gesetzt hast.</p>
-
-  <h3>Wassermann</h3>
-  <p>Ein kreativer Funke bringt dich weiter.</p>
-
-  <h3>Fische</h3>
-  <p>Du wirst diese Woche besonders inspiriert sein.</p>
-</section>
-
-<!-- ========================================================= -->
-<!-- ======================= SPEISEPLAN ======================= -->
-<!-- ========================================================= -->
-
-<section id="speiseplan" class="page">
- <!-- ========================================================= -->
-<!-- ===================== TECHNIK & GAMING ================== -->
-<!-- ========================================================= -->
-
-<section id="technik" class="page">
-  <h2>Technik & Gaming</h2>
-
-  <h3>Die neue Computer‑AG</h3>
-  <p>
-    Die Computer‑AG hat dieses Jahr einen enormen Zulauf. Schülerinnen und Schüler lernen dort
-    Grundlagen der Programmierung, Webdesign, Robotik und sogar KI‑Modelle.
-    Besonders beliebt ist das Projekt „Eigene Spiele entwickeln“, bei dem Teams kleine
-    Jump‑and‑Run‑Games erstellen.
-  </p>
-
-  <h3>Gaming‑Turnier</h3>
-  <p>
-    Das erste schulinterne Gaming‑Turnier war ein voller Erfolg. Gespielt wurden
-    Mario Kart, Rocket League und Minecraft‑Challenges.  
-    Der Sieger der Mario‑Kart‑Liga war Leon (8A), der mit beeindruckender Präzision
-    durch die Strecken raste.
-  </p>
-
-  <h3>Hardware‑Workshop</h3>
-  <p>
-    Im Hardware‑Workshop lernten die Teilnehmer, wie man einen PC zusammenbaut.
-    Vom Einsetzen der CPU bis zur Installation des Betriebssystems war alles dabei.
-    Viele waren überrascht, wie einfach es eigentlich ist.
-  </p>
-</section>
-
-<!-- ========================================================= -->
-<!-- ===================== WISSENSCHAFT & LAB ================= -->
-<!-- ========================================================= -->
-
-<section id="wissenschaft" class="page">
-  <h2>Wissenschaft & Experimente</h2>
-
-  <h3>Das große Vulkan‑Projekt</h3>
-  <p>
-    Die 6. Klassen bauten im Rahmen des Sachunterrichts eigene Vulkane.
-    Mit Backpulver, Essig und Lebensmittelfarbe entstanden beeindruckende Eruptionen.
-    Die Jury kürte den Vulkan von Mia (6C) zum Sieger, da er besonders realistisch aussah.
-  </p>
-
-  <h3>Physik‑Experiment: Die Kraft des Magnetismus</h3>
-  <p>
-    In der Physik‑AG wurde untersucht, wie Magnetfelder funktionieren.
-    Mit Eisenfeilspänen, Spulen und Batterien konnten die Schüler eigene Elektromagnete bauen.
-  </p>
-
-  <h3>Chemie‑Labor: Farben mischen</h3>
-  <p>
-    Im Chemielabor experimentierten die 9. Klassen mit Indikatoren und pH‑Werten.
-    Besonders spannend war das „Regenbogen‑Experiment“, bei dem sieben Farbstufen
-    in einem einzigen Reagenzglas erzeugt wurden.
-  </p>
-</section>
-
-<!-- ========================================================= -->
-<!-- ===================== SCHULGESCHICHTE ==================== -->
-<!-- ========================================================= -->
-
-<section id="geschichte" class="page">
-  <h2>Schulgeschichte & Archiv</h2>
-
-  <h3>Die Schule vor 50 Jahren</h3>
-  <p>
-    Vor einem halben Jahrhundert sah unsere Schule ganz anders aus:
-    Es gab keine Computer, keine Smartboards und keine Mensa.
-    Stattdessen standen Kreidetafeln, Holzstühle und ein großer Kohleofen im Mittelpunkt.
-  </p>
-
-  <h3>Alte Klassenfotos</h3>
-  <p>
-    Im Archiv fanden wir Klassenfotos aus den 1970er‑Jahren.
-    Die Mode war bunt, die Frisuren wild und die Brillen groß.
-  </p>
-  <p>
-    <img src="https://dummyimage.com/600x300/cccccc/000000&text=Klassenfoto+1974"
-         style="width:100%; border:1px solid #000;">
-  </p>
-
-  <h3>Lehrer von damals</h3>
-  <p>
-    Einige Lehrer, die heute noch unterrichten, begannen ihre Karriere bereits vor Jahrzehnten.
-    In Interviews erzählten sie von Schreibmaschinen, Overhead‑Projektoren und dem ersten Computerraum.
-  </p>
-</section>
-<!-- ========================================================= -->
-<!-- ===================== INTERVIEWS TEIL 2 ================= -->
-<!-- ========================================================= -->
-
-<section id="interviews2" class="page">
-  <h2>Interviews – Teil 2</h2>
-
-  <h3>Interview mit der Schulsozialarbeit</h3>
-  <p>
-    Die Schulsozialarbeit spielt eine wichtige Rolle im Alltag vieler Schülerinnen und Schüler.
-    Im Gespräch erzählten uns Frau Berger und Herr Klein, wie sie Konflikte lösen,
-    Projekte begleiten und Schüler unterstützen.
-  </p>
-  <p>
-    Besonders spannend war die Frage, wie sich die Probleme der Schüler in den letzten Jahren
-    verändert haben. „Digitale Medien spielen eine immer größere Rolle“, sagt Herr Klein.
-  </p>
-
-  <h3>Interview mit der Mensa‑Leitung</h3>
-  <p>
-    Die Mensa ist ein zentraler Treffpunkt der Schule. Wir sprachen mit Frau Novak,
-    die seit über 15 Jahren für das Essen verantwortlich ist.
-  </p>
-  <p>
-    „Wir versuchen, jeden Tag etwas Gesundes und Leckeres anzubieten“, erklärt sie.
-    Besonders beliebt seien Nudeln, Pizza und die hausgemachte Kürbissuppe.
-  </p>
-
-  <h3>Interview mit der Schulband</h3>
-  <p>
-    Die Schulband „The Retro Beats“ probt zweimal pro Woche und tritt bei Schulfeiern auf.
-    Im Interview erzählten sie von ihrem neuen Song, der bald veröffentlicht wird.
-  </p>
-</section>
-
-<!-- ========================================================= -->
-<!-- ===================== SCHÜLERBEITRÄGE =================== -->
-<!-- ========================================================= -->
-
-<section id="schuelerbeitraege" class="page">
-  <h2>Schülerbeiträge</h2>
-
-  <h3>Gedicht: „Der Schulhof im Frühling“</h3>
-  <p>
-    Wenn Blumen blühen, bunt und fein,<br>
-    beginnt die Schule neu zu sein.<br>
-    Die Sonne lacht, der Himmel klar,<br>
-    der Frühling ist nun endlich da.
-  </p>
-
-  <h3>Mein schönster Schultag</h3>
-  <p>
-    „Mein schönster Schultag war der Ausflug in den Kletterpark“, schreibt Jonas (6B).
-    „Ich hatte zuerst Angst, aber am Ende bin ich die höchste Strecke geklettert.“
-  </p>
-
-  <h3>Fotogalerie der Schüler</h3>
-  <p>
-    <img src="https://dummyimage.com/600x300/cccccc/000000&text=Schülerfoto+1"
-         style="width:100%; border:1px solid #000;">
-  </p>
-  <p>
-    <img src="https://dummyimage.com/600x300/cccccc/000000&text=Schülerfoto+2"
-         style="width:100%; border:1px solid #000;">
-  </p>
-</section>
-
-<!-- ========================================================= -->
-<!-- ======================== KREATIVE ECKE =================== -->
-<!-- ========================================================= -->
-
-<section id="kreativ" class="page">
-  <h2>Kreative Ecke</h2>
-
-  <h3>Zeichnungen der Kunst‑AG</h3>
-  <p>
-    Die Kunst‑AG hat wieder beeindruckende Werke geschaffen:
-  </p>
-  <p>
-    <img src="https://dummyimage.com/600x300/cccccc/000000&text=Kunstwerk+1"
-         style="width:100%; border:1px solid #000;">
-  </p>
-  <p>
-    <img src="https://dummyimage.com/600x300/cccccc/000000&text=Kunstwerk+2"
-         style="width:100%; border:1px solid #000;">
-  </p>
-
-  <h3>Kurzgeschichte: „Der verlorene Schlüssel“</h3>
-  <p>
-    Es war ein regnerischer Morgen, als Mia bemerkte, dass ihr Schlüssel verschwunden war.
-    Sie suchte überall – in der Tasche, im Rucksack, sogar im Pausenhof.
-    Doch erst in der letzten Stunde fand sie ihn: Er lag im Kunstraum unter einem Stapel Papier.
-  </p>
-
-  <h3>Origami‑Galerie</h3>
-  <p>
-    Die Origami‑AG zeigt ihre neuesten Faltkunstwerke:
-  </p>
-  <p>
-    <img src="https://dummyimage.com/600x200/cccccc/000000&text=Origami+1"
-         style="width:100%; border:1px solid #000;">
-  </p>
-  <p>
-    <img src="https://dummyimage.com/600x200/cccccc/000000&text=Origami+2"
-         style="width:100%; border:1px solid #000;">
-  </p>
-</section>
-
-<!-- ========================================================= -->
-<!-- ===================== RÄTSELSEITE 4 ====================== -->
-<!-- ========================================================= -->
-
-<section id="raetsel4" class="page">
-  <h2>Rätselseite 4</h2>
-
-  <div class="riddle-block">
-    <h3>Bilder‑Sudoku</h3>
-    <p>Setze die Bilder so ein, dass in jeder Reihe und Spalte jedes Bild nur einmal vorkommt.</p>
-    <img src="https://dummyimage.com/600x300/cccccc/000000&text=Bilder-Sudoku"
-         style="width:100%; border:1px solid #000;">
-    <div class="riddle-solution">Lösung in der nächsten Ausgabe.</div>
-  </div>
-
-  <div class="riddle-block">
-    <h3>Wortmix</h3>
-    <p>Aus den Buchstaben „R E T R O G A Z E T T E“ lassen sich viele Wörter bilden.</p>
-    <p>Wie viele findest du?</p>
-    <div class="riddle-solution">Lösung in der nächsten Ausgabe.</div>
-  </div>
-
-  <div class="riddle-block">
-    <h3>Logik‑Puzzle</h3>
-    <p>Drei Lehrer – Herr Blau, Frau Grün und Herr Rot – tragen farbige Hemden.</p>
-    <ul>
-      <li>Herr Blau trägt kein blaues Hemd.</li>
-      <li>Frau Grün trägt kein grünes Hemd.</li>
-      <li>Herr Rot trägt kein rotes Hemd.</li>
-    </ul>
-    <p>Wer trägt welche Farbe?</p>
-    <div class="riddle-solution">Lösung in der nächsten Ausgabe.</div>
-  </div>
-</section>
-
-<!-- ========================================================= -->
-<!-- ===================== RÄTSELSEITE 5 ====================== -->
-<!-- ========================================================= -->
-
-<section id="raetsel5" class="page">
-  <h2>Rätselseite 5</h2>
-
-  <div class="riddle-block">
-    <h3>Emoji‑Geschichte</h3>
-    <p>Erzähle eine Geschichte mit diesen Emojis:</p>
-    <p style="font-size:2rem;">🏫 📚 🤓 🎒 🚌 🌧️ 😱 🔑 😊</p>
-    <div class="riddle-solution">Lösung in der nächsten Ausgabe.</div>
-  </div>
-
-  <div class="riddle-block">
-    <h3>Wortschlange 2</h3>
-    <pre>
-DIESESISTNOCHMALENEWORTSCHLANGEDIEFORTGESETZTWIRD
-    </pre>
-    <div class="riddle-solution">Lösung in der nächsten Ausgabe.</div>
-  </div>
-
-  <div class="riddle-block">
-    <h3>Mini‑Rechenrätsel</h3>
-    <p>Wenn 🍎 = 2, 🍌 = 3 und 🍇 = 5, wie viel ist 🍎 + 🍌 × 🍇?</p>
-    <div class="riddle-solution">Lösung in der nächsten Ausgabe.</div>
-  </div>
-</section>
-<!-- ========================================================= -->
-<!-- ===================== SCHULPROJEKTE XXL ================= -->
-<!-- ========================================================= -->
-
-<section id="projekte_xxl" class="page">
-  <h2>Schulprojekte XXL</h2>
-
-  <h3>Das Solar‑Energie‑Projekt</h3>
-  <p>
-    Die Technik‑AG arbeitet seit Monaten an einem Solarprojekt, bei dem kleine Fahrzeuge
-    ausschließlich mit Sonnenenergie betrieben werden. Die Modelle wurden im 3D‑Drucker
-    hergestellt und anschließend mit Solarzellen ausgestattet.
-  </p>
-  <p>
-    Beim Testtag auf dem Schulhof erreichten einige Fahrzeuge erstaunliche Geschwindigkeiten.
-    Besonders beeindruckend war das Modell von Elias (9A), das sogar Steigungen bewältigen konnte.
-  </p>
-
-  <h3>Schulgarten 2.0</h3>
-  <p>
-    Der Schulgarten wurde komplett neu gestaltet. Neben Gemüsebeeten gibt es jetzt
-    auch ein Insektenhotel, eine Kräuterspirale und einen kleinen Teich.
-    Die Umwelt‑AG kümmert sich um die Pflege und dokumentiert das Wachstum der Pflanzen.
-  </p>
-
-  <h3>Podcast‑Studio</h3>
-  <p>
-    Im neuen Podcast‑Studio entstehen wöchentlich Folgen zu Themen wie Musik,
-    Gaming, Schulnews und Interviews. Die Schüler lernen dort Moderation,
-    Schnitttechnik und Sounddesign.
-  </p>
-</section>
-
-<!-- ========================================================= -->
-<!-- ===================== UMWELT & NATUR ===================== -->
-<!-- ========================================================= -->
-
-<section id="umwelt" class="page">
-  <h2>Umwelt & Natur</h2>
-
-  <h3>Baumpflanzaktion</h3>
-  <p>
-    Die 7. Klassen pflanzten gemeinsam mit der Stadtverwaltung 50 neue Bäume
-    im Park neben der Schule. Ziel ist es, den CO₂‑Ausstoß der Schule langfristig
-    zu kompensieren.
-  </p>
-
-  <h3>Recycling‑Projekt</h3>
-  <p>
-    Die Umwelt‑AG startete ein Projekt, bei dem alte Plastikflaschen zu
-    nützlichen Gegenständen wie Stiftehaltern oder Blumentöpfen umgebaut werden.
-  </p>
-
-  <h3>Waldexkursion</h3>
-  <p>
-    Die 5. Klassen machten eine Exkursion in den nahegelegenen Wald.
-    Dort lernten sie, wie man Tierspuren erkennt und welche Pflanzen essbar sind.
-  </p>
-
-  <p>
-    <img src="https://dummyimage.com/600x300/cccccc/000000&text=Waldexkursion"
-         style="width:100%; border:1px solid #000;">
-  </p>
-</section>
-
-<!-- ========================================================= -->
-<!-- ===================== KLASSENBERICHTE ==================== -->
-<!-- ========================================================= -->
-
-<section id="klassenberichte" class="page">
-  <h2>Klassenberichte</h2>
-
-  <h3>Klasse 5A – Unser erster Wandertag</h3>
-  <p>
-    Die 5A wanderte zum Aussichtspunkt oberhalb der Stadt.
-    Trotz Regen hatten alle viel Spaß und am Ende gab es ein Picknick.
-  </p>
-
-  <h3>Klasse 7C – Projektwoche Medien</h3>
-  <p>
-    Die 7C beschäftigte sich eine Woche lang mit Medienkompetenz.
-    Es wurden Videos gedreht, Podcasts aufgenommen und sogar kleine Webseiten gebaut.
-  </p>
-
-  <h3>Klasse 9B – Berufsorientierung</h3>
-  <p>
-    Die 9B besuchte mehrere Betriebe in der Umgebung, darunter eine Druckerei,
-    eine Autowerkstatt und ein Softwareunternehmen.
-  </p>
-</section>
-
-<!-- ========================================================= -->
-<!-- ===================== RÄTSELSEITE 6 ====================== -->
-<!-- ========================================================= -->
-
-<section id="raetsel6" class="page">
-  <h2>Rätselseite 6</h2>
-
-  <div class="riddle-block">
-    <h3>Schul‑Quiz</h3>
-    <ol>
-      <li>Wie viele Klassen gibt es an unserer Schule?</li>
-      <li>Wie heißt die Schulleiterin?</li>
-      <li>In welchem Jahr wurde die Schule gegründet?</li>
-    </ol>
-    <div class="riddle-solution">Antworten in der nächsten Ausgabe.</div>
-  </div>
-
-  <div class="riddle-block">
-    <h3>Wortpyramide</h3>
-    <pre>
-S
-SC
-SCH
-SCHU
-SCHUL
-SCHULE
-    </pre>
-    <div class="riddle-solution">Lösung in der nächsten Ausgabe.</div>
-  </div>
-
-  <div class="riddle-block">
-    <h3>Mini‑Sudoku</h3>
-    <img src="https://dummyimage.com/400x400/cccccc/000000&text=Mini-Sudoku"
-         style="width:100%; border:1px solid #000;">
-    <div class="riddle-solution">Lösung in der nächsten Ausgabe.</div>
-  </div>
-</section>
-
-<!-- ========================================================= -->
-<!-- ===================== RÄTSELSEITE 7 ====================== -->
-<!-- ========================================================= -->
-
-<section id="raetsel7" class="page">
-  <h2>Rätselseite 7</h2>
-
-  <div class="riddle-block">
-    <h3>Schul‑Emoji‑Quiz</h3>
-    <p style="font-size:2rem;">🏫 ➕ 📚 ➕ 😴 = ?</p>
-    <div class="riddle-solution">Lösung in der nächsten Ausgabe.</div>
-  </div>
-
-  <div class="riddle-block">
-    <h3>Wörter verbinden</h3>
-    <p>Verbinde passende Begriffe:</p>
-    <ul>
-      <li>Lehrer – Unterricht</li>
-      <li>Schüler – Pause</li>
-      <li>Mensa – Essen</li>
-      <li>Sporthalle – Bewegung</li>
-    </ul>
-    <div class="riddle-solution">Lösung in der nächsten Ausgabe.</div>
-  </div>
-
-  <div class="riddle-block">
-    <h3>Fehler im Text</h3>
-    <p>
-      „Die Schuhle ist ein Ort des Lärnes und der Frunde.“
-    </p>
-    <p>Wie viele Fehler findest du?</p>
-    <div class="riddle-solution">Lösung in der nächsten Ausgabe.</div>
-  </div>
-</section>
- 
+<div id="loginBox" class="box hidden">
+<h3>Email Login</h3>
+<input id="email" placeholder="Email">
+<button onclick="login()">Login</button>
+</div>
+
+<div id="home"></div>
+<div id="archive" class="hidden scroll-section"></div>
+<div id="editor" class="hidden"></div>
+<div id="admin" class="hidden"></div>
+<div id="articleView" class="hidden"></div>
+<div id="quiz" class="hidden"></div>
+
+<script>
+/* ================== STATE ================== */
+let articles = JSON.parse(localStorage.getItem('articles'))||[];
+let submissions = JSON.parse(localStorage.getItem('submissions'))||[];
+let approvedEmails = JSON.parse(localStorage.getItem('approvedEmails'))||[];
+let users = JSON.parse(localStorage.getItem('users'))||[];
+let currentUser = null;
+let currentPage = 0;
+let flipState = 0;
+
+/* ================== NAVIGATION ================== */
+function show(id){['home','archive','editor','admin','articleView','quiz'].forEach(x=>document.getElementById(x).classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
+function showLogin(){ document.getElementById('loginBox').classList.toggle('hidden'); }
+function login(){ let email=document.getElementById('email').value; let approved=approvedEmails.find(e=>e.email===email); if(!approved){ alert('❌ Email nicht freigegeben!'); return; } currentUser=approved; alert('✅ Eingeloggt als '+approved.role); if(approved.role==='admin'){ renderAdmin(); show('admin'); } else if(approved.role==='editor'){ renderEditor(); show('editor'); } else{ show('home'); }}
+function adminAccess(){ let code=prompt('Admin-Code:'); if(code==='13243!'){ currentUser={role:'admin'}; renderAdmin(); show('admin'); } else{ alert('❌ Falscher Code'); }}
+function saveAll(){ localStorage.setItem('articles',JSON.stringify(articles)); localStorage.setItem('submissions',JSON.stringify(submissions)); localStorage.setItem('approvedEmails',JSON.stringify(approvedEmails)); localStorage.setItem('users',JSON.stringify(users));}
+
+/* ================== ARTICLES ================== */
+function createArticle(t,c,cat){ articles.push({id:Date.now(), title:t, content:c, category:cat, comments:[], approved:true}); saveAll(); renderAll(); }
+function submitArticle(t,c,cat){ submissions.push({id:Date.now(), title:t, content:c, category:cat, status:'pending'}); saveAll(); }
+function addComment(id){ let text=prompt('Kommentar:'); let a=articles.find(x=>x.id===id); a.comments.push({text, approved:false}); saveAll(); renderAll(); }
+function searchArticles(){ let q=document.getElementById('search').value.toLowerCase(); let el=document.getElementById('home'); el.innerHTML='<h2>Suchergebnisse</h2>'; articles.filter(a=>a.title.toLowerCase().includes(q)).forEach(a=>el.appendChild(articleBox(a)));}
+
+/* ================== RENDER ================== */
+function renderAll(){ renderHome(); renderArchive(); }
+function renderHome(){ let el=document.getElementById('home'); el.innerHTML=`<div class='box'><input id='search' placeholder='Suche'><button onclick='searchArticles()'>Suche</button></div><h2>Neueste Artikel</h2>`; articles.slice(-5).reverse().forEach(a=>el.appendChild(articleBox(a))); }
+function renderArchive(){ let el=document.getElementById('archive'); el.innerHTML='<h2>Archiv</h2>'; articles.forEach(a=>el.appendChild(articleBox(a))); }
+function articleBox(a){ let d=document.createElement('div'); d.className='box article-box'; let html=`<h3>${a.title}</h3><small>${a.category}</small><p>${a.content}</p>`; a.comments.filter(c=>c.approved).forEach(c=>html+=`<p><b>Kommentar:</b> ${c.text}</p>`); html+=`<button onclick='addComment(${a.id})'>Kommentar</button> <button onclick='showArticlePageById(${a.id})'>Artikel anzeigen</button>`; d.innerHTML=html; return d; }
+
+/* ================== RICH TEXT EDITOR ================== */
+function renderEditor(){ let el=document.getElementById('editor'); el.innerHTML=`<div class='box'><h2>Artikel schreiben</h2><div class='toolbar'><button onclick="document.execCommand('bold',false,null)">B</button><button onclick="document.execCommand('italic',false,null)">I</button><button onclick="document.execCommand('insertUnorderedList',false,null)">• Liste</button><button onclick="insertImage()">Bild</button><button onclick="insertLink()">Link</button></div><div id='editorBox' contenteditable='true'></div><button onclick='saveRichText()'>Speichern</button></div>`; }
+function saveRichText(){ let content=document.getElementById('editorBox').innerHTML; let title=prompt('Titel:'); let category=prompt('Kategorie:'); createArticle(title, content, category); alert('Artikel gespeichert!'); }
+function insertImage(){ let url=prompt('Bild-URL:'); document.execCommand('insertImage', false, url); }
+function insertLink(){ let url=prompt('Link-URL:'); document.execCommand('createLink', false, url); }
+
+/* ================== ADMIN ================== */
+function renderAdmin(){ let el=document.getElementById('admin'); el.innerHTML=`<div class='box'><h2>Admin Panel</h2><h3>Email freigeben</h3><input id='newEmail'><select id='role'><option>reader</option><option>editor</option><option>admin</option></select><button onclick='approveEmail()'>Freigeben</button><h3>Submissions</h3><div id='subs'></div><h3>Kommentare moderieren</h3><div id='comments'></div></div>`; renderSubs(); renderComments(); }
+function approveEmail(){ let email=document.getElementById('newEmail').value; let role=document.getElementById('role').value; approvedEmails.push({email,role}); saveAll(); }
+function renderSubs(){ let el=document.getElementById('subs'); el.innerHTML=''; submissions.forEach(s=>{ let d=document.createElement('div'); d.className='box'; d.innerHTML=`${s.title} <button onclick='approveSub(${s.id})'>Freigeben</button>`; el.appendChild(d); }); }
+function approveSub(id){ let s=submissions.find(x=>x.id===id); createArticle(s.title,s.content,s.category); submissions=submissions.filter(x=>x.id!==id); saveAll(); renderAdmin(); }
+function renderComments(){ let el=document.getElementById('comments'); el.innerHTML=''; articles.forEach(a=>a.comments.forEach(c=>{ if(!c.approved){ let d=document.createElement('div'); d.className='box'; d.innerHTML=`${c.text} <button onclick='approveComment(${a.id},\'${c.text}\')'>OK</button>`; el.appendChild(d); } })); }
+function approveComment(id,text){ let a=articles.find(x=>x.id===id); let c=a.comments.find(x=>x.text===text); c.approved=true; saveAll(); renderAdmin();}
+
+/* ================== PAGE-FLIP ================== */
+function showArticlePageById(id){ let index=articles.findIndex(a=>a.id===id); showArticlePage(index); }
+function showArticlePage(index){ let el=document.getElementById('articleView'); currentPage=index; if(!articles[index]) return; el.innerHTML=''; let a=articles[index]; let d=document.createElement('div'); d.className='box article-box page-flip'; d.innerHTML=`<div class='page'><div class='page-content'><h2>${a.title}</h2><small>${a.category}</small><p>${a.content}</p><button onclick='prevPage()'>◀ Zurück</button> <button onclick='nextPage()'>Vor ▶</button></div></div>`; el.appendChild(d); show('articleView'); }
+function nextPage(){ if(currentPage+1<articles.length){ flipState+=180; showArticlePage(currentPage+1); } }
+function prevPage(){ if(currentPage-1>=0){ flipState-=180; showArticlePage(currentPage-1); } }
+
+/* ================== QUIZ / RÄTSEL ================== */
+function renderQuiz(){ let el=document.getElementById('quiz'); el.innerHTML=`<div class='quiz-box'><h3>Rätsel</h3><p>Wie viele Artikel sind aktuell freigegeben?</p><input id='ans'><button onclick='checkQuiz()'>Antwort prüfen</button><p class='easter-egg' onclick='secretEasterEgg()'>Klicke mich!</p></div>`; }
+function checkQuiz(){ let a=document.getElementById('ans').value; let count=articles.length; if(parseInt(a)===count) alert('✅ Richtig!'); else alert('❌ Falsch, richtige Antwort: '+count); }
+function secretEasterEgg(){ alert('🎉 Glückwunsch! Du hast das Easter Egg gefunden!'); }
+
+/* ================== INIT ================== */
+renderAll(); renderEditor(); renderQuiz();
+</script>
+</body>
+</html>

@@ -2,108 +2,108 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Ultimative Schulzeitung Plattform</title>
+<title>Schülerzeitung Plattform</title>
 <style>
-/* ================== GENERAL ================== */
-body { font-family:'Times New Roman', serif; background:#e0e0d1; margin:0; }
-nav { background:#222; color:#fff; padding:10px; display:flex; gap:10px; }
-nav button { cursor:pointer; background:#444; color:#fff; border:none; padding:5px 10px; }
-button:hover { background:#666; }
-.box { background:#fff; border:2px solid #000; padding:10px; margin:10px; }
+/* ================== ALTmodisches Zeitungslayout ================== */
+body { margin:0; font-family: 'Times New Roman', serif; background:#fdf8f0; color:#222; }
+nav { background:#3a2c1b; color:#fff; padding:10px; display:flex; gap:12px; border-bottom:3px solid gold; }
+nav button { background:#5b482b; color:#fff; border:none; padding:8px 16px; cursor:pointer; border-radius:4px; font-weight:bold; border:1px solid #d4af37; }
+nav button:hover { background:#7c5e3e; }
+.box { background:#fffaf0; border:2px solid #d4af37; margin:12px; padding:12px; box-shadow:3px 3px 10px #aaa; border-radius:6px; }
 .hidden { display:none; }
-input, textarea, select { width:100%; margin:5px 0; padding:5px; }
-.article-box { transition: transform 0.6s ease, opacity 0.5s ease; }
-.article-box:hover { transform: scale(1.02); opacity:0.9; }
-.scroll-section { scroll-behavior: smooth; }
-.quiz-box { border:2px dashed #444; padding:10px; margin:10px; background:#f5f5d5; }
-#editorBox { border:2px solid #000; padding:5px; min-height:200px; margin:5px 0; }
-.toolbar button { margin-right:5px; }
-.page-flip { perspective:1000px; }
-.page { width:100%; height:400px; transform-style:preserve-3d; transition: transform 0.8s; }
-.page-content { backface-visibility:hidden; padding:10px; border:1px solid #000; background:#fff; }
-.page-back { transform:rotateY(180deg); }
-.easter-egg { color: red; font-weight:bold; cursor:pointer; }
+input, textarea, select { width:100%; margin:5px 0; padding:6px; font-family:'Times New Roman', serif; border-radius:4px; border:1px solid #aaa; }
+textarea { min-height:120px; }
+.article-page { perspective:1200px; margin:12px; }
+.page { width:100%; height:600px; transform-style:preserve-3d; transition: transform 1s; border:3px solid #d4af37; background:#fff8e1; padding:12px; box-sizing:border-box; border-radius:6px; box-shadow:2px 2px 12px #999; }
+.page-content { backface-visibility:hidden; font-size:16px; line-height:1.6em; }
+.page-back { transform: rotateY(180deg); }
+.toolbar button { margin-right:6px; font-weight:bold; border:1px solid #d4af37; border-radius:4px; background:#f0e0c6; }
+.toolbar button:hover { background:#f8e5b3; }
+.editor-box { border:2px solid #d4af37; padding:8px; min-height:400px; margin-top:6px; border-radius:6px; box-shadow:inset 0 0 8px #ccc; }
+#animationList { margin-top:10px; }
+h2, h3 { text-shadow: 1px 1px 2px #ccc; color:#4b3e2b; }
+article { margin-bottom:20px; padding:10px; border-bottom:1px solid #d4af37; }
+label { font-weight:bold; }
+.gold-frame { border:2px solid #d4af37; padding:8px; border-radius:6px; box-shadow:1px 1px 6px #aaa; margin-bottom:10px; }
+.quiz-box { border:2px solid #d4af37; padding:10px; background:#fff8e1; border-radius:6px; }
 </style>
 </head>
 <body>
 
 <nav>
-<b>📜 Schulzeitung</b>
+<b>Schulzeitung</b>
 <button onclick="show('home')">Start</button>
 <button onclick="show('archive')">Archiv</button>
-<button onclick="show('editor')">FreeEditor</button>
+<button onclick="show('editor')">Editor</button>
 <button onclick="showLogin()">Login</button>
 <button onclick="adminAccess()">Admin</button>
+<button onclick="window.location.href='comments.html'">Kommentare</button>
 </nav>
 
 <div id="loginBox" class="box hidden">
 <h3>Email Login</h3>
-<input id="email" placeholder="Email">
+<input id="email" placeholder="Email-Adresse">
 <button onclick="login()">Login</button>
 </div>
 
-<div id="home"></div>
-<div id="archive" class="hidden scroll-section"></div>
-<div id="editor" class="hidden"></div>
-<div id="admin" class="hidden"></div>
-<div id="articleView" class="hidden"></div>
-<div id="quiz" class="hidden"></div>
+<div id="home" class="box"></div>
+<div id="archive" class="hidden scroll-section box"></div>
+<div id="editor" class="hidden box"></div>
+<div id="admin" class="hidden box"></div>
+<div id="articleView" class="hidden box"></div>
+<div id="quiz" class="hidden box"></div>
 
 <script>
-/* ================== STATE ================== */
-let articles = JSON.parse(localStorage.getItem('articles'))||[];
-let submissions = JSON.parse(localStorage.getItem('submissions'))||[];
-let approvedEmails = JSON.parse(localStorage.getItem('approvedEmails'))||[];
-let users = JSON.parse(localStorage.getItem('users'))||[];
+// ================== STATE ==================
+let articles = [];
+let submissions = [];
+let approvedEmails = [];
+let users = [];
 let currentUser = null;
 let currentPage = 0;
 let flipState = 0;
 
-/* ================== NAVIGATION ================== */
+// ================== NAVIGATION ==================
 function show(id){['home','archive','editor','admin','articleView','quiz'].forEach(x=>document.getElementById(x).classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
 function showLogin(){ document.getElementById('loginBox').classList.toggle('hidden'); }
-function login(){ let email=document.getElementById('email').value; let approved=approvedEmails.find(e=>e.email===email); if(!approved){ alert('❌ Email nicht freigegeben!'); return; } currentUser=approved; alert('✅ Eingeloggt als '+approved.role); if(approved.role==='admin'){ renderAdmin(); show('admin'); } else if(approved.role==='editor'){ renderEditor(); show('editor'); } else{ show('home'); }}
-function adminAccess(){ let code=prompt('Admin-Code:'); if(code==='13243!'){ currentUser={role:'admin'}; renderAdmin(); show('admin'); } else{ alert('❌ Falscher Code'); }}
+function login(){ let email=document.getElementById('email').value; let approved=approvedEmails.find(e=>e.email===email); if(!approved){ alert('Email nicht freigegeben'); return; } currentUser=approved; alert('Eingeloggt als '+approved.role); if(approved.role==='admin'){ renderAdmin(); show('admin'); } else if(approved.role==='editor'){ renderEditor(); show('editor'); } else{ show('home'); }}
+function adminAccess(){ let code=prompt('Admin-Code:'); if(code==='13243!'){ currentUser={role:'admin'}; renderAdmin(); show('admin'); } else{ alert('Falscher Code'); }}
 function saveAll(){ localStorage.setItem('articles',JSON.stringify(articles)); localStorage.setItem('submissions',JSON.stringify(submissions)); localStorage.setItem('approvedEmails',JSON.stringify(approvedEmails)); localStorage.setItem('users',JSON.stringify(users));}
 
-/* ================== ARTICLES ================== */
-function createArticle(t,c,cat){ articles.push({id:Date.now(), title:t, content:c, category:cat, comments:[], approved:true}); saveAll(); renderAll(); }
-function submitArticle(t,c,cat){ submissions.push({id:Date.now(), title:t, content:c, category:cat, status:'pending'}); saveAll(); }
-function addComment(id){ let text=prompt('Kommentar:'); let a=articles.find(x=>x.id===id); a.comments.push({text, approved:false}); saveAll(); renderAll(); }
-function searchArticles(){ let q=document.getElementById('search').value.toLowerCase(); let el=document.getElementById('home'); el.innerHTML='<h2>Suchergebnisse</h2>'; articles.filter(a=>a.title.toLowerCase().includes(q)).forEach(a=>el.appendChild(articleBox(a)));}
+// ================== ARTICLES ==================
+function createArticle(title,content,cat){ articles.push({id:Date.now(), title, content, category:cat, pages:[content], approved:true, animations:[]}); saveAll(); renderAll(); }
+function submitArticle(title,content,cat){ submissions.push({id:Date.now(), title, content, category:cat, status:'pending', animations:[]}); saveAll(); }
 
-/* ================== RENDER ================== */
+// ================== RENDER FUNCTIONS ==================
 function renderAll(){ renderHome(); renderArchive(); }
-function renderHome(){ let el=document.getElementById('home'); el.innerHTML=`<div class='box'><input id='search' placeholder='Suche'><button onclick='searchArticles()'>Suche</button></div><h2>Neueste Artikel</h2>`; articles.slice(-5).reverse().forEach(a=>el.appendChild(articleBox(a))); }
+function renderHome(){ let el=document.getElementById('home'); el.innerHTML='<h2>Neueste Artikel</h2>'; articles.slice(-5).reverse().forEach(a=>el.appendChild(articleBox(a))); }
 function renderArchive(){ let el=document.getElementById('archive'); el.innerHTML='<h2>Archiv</h2>'; articles.forEach(a=>el.appendChild(articleBox(a))); }
-function articleBox(a){ let d=document.createElement('div'); d.className='box article-box'; let html=`<h3>${a.title}</h3><small>${a.category}</small><p>${a.content}</p>`; a.comments.filter(c=>c.approved).forEach(c=>html+=`<p><b>Kommentar:</b> ${c.text}</p>`); html+=`<button onclick='addComment(${a.id})'>Kommentar</button> <button onclick='showArticlePageById(${a.id})'>Artikel anzeigen</button>`; d.innerHTML=html; return d; }
+function articleBox(a){ let d=document.createElement('div'); d.className='box article-box gold-frame'; let html=`<article><h3>${a.title}</h3><small>${a.category}</small><p>${a.pages[0]}</p><button onclick='showArticlePageById(${a.id})'>Artikel anzeigen</button></article>`; d.innerHTML=html; return d; }
 
-/* ================== RICH TEXT EDITOR ================== */
-function renderEditor(){ let el=document.getElementById('editor'); el.innerHTML=`<div class='box'><h2>Artikel schreiben</h2><div class='toolbar'><button onclick="document.execCommand('bold',false,null)">B</button><button onclick="document.execCommand('italic',false,null)">I</button><button onclick="document.execCommand('insertUnorderedList',false,null)">• Liste</button><button onclick="insertImage()">Bild</button><button onclick="insertLink()">Link</button></div><div id='editorBox' contenteditable='true'></div><button onclick='saveRichText()'>Speichern</button></div>`; }
-function saveRichText(){ let content=document.getElementById('editorBox').innerHTML; let title=prompt('Titel:'); let category=prompt('Kategorie:'); createArticle(title, content, category); alert('Artikel gespeichert!'); }
-function insertImage(){ let url=prompt('Bild-URL:'); document.execCommand('insertImage', false, url); }
-function insertLink(){ let url=prompt('Link-URL:'); document.execCommand('createLink', false, url); }
+// ================== EDITOR ==================
+function renderEditor(){ let el=document.getElementById('editor'); el.innerHTML=`<h2>Editor</h2><div class='toolbar'><button onclick="document.execCommand('bold',false,null)">B</button><button onclick="document.execCommand('italic',false,null)">I</button><button onclick="document.execCommand('insertUnorderedList',false,null)">Liste</button><button onclick="insertImage()">Bild</button><button onclick="insertLink()">Link</button><button onclick="insertTable()">Tabelle</button></div><div id='editorBox' class='editor-box' contenteditable='true'></div><label>Animation:</label><select id='animationList'><option value='none'>Keine</option><option value='fade'>Fade</option><option value='slide'>Slide</option><option value='bounce'>Bounce</option><option value='zoom'>Zoom</option></select><button onclick='saveRichText()'>Speichern</button>`; }
+function saveRichText(){ let content=document.getElementById('editorBox').innerHTML; let title=prompt('Titel'); let category=prompt('Kategorie'); let animation=document.getElementById('animationList').value; createArticle(title, content, category); articles[articles.length-1].animations.push(animation); saveAll(); alert('Artikel gespeichert'); }
+function insertImage(){ let url=prompt('Bild URL'); document.execCommand('insertImage',false,url); }
+function insertLink(){ let url=prompt('Link URL'); document.execCommand('createLink',false,url); }
+function insertTable(){ let rows=prompt('Anzahl Reihen'); let cols=prompt('Anzahl Spalten'); let html='<table border="1" style="border-collapse:collapse;width:100%;">'; for(let r=0;r<rows;r++){ html+='<tr>'; for(let c=0;c<cols;c++){ html+='<td>Text</td>'; } html+='</tr>'; } html+='</table>'; document.execCommand('insertHTML',false,html); }
 
-/* ================== ADMIN ================== */
-function renderAdmin(){ let el=document.getElementById('admin'); el.innerHTML=`<div class='box'><h2>Admin Panel</h2><h3>Email freigeben</h3><input id='newEmail'><select id='role'><option>reader</option><option>editor</option><option>admin</option></select><button onclick='approveEmail()'>Freigeben</button><h3>Submissions</h3><div id='subs'></div><h3>Kommentare moderieren</h3><div id='comments'></div></div>`; renderSubs(); renderComments(); }
-function approveEmail(){ let email=document.getElementById('newEmail').value; let role=document.getElementById('role').value; approvedEmails.push({email,role}); saveAll(); }
-function renderSubs(){ let el=document.getElementById('subs'); el.innerHTML=''; submissions.forEach(s=>{ let d=document.createElement('div'); d.className='box'; d.innerHTML=`${s.title} <button onclick='approveSub(${s.id})'>Freigeben</button>`; el.appendChild(d); }); }
+// ================== ADMIN PANEL ==================
+function renderAdmin(){ let el=document.getElementById('admin'); el.innerHTML=`<h2>Admin Panel</h2><h3>Email freigeben</h3><input id='newEmail'><select id='role'><option>reader</option><option>editor</option><option>admin</option></select><button onclick='approveEmail()'>Freigeben</button><h3>Submissions</h3><div id='subs'></div>`; renderSubs(); }
+function approveEmail(){ let email=document.getElementById('newEmail').value; let role=document.getElementById('role').value; approvedEmails.push({email,role}); saveAll(); alert('Email freigegeben'); }
+function renderSubs(){ let el=document.getElementById('subs'); el.innerHTML=''; submissions.forEach(s=>{ let d=document.createElement('div'); d.className='box gold-frame'; d.innerHTML=`${s.title} <button onclick='approveSub(${s.id})'>Freigeben</button>`; el.appendChild(d); }); }
 function approveSub(id){ let s=submissions.find(x=>x.id===id); createArticle(s.title,s.content,s.category); submissions=submissions.filter(x=>x.id!==id); saveAll(); renderAdmin(); }
-function renderComments(){ let el=document.getElementById('comments'); el.innerHTML=''; articles.forEach(a=>a.comments.forEach(c=>{ if(!c.approved){ let d=document.createElement('div'); d.className='box'; d.innerHTML=`${c.text} <button onclick='approveComment(${a.id},\'${c.text}\')'>OK</button>`; el.appendChild(d); } })); }
-function approveComment(id,text){ let a=articles.find(x=>x.id===id); let c=a.comments.find(x=>x.text===text); c.approved=true; saveAll(); renderAdmin();}
 
-/* ================== PAGE-FLIP ================== */
+// ================== PAGE-FLIP ==================
 function showArticlePageById(id){ let index=articles.findIndex(a=>a.id===id); showArticlePage(index); }
-function showArticlePage(index){ let el=document.getElementById('articleView'); currentPage=index; if(!articles[index]) return; el.innerHTML=''; let a=articles[index]; let d=document.createElement('div'); d.className='box article-box page-flip'; d.innerHTML=`<div class='page'><div class='page-content'><h2>${a.title}</h2><small>${a.category}</small><p>${a.content}</p><button onclick='prevPage()'>◀ Zurück</button> <button onclick='nextPage()'>Vor ▶</button></div></div>`; el.appendChild(d); show('articleView'); }
+function showArticlePage(index){ if(!articles[index]) return; currentPage=index; let el=document.getElementById('articleView'); el.innerHTML=''; let a=articles[index]; let d=document.createElement('div'); d.className='article-page'; d.innerHTML=`<div class='page'><div class='page-content'>${a.pages[0]}<br><button onclick='prevPage()'>Zurück</button><button onclick='nextPage()'>Vor</button></div></div>`; el.appendChild(d); show('articleView'); }
 function nextPage(){ if(currentPage+1<articles.length){ flipState+=180; showArticlePage(currentPage+1); } }
-function prevPage(){ if(currentPage-1>=0){ flipState-=180; showArticlePage(currentPage-1); } }
+function prevPage(){ if(currentPage-1>=0){ flipState-=180; showArticlePage(currentPage-1); }}
 
-/* ================== QUIZ / RÄTSEL ================== */
-function renderQuiz(){ let el=document.getElementById('quiz'); el.innerHTML=`<div class='quiz-box'><h3>Rätsel</h3><p>Wie viele Artikel sind aktuell freigegeben?</p><input id='ans'><button onclick='checkQuiz()'>Antwort prüfen</button><p class='easter-egg' onclick='secretEasterEgg()'>Klicke mich!</p></div>`; }
-function checkQuiz(){ let a=document.getElementById('ans').value; let count=articles.length; if(parseInt(a)===count) alert('✅ Richtig!'); else alert('❌ Falsch, richtige Antwort: '+count); }
-function secretEasterEgg(){ alert('🎉 Glückwunsch! Du hast das Easter Egg gefunden!'); }
+// ================== QUIZ ==================
+function renderQuiz(){ let el=document.getElementById('quiz'); el.innerHTML=`<div class='quiz-box'><h3>Rätsel</h3><p>Wie viele Artikel sind freigegeben?</p><input id='ans'><button onclick='checkQuiz()'>Antwort prüfen</button></div>`; }
+function checkQuiz(){ let a=document.getElementById('ans').value; let count=articles.length; if(parseInt(a)===count) alert('Richtig'); else alert('Falsch, richtig: '+count); }
 
-/* ================== INIT ================== */
+// ================== INIT ==================
 renderAll(); renderEditor(); renderQuiz();
 </script>
 </body>

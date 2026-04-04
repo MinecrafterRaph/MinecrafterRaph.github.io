@@ -2,128 +2,246 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Editor Login</title>
+<title>Retro Gazette – Editor</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #eaeaea;
-        padding: 40px;
-    }
+  body {
+    font-family: Arial, sans-serif;
+    background: #eaeaea;
+    padding: 20px;
+  }
 
-    #loginBox, #editorBox {
-        max-width: 500px;
-        margin: auto;
-        padding: 20px;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
+  #loginBox, #editorBox {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
 
-    #editorBox { display: none; }
+  #editorBox { display: none; }
 
-    input, textarea, select {
-        width: 100%;
-        padding: 10px;
-        margin-top: 10px;
-    }
+  input, textarea, select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 6px;
+    margin-bottom: 10px;
+  }
 
-    textarea {
-        height: 120px;
-    }
+  textarea {
+    height: 80px;
+  }
 
-    button {
-        width: 100%;
-        padding: 10px;
-        margin-top: 15px;
-        background: black;
-        color: white;
-        border: none;
-        cursor: pointer;
-    }
+  button {
+    padding: 8px 12px;
+    margin-top: 5px;
+    cursor: pointer;
+  }
+
+  .row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .col {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .block-area {
+    border: 1px dashed #aaa;
+    height: 200px;
+    position: relative;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+
+  .block {
+    position: absolute;
+    background: rgba(0,0,0,0.1);
+    border: 1px solid #333;
+    padding: 5px;
+    cursor: move;
+    font-size: 0.8rem;
+  }
 </style>
 </head>
 <body>
 
 <div id="loginBox">
-    <h2>Editor Login</h2>
-    <input type="password" id="code" placeholder="Code eingeben">
-    <button onclick="login()">Login</button>
-    <p id="error" style="color:red; display:none;">Falscher Code!</p>
+  <h2>Editor Login</h2>
+  <input type="password" id="code" placeholder="Code eingeben">
+  <button onclick="login()">Login</button>
+  <p id="error" style="color:red; display:none;">Falscher Code!</p>
 </div>
 
 <div id="editorBox">
-    <h2>Editor</h2>
+  <h2>Retro Gazette – Editor</h2>
 
-    <label>Text auswählen:</label>
-    <select id="textSelect" onchange="loadText()">
-        <option value="t1">Titel</option>
-        <option value="t2">Untertitel</option>
-        <option value="t3">Headline</option>
-        <option value="t4">Absatz 1</option>
-        <option value="t5">Absatz 2</option>
-        <option value="t6">Seite 2 Titel</option>
-        <option value="t7">Seite 2 Text</option>
-        <option value="t8">News Titel</option>
-        <option value="t9">News Text</option>
-        <option value="t10">Interview Titel</option>
-        <option value="t11">Interview Text</option>
-        <option value="t12">Projekte Titel</option>
-        <option value="t13">Projekte Text</option>
-        <option value="t14">Rätsel Titel</option>
-        <option value="t15">Rätsel Text</option>
-    </select>
+  <div class="row">
+    <div class="col">
+      <h3>Allgemeine Einstellungen</h3>
+      <label>Textfarbe:</label>
+      <input type="color" id="textColor" onchange="saveSettings()">
 
-    <textarea id="textEditor"></textarea>
-    <button onclick="saveText()">Text speichern</button>
+      <label>Hintergrundfarbe:</label>
+      <input type="color" id="bgColor" onchange="saveSettings()">
 
-    <hr>
+      <label>Schriftgröße (px):</label>
+      <input type="number" id="fontSize" value="16" onchange="saveSettings()">
 
-    <label>Textfarbe:</label>
-    <input type="color" id="textColor" onchange="saveSettings()">
+      <label>Seitenbreite (px):</label>
+      <input type="number" id="pageWidth" value="900" onchange="saveSettings()">
+    </div>
 
-    <label>Hintergrundfarbe:</label>
-    <input type="color" id="bgColor" onchange="saveSettings()">
+    <div class="col">
+      <h3>Ausgabe wählen</h3>
+      <select id="issueSelect" onchange="loadIssue()">
+        <option value="1">Ausgabe 1</option>
+        <option value="2">Ausgabe 2</option>
+      </select>
 
-    <label>Schriftgröße (px):</label>
-    <input type="number" id="fontSize" value="16" onchange="saveSettings()">
+      <h4>Texte</h4>
+      <label>Titel:</label>
+      <input type="text" id="titel">
 
-    <label>Seitenbreite (px):</label>
-    <input type="number" id="pageWidth" value="900" onchange="saveSettings()">
+      <label>Untertitel:</label>
+      <input type="text" id="untertitel">
 
-    <button onclick="window.location.href='index.html'">Zur Zeitung</button>
+      <label>Headline:</label>
+      <input type="text" id="headline">
+
+      <label>Text links:</label>
+      <textarea id="text1"></textarea>
+
+      <label>Text rechts:</label>
+      <textarea id="text2"></textarea>
+
+      <h4>Bild</h4>
+      <label>Bild‑URL (Titelbild):</label>
+      <input type="text" id="bildUrl">
+      <button onclick="saveIssue()">Ausgabe speichern</button>
+    </div>
+  </div>
+
+  <hr>
+
+  <h3>Einfache Layout‑Blöcke (Spielwiese)</h3>
+  <p>Du kannst diese Blöcke verschieben. (Nur lokal, zum Ausprobieren.)</p>
+  <div class="block-area" id="blockArea">
+    <div class="block" style="top:10px; left:10px;">Block 1</div>
+    <div class="block" style="top:80px; left:120px;">Block 2</div>
+  </div>
+
+  <button onclick="window.location.href='index.html'">Zur Zeitung</button>
 </div>
 
 <script>
 function login() {
-    if (document.getElementById("code").value === "13243") {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("editorBox").style.display = "block";
-    } else {
-        document.getElementById("error").style.display = "block";
-    }
-}
-
-function loadText() {
-    const id = document.getElementById("textSelect").value;
-    const saved = localStorage.getItem(id);
-    document.getElementById("textEditor").value = saved || "";
-}
-
-function saveText() {
-    const id = document.getElementById("textSelect").value;
-    const text = document.getElementById("textEditor").value;
-    localStorage.setItem(id, text);
+  if (document.getElementById("code").value === "13243") {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("editorBox").style.display = "block";
+    loadSettings();
+    loadIssue();
+    initDrag();
+  } else {
+    document.getElementById("error").style.display = "block";
+  }
 }
 
 function saveSettings() {
-    localStorage.setItem("textColor", document.getElementById("textColor").value);
-    localStorage.setItem("bgColor", document.getElementById("bgColor").value);
-    localStorage.setItem("fontSize", document.getElementById("fontSize").value);
-    localStorage.setItem("pageWidth", document.getElementById("pageWidth").value);
+  localStorage.setItem("textColor", document.getElementById("textColor").value);
+  localStorage.setItem("bgColor", document.getElementById("bgColor").value);
+  localStorage.setItem("fontSize", document.getElementById("fontSize").value);
+  localStorage.setItem("pageWidth", document.getElementById("pageWidth").value);
+}
+
+function loadSettings() {
+  const t = localStorage.getItem("textColor");
+  const b = localStorage.getItem("bgColor");
+  const s = localStorage.getItem("fontSize");
+  const w = localStorage.getItem("pageWidth");
+  if (t) document.getElementById("textColor").value = t;
+  if (b) document.getElementById("bgColor").value = b;
+  if (s) document.getElementById("fontSize").value = s;
+  if (w) document.getElementById("pageWidth").value = w;
+}
+
+function loadIssue() {
+  const issue = document.getElementById("issueSelect").value;
+  const prefix = issue === "1" ? "a1_" : "a2_";
+
+  document.getElementById("titel").value      = localStorage.getItem(prefix + "titel")      || "";
+  document.getElementById("untertitel").value = localStorage.getItem(prefix + "untertitel") || "";
+  document.getElementById("headline").value   = localStorage.getItem(prefix + "headline")   || "";
+  document.getElementById("text1").value      = localStorage.getItem(prefix + "text1")      || "";
+  document.getElementById("text2").value      = localStorage.getItem(prefix + "text2")      || "";
+  document.getElementById("bildUrl").value    = localStorage.getItem(prefix + "titelbild")  || "";
+}
+
+function saveIssue() {
+  const issue = document.getElementById("issueSelect").value;
+  const prefix = issue === "1" ? "a1_" : "a2_";
+
+  localStorage.setItem(prefix + "titel",      document.getElementById("titel").value);
+  localStorage.setItem(prefix + "untertitel", document.getElementById("untertitel").value);
+  localStorage.setItem(prefix + "headline",   document.getElementById("headline").value);
+  localStorage.setItem(prefix + "text1",      document.getElementById("text1").value);
+  localStorage.setItem(prefix + "text2",      document.getElementById("text2").value);
+  localStorage.setItem(prefix + "titelbild",  document.getElementById("bildUrl").value);
+
+  // auch in die IDs schreiben, die index.html nutzt
+  if (issue === "1") {
+    localStorage.setItem("a1_titel",      document.getElementById("titel").value);
+    localStorage.setItem("a1_untertitel", document.getElementById("untertitel").value);
+    localStorage.setItem("a1_headline",   document.getElementById("headline").value);
+    localStorage.setItem("a1_text1",      document.getElementById("text1").value);
+    localStorage.setItem("a1_text2",      document.getElementById("text2").value);
+  } else {
+    localStorage.setItem("a2_titel",      document.getElementById("titel").value);
+    localStorage.setItem("a2_untertitel", document.getElementById("untertitel").value);
+    localStorage.setItem("a2_headline",   document.getElementById("headline").value);
+    localStorage.setItem("a2_text1",      document.getElementById("text1").value);
+    localStorage.setItem("a2_text2",      document.getElementById("text2").value);
+  }
+
+  alert("Ausgabe gespeichert. Öffne index.html neu, um es zu sehen.");
+}
+
+// einfache Drag-&-Drop-Blöcke
+function initDrag() {
+  const area = document.getElementById("blockArea");
+  const blocks = area.querySelectorAll(".block");
+  let active = null;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  blocks.forEach(b => {
+    b.addEventListener("mousedown", e => {
+      active = b;
+      offsetX = e.offsetX;
+      offsetY = e.offsetY;
+    });
+  });
+
+  document.addEventListener("mousemove", e => {
+    if (!active) return;
+    const rect = area.getBoundingClientRect();
+    let x = e.clientX - rect.left - offsetX;
+    let y = e.clientY - rect.top - offsetY;
+    active.style.left = x + "px";
+    active.style.top = y + "px";
+  });
+
+  document.addEventListener("mouseup", () => {
+    active = null;
+  });
 }
 </script>
 
 </body>
 </html>
+

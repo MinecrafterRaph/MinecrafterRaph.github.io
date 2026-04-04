@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Retro Gazette – Editor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f0f0f0;
+        padding: 40px;
+    }
+
+    #loginBox, #editorBox {
+        max-width: 400px;
+        margin: auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    #editorBox {
+        display: none;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 15px;
+        background: black;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #333;
+    }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginBox">
+    <h2>Editor Login</h2>
+    <p>Bitte Code eingeben:</p>
+    <input type="password" id="codeInput" placeholder="Code eingeben">
+    <button onclick="checkCode()">Login</button>
+    <p id="error" style="color:red; display:none;">Falscher Code!</p>
+</div>
+
+<!-- EDITOR -->
+<div id="editorBox">
+    <h2>Editor – Live Anpassungen</h2>
+
+    <label>Textfarbe:</label>
+    <input type="color" id="textColor" onchange="updateStyle()">
+
+    <label>Hintergrundfarbe:</label>
+    <input type="color" id="bgColor" onchange="updateStyle()">
+
+    <label>Schriftgröße (px):</label>
+    <input type="number" id="fontSize" value="16" onchange="updateStyle()">
+
+    <label>Seitenbreite (px):</label>
+    <input type="number" id="pageWidth" value="900" onchange="updateStyle()">
+
+    <label>Eigener Text (Titel):</label>
+    <input type="text" id="customTitle" placeholder="Neuer Titel" onchange="updateTitle()">
+
+    <button onclick="window.location.href='index.html'">Zurück zur Zeitung</button>
+</div>
+
+<script>
+function checkCode() {
+    const input = document.getElementById("codeInput").value;
+    if (input === "13243") {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("editorBox").style.display = "block";
+    } else {
+        document.getElementById("error").style.display = "block";
+    }
+}
+
+function updateStyle() {
+    const textColor = document.getElementById("textColor").value;
+    const bgColor = document.getElementById("bgColor").value;
+    const fontSize = document.getElementById("fontSize").value;
+    const pageWidth = document.getElementById("pageWidth").value;
+
+    localStorage.setItem("textColor", textColor);
+    localStorage.setItem("bgColor", bgColor);
+    localStorage.setItem("fontSize", fontSize);
+    localStorage.setItem("pageWidth", pageWidth);
+}
+
+function updateTitle() {
+    const title = document.getElementById("customTitle").value;
+    localStorage.setItem("customTitle", title);
+}
+</script>
+
+</body>
+</html>

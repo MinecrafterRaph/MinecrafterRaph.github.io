@@ -1,222 +1,1049 @@
+```html
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<title>Retro Gazette – Schulzeitung</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<style>
-  :root {
-    --bg: #f5f0e6;
-    --text: #222;
-    --fontSize: 16px;
-    --width: 900px;
-  }
-
-  body {
-    margin: 0;
-    font-family: "Georgia", serif;
-    background: var(--bg);
-    color: var(--text);
-    font-size: var(--fontSize);
-  }
-
-  header {
-    background: #111;
-    color: #f5f0e6;
-    padding: 10px 20px;
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 1.4rem;
-  }
-
-  .top-menu {
-    background: #222;
-    color: #eee;
-    padding: 8px 20px;
-    display: flex;
-    gap: 15px;
-    font-size: 0.9rem;
-  }
-
-  .top-menu a {
-    color: #eee;
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .top-menu a:hover {
-    text-decoration: underline;
-  }
-
-  .page {
-    max-width: var(--width);
-    margin: 30px auto;
-    padding: 30px;
-    background: #fffdf6;
-    border: 1px solid #333;
-  }
-
-  .masthead {
-    text-align: center;
-    border-bottom: 3px double #000;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-  }
-
-  .masthead h2 {
-    margin: 0;
-    font-size: 2.4rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .columns {
-    display: flex;
-    gap: 20px;
-  }
-
-  .col {
-    flex: 1;
-    text-align: justify;
-  }
-
-  .image-placeholder {
-    background: #eee;
-    border: 1px solid #555;
-    height: 150px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 15px 0;
-  }
-
-  .issue {
-    display: none;
-  }
-
-  .issue.active {
-    display: block;
-  }
-
-  .editor-link {
-    text-align: center;
-    margin-bottom: 10px;
-  }
-
-  .editor-link a {
-    color: #222;
-    text-decoration: none;
-    font-weight: bold;
-  }
-</style>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // Styles laden
-  const text = localStorage.getItem("textColor");
-  const bg = localStorage.getItem("bgColor");
-  const size = localStorage.getItem("fontSize");
-  const width = localStorage.getItem("pageWidth");
-
-  if (text) document.documentElement.style.setProperty("--text", text);
-  if (bg) document.documentElement.style.setProperty("--bg", bg);
-  if (size) document.documentElement.style.setProperty("--fontSize", size + "px");
-  if (width) document.documentElement.style.setProperty("--width", width + "px");
-
-  // Texte laden
-  document.querySelectorAll("[data-id]").forEach(el => {
-    const saved = localStorage.getItem(el.dataset.id);
-    if (saved) el.innerText = saved;
-  });
-
-  // Bilder laden
-  document.querySelectorAll("[data-img]").forEach(el => {
-    const url = localStorage.getItem(el.dataset.img);
-    if (url) {
-      el.style.backgroundImage = `url(${url})`;
-      el.style.backgroundSize = "cover";
-      el.style.backgroundPosition = "center";
-      el.innerText = "";
-    }
-  });
-
-  // Ausgabe 1 als Standard
-  showIssue('issue1');
-});
-
-function showIssue(id) {
-  document.querySelectorAll(".issue").forEach(i => i.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
-</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schulzeitung Plattform</title>
+    <link rel="stylesheet" href="style.css"> <!-- Platzhalter für CSS -->
 </head>
 <body>
 
-<header>
-  <h1>Retro Gazette – Schulzeitung</h1>
-</header>
+    <header>
+        <h1>Unsere Schulzeitung</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Startseite</a></li>
+                <li><a href="#archiv">Archiv</a></li>
+                <li><a href="#highlights">Aktuelles</a></li>
+                <li><a href="freeeditor.html">Anzeigen/Beiträge</a></li>
+                <li><a href="login.html">Login</a> / <a href="register.html">Registrieren</a></li>
+            </ul>
+        </header>
 
-<div class="top-menu">
-  <a onclick="showIssue('issue1')">Ausgabe 1</a>
-  <a onclick="showIssue('issue2')">Ausgabe 2</a>
-  <a href="editor.html">Editor</a>
-</div>
+    <main>
+        <section id="hero">
+            <h2>Willkommen bei der Schulzeitung!</h2>
+            <p>Hier finden Sie die neuesten Ausgaben und spannende Artikel unserer Schulgemeinschaft.</p>
+            <!-- Optional: Einbinden eines Slider-Banners oder wichtigen Links -->
+        </section>
 
-<div class="editor-link">
-  <a href="editor.html">→ Zum Editor (Code 13243)</a>
-</div>
+        <section id="archiv">
+            <h2>Zeitungs-Archiv</h2>
+            <div class="zeitungs-liste">
+                <!-- Beispiel: Dynamisch generierte Liste von Zeitungen -->
+                <article class="zeitungs-entry">
+                    <img src="images/zeitung_logo_sommer2023.png" alt="Logo Sommer 2023">
+                    <h3>Sommerausgabe 2023</h3>
+                    <p>Erschienen am: 15.07.2023</p>
+                    <a href="zeitung1.html">Zur Ausgabe</a>
+                </article>
+                <article class="zeitungs-entry">
+                    <img src="images/zeitung_logo_fruehling2024.png" alt="Logo Frühling 2024">
+                    <h3>Frühlingsausgabe 2024</h3>
+                    <p>Erschienen am: 20.04.2024</p>
+                    <a href="zeitung2.html">Zur Ausgabe</a>
+                </article>
+                <!-- Weitere Ausgaben hier -->
+            </div>
+        </section>
 
-<!-- AUSGABE 1 -->
-<div class="issue" id="issue1">
-  <div class="page">
-    <div class="masthead">
-      <h2 data-id="a1_titel">Retro Gazette</h2>
-      <p data-id="a1_untertitel">Ausgabe 1 – 2026</p>
-    </div>
+        <section id="highlights">
+            <h2>Neueste Artikel & Highlights</h2>
+            <div class="artikel-liste">
+                <article class="artikel-highlight">
+                    <h3>Schulfest ein voller Erfolg!</h3>
+                    <p>Ein Rückblick auf das diesjährige Schulfest mit vielen Bildern und Eindrücken...</p>
+                    <a href="zeitung2.html#artikel1">Weiterlesen</a>
+                </article>
+                <article class="artikel-highlight">
+                    <h3>Neue AGs für das nächste Schuljahr</h3>
+                    <p>Entdecken Sie die spannenden neuen Arbeitsgemeinschaften, die im kommenden Schuljahr angeboten werden...</p>
+                    <a href="zeitung2.html#artikel2">Weiterlesen</a>
+                </article>
+                <!-- Weitere Highlights hier -->
+            </div>
+        </section>
 
-    <h3 data-id="a1_headline">Neue Ideen verändern unsere Schule</h3>
-    <div class="image-placeholder" data-img="a1_titelbild">Titelbild</div>
+        <section id="info">
+            <h2>Über uns</h2>
+            <p>Die Schulzeitung ist ein Projekt von Schülern für Schüler. Wir möchten aktuelle Informationen, spannende Berichte und die Meinungen unserer Mitschüler teilen. Ziel ist es, die Schulgemeinschaft zu stärken und ein Forum für Austausch zu bieten.</p>
+        </section>
 
-    <div class="columns">
-      <div class="col" data-id="a1_text1">
-        Unsere Schule befindet sich im Wandel: Neue Projekte, digitale Werkzeuge
-        und kreative AGs sorgen dafür, dass Lernen moderner wird.
-      </div>
-      <div class="col" data-id="a1_text2">
-        Von der Entwicklung einer eigenen Schul-App bis hin zu Umweltprojekten –
-        überall entstehen Ideen, die den Alltag verändern.
-      </div>
-    </div>
-  </div>
-</div>
+        <section id="kontakt">
+            <h2>Kontakt</h2>
+            <p>Haben Sie Fragen, Anregungen oder möchten Sie Teil des Teams werden? Kontaktieren Sie uns unter:</p>
+            <p>E-Mail: <a href="mailto:redaktion@schulzeitung.de">redaktion@schulzeitung.de</a></p>
+            <!-- Optional: Link zu einer separaten Kontaktseite -->
+        </section>
+    </main>
 
-<!-- AUSGABE 2 -->
-<div class="issue" id="issue2">
-  <div class="page">
-    <div class="masthead">
-      <h2 data-id="a2_titel">Retro Gazette – Spezial</h2>
-      <p data-id="a2_untertitel">Ausgabe 2 – Projektwoche</p>
-    </div>
+    <footer>
+        <p>&copy; 2024 Schulzeitung Plattform. Alle Rechte vorbehalten.</p>
+        <!-- Optional: Links zu Impressum, Datenschutz -->
+    </footer>
 
-    <h3 data-id="a2_headline">Projektwoche: Kreativität ohne Grenzen</h3>
-    <div class="image-placeholder" data-img="a2_titelbild">Titelbild</div>
+    <!-- Hier könnten JavaScript-Dateien eingebunden werden -->
+    <script src="script.js"></script> <!-- Platzhalter für JavaScript -->
+</body>
+</html>
+```
 
-    <div class="columns">
-      <div class="col" data-id="a2_text1">
-        In der Projektwoche arbeiten Schülerinnen und Schüler an eigenen Ideen:
-        Kunst, Technik, Musik, Theater und mehr.
-      </div>
-      <div class="col" data-id="a2_text2">
-        Diese Ausgabe sammelt die spannendsten Projekte und zeigt, wie viel
-        Kreativität in unserer Schule steckt.
-      </div>
-    </div>
-  </div>
-</div>
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeitung Ausgabe [X]</title>
+    <link rel="stylesheet" href="style.css"> <!-- Platzhalter für CSS -->
+</head>
+<body>
 
+    <header>
+        <h1>Schulzeitung Ausgabe [X]</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Startseite</a></li>
+                <!-- Dynamisch generierte Navigation für Artikel dieser Ausgabe -->
+                <li><a href="#artikel1">Artikel 1 Titel</a></li>
+                <li><a href="#artikel2">Artikel 2 Titel</a></li>
+                <!-- ... -->
+            </ul>
+        </header>
+
+    <main>
+        <h2>[Name der Ausgabe, z.B. Sommerausgabe 2024]</h2>
+        <p>Erschienen am: [Datum]</p>
+
+        <aside class="seitenleiste-navigation">
+            <h3>Inhalt dieser Ausgabe:</h3>
+            <ul>
+                <li><a href="#artikel1">[Titel Artikel 1]</a></li>
+                <li><a href="#artikel2">[Titel Artikel 2]</a></li>
+                <!-- Weitere Artikel hier -->
+            </ul>
+        </aside>
+
+        <section class="artikel-bereich">
+            <article id="artikel1">
+                <h3>[Titel Artikel 1]</h3>
+                <h4>[Untertitel Artikel 1]</h4>
+                <p class="autor-datum">Von: [Autor] | Am: [Datum]</p>
+                <img src="images/artikel1_bild.jpg" alt="Bild zu Artikel 1">
+                <div class="artikel-inhalt">
+                    <p>Dies ist der erste Absatz des Artikels. Hier beginnt die spannende Geschichte unserer Schulgemeinschaft, die wir Ihnen gerne näherbringen möchten. Mit viel Engagement und Kreativität haben die Redakteure diesen Inhalt für Sie aufbereitet.</p>
+                    <p>Ein weiterer Absatz, der Details und Hintergründe liefert. Wir hoffen, dass die Lektüre für Sie informativ und unterhaltsam ist. Achten Sie auch auf die eingebetteten Medien, die das Leseerlebnis noch weiter bereichern.</p>
+                    <ul>
+                        <li>Ein wichtiger Punkt</li>
+                        <li>Ein weiterer relevanter Aspekt</li>
+                    </ul>
+                    <blockquote>
+                        "Dies ist ein zitierter Satz, der besondere Aufmerksamkeit verdient." - Ein Experte
+                    </blockquote>
+                    <p>Hier könnte auch ein eingebettetes Video sein:</p>
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <!-- Weitere Inhalte wie Absätze, Listen, Bilder, Videos -->
+                </div>
+                <div class="artikel-aktionen">
+                    <p>Teilen Sie diesen Artikel:</p>
+                    <a href="#" class="share-button facebook">Facebook</a>
+                    <a href="#" class="share-button twitter">Twitter</a>
+                    <a href="#" class="share-button whatsapp">WhatsApp</a>
+                    <a href="mailto:?subject=Artikel: [Titel Artikel 1]&body=Ich%20möchte%20diesen%20Artikel%20mit%20dir%20teilen:%20[Link%20zum%20Artikel]" class="share-button email">E-Mail</a>
+                </div>
+            </article>
+
+            <article id="artikel2">
+                <h3>[Titel Artikel 2]</h3>
+                <p class="autor-datum">Von: [Autor] | Am: [Datum]</p>
+                <div class="artikel-inhalt">
+                    <p>Der zweite Artikel in dieser Ausgabe befasst sich mit einem anderen wichtigen Thema. Wir beleuchten die Hintergründe und geben Einblicke in die Entwicklungen, die unsere Schule betreffen.</p>
+                    <!-- Weitere Inhalte -->
+                </div>
+            </article>
+            <!-- Weitere Artikel hier -->
+
+            <!-- Optional: Kommentarfunktion -->
+            <section class="kommentar-sektion">
+                <h4>Kommentare</h4>
+                <div class="kommentar-form">
+                    <h5>Hinterlassen Sie einen Kommentar</h5>
+                    <form action="submit_comment.php" method="post"> <!-- Platzhalter für Backend-Endpunkt -->
+                        <label for="kommentar-name">Name:</label><br>
+                        <input type="text" id="kommentar-name" name="name" required><br><br>
+                        <label for="kommentar-text">Ihr Kommentar:</label><br>
+                        <textarea id="kommentar-text" name="comment" rows="4" required></textarea><br><br>
+                        <button type="submit">Kommentar absenden</button>
+                    </form>
+                </div>
+                <div class="bestehende-kommentare">
+                    <h6>Vorhandene Kommentare:</h6>
+                    <div class="kommentar">
+                        <p class="kommentar-autor">Max Mustermann am [Datum]:</p>
+                        <p>Sehr interessanter Artikel! Vielen Dank für die ausführliche Darstellung.</p>
+                    </div>
+                    <div class="kommentar">
+                        <p class="kommentar-autor">Anna Schmidt am [Datum]:</p>
+                        <p>Ich stimme dem Autor voll und ganz zu. Das ist ein wichtiges Thema.</p>
+                    </div>
+                    <!-- Weitere Kommentare -->
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Schulzeitung Plattform. Alle Rechte vorbehalten.</p>
+    </footer>
+
+    <script src="script.js"></script> <!-- Platzhalter für JavaScript -->
+</body>
+</html>
+```
+
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anzeigen & Beiträge einreichen</title>
+    <link rel="stylesheet" href="style.css"> <!-- Platzhalter für CSS -->
+</head>
+<body>
+
+    <header>
+        <h1>Anzeigen & Beiträge einreichen</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Startseite</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </header>
+
+    <main>
+        <section>
+            <h2>Haben Sie etwas zu verkaufen, zu suchen oder möchten Sie einen Beitrag einreichen?</h2>
+            <p>Nutzen Sie dieses Formular, um Ihre Anzeige zu schalten oder einen Leserbrief/Vorschlag einzureichen.</p>
+        </section>
+
+        <section id="anzeigen-formular">
+            <h3>Anzeige aufgeben</h3>
+            <form action="submit_ad.php" method="post" enctype="multipart/form-data"> <!-- Platzhalter für Backend-Endpunkt -->
+                <label for="anzeige-titel">Titel der Anzeige:</label><br>
+                <input type="text" id="anzeige-titel" name="title" required><br><br>
+
+                <label for="anzeige-beschreibung">Beschreibung:</label><br>
+                <textarea id="anzeige-beschreibung" name="description" rows="6" required></textarea><br><br>
+
+                <label for="anzeige-kategorie">Kategorie:</label><br>
+                <select id="anzeige-kategorie" name="category">
+                    <option value="verkaufen">Verkaufe</option>
+                    <option value="suchen">Suche</option>
+                    <option value="sonstiges">Sonstiges</option>
+                    <!-- Weitere Kategorien -->
+                </select><br><br>
+
+                <label for="anzeige-preis">Preis (optional):</label><br>
+                <input type="text" id="anzeige-preis" name="price"><br><br>
+
+                <label for="anzeige-bilder">Bilder hochladen (optional):</label><br>
+                <input type="file" id="anzeige-bilder" name="images[]" multiple accept="image/*"><br><br>
+
+                <label for="anzeige-kontakt-name">Ihr Name:</label><br>
+                <input type="text" id="anzeige-kontakt-name" name="contact_name" required><br><br>
+
+                <label for="anzeige-kontakt-email">Ihre E-Mail:</label><br>
+                <input type="email" id="anzeige-kontakt-email" name="contact_email" required><br><br>
+
+                <button type="submit">Anzeige einreichen</button>
+            </form>
+        </section>
+
+        <section id="beitrags-einreichung">
+            <h3>Beitrag einreichen (Leserbrief, Vorschlag, etc.)</h3>
+            <form action="submit_contribution.php" method="post"> <!-- Platzhalter für Backend-Endpunkt -->
+                <label for="beitrag-titel">Titel des Beitrags:</label><br>
+                <input type="text" id="beitrag-titel" name="title" required><br><br>
+
+                <label for="beitrag-inhalt">Ihr Beitrag:</label><br>
+                <textarea id="beitrag-inhalt" name="content" rows="8" required></textarea><br><br>
+
+                <label for="beitrag-name">Ihr Name:</label><br>
+                <input type="text" id="beitrag-name" name="name" required><br><br>
+
+                <label for="beitrag-email">Ihre E-Mail:</label><br>
+                <input type="email" id="beitrag-email" name="email" required><br><br>
+
+                <button type="submit">Beitrag einreichen</button>
+            </form>
+        </section>
+
+        <!-- Optional: Bereich für Status-Anzeige nach Login -->
+        <section id="status-anzeige" style="display: none;"> <!-- Standardmäßig ausgeblendet, wird bei Login sichtbar -->
+            <h3>Meine eingereichten Beiträge/Anzeigen</h3>
+            <div class="status-liste">
+                <!-- Hier werden die Einträge des Nutzers geladen -->
+                <div class="status-item">
+                    <p><strong>Anzeige:</strong> "Fahrrad gesucht"</p>
+                    <p>Status: Eingereicht</p>
+                </div>
+                 <div class="status-item">
+                    <p><strong>Beitrag:</strong> "Idee für neues Schulfest"</p>
+                    <p>Status: In Prüfung</p>
+                </div>
+                <!-- ... -->
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Schulzeitung Plattform. Alle Rechte vorbehalten.</p>
+    </footer>
+
+    <script src="script.js"></script> <!-- Platzhalter für JavaScript -->
+</body>
+</html>
+```
+
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Bereich</title>
+    <link rel="stylesheet" href="style.css"> <!-- Platzhalter für CSS -->
+</head>
+<body>
+
+    <header>
+        <h1>Admin Dashboard</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Zurück zur Startseite</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </header>
+
+    <main>
+        <h2>Willkommen im Admin-Bereich</h2>
+        <p>Hier verwalten Sie alle Inhalte und Benutzer der Schulzeitungs-Plattform.</p>
+
+        <section id="admin-dashboard">
+            <h3>Startseiten-Management</h3>
+            <button onclick="openWysiwygEditor('index')">Startseite bearbeiten</button>
+            <p><em>(Öffnet einen WYSIWYG-Editor zum Anpassen von Texten und Bildern auf der Startseite.)</em></p>
+        </section>
+
+        <section id="artikel-verwaltung">
+            <h3>Artikelverwaltung</h3>
+            <button onclick="createNewArticle()">Neuen Artikel erstellen</button>
+            <button onclick="managePublishedArticles()">Veröffentlichte Artikel verwalten</button>
+            <button onclick="reviewSubmittedArticles()">Eingereichte Beiträge prüfen</button>
+            <p><em>(Hier können Sie Artikel erstellen, bearbeiten, löschen und zu Ausgaben zuordnen.)</em></p>
+        </section>
+
+        <section id="anzeigen-verwaltung">
+            <h3>Anzeigenverwaltung</h3>
+            <button onclick="reviewSubmittedAds()">Eingereichte Anzeigen prüfen</button>
+            <button onclick="managePublishedAds()">Veröffentlichte Anzeigen verwalten</button>
+            <p><em>(Überprüfen und genehmigen Sie Anzeigen von Nutzern.)</em></p>
+        </section>
+
+        <section id="nutzer-verwaltung">
+            <h3>Nutzerverwaltung</h3>
+            <button onclick="manageUsers()">Benutzerkonten verwalten</button>
+            <p><em>(Erstellen, bearbeiten und löschen Sie Benutzerkonten und weisen Sie Rollen zu.)</em></p>
+        </section>
+
+        <section id="archiv-verwaltung">
+            <h3>Zeitungs-Archivverwaltung</h3>
+            <button onclick="addArchiveEdition()">Neue Ausgabe hinzufügen</button>
+            <button onclick="manageArchive()">Archiv verwalten</button>
+            <p><em>(Verwalten Sie bestehende und fügen Sie neue Ausgaben Ihrer Schulzeitung hinzu.)</em></p>
+        </section>
+
+        <section id="live-vorschau">
+            <h3>Live-Vorschau</h3>
+            <button onclick="showLivePreview()">Vorschau starten</button>
+            <p><em>(Sehen Sie Ihre Änderungen, bevor sie live gehen.)</em></p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Schulzeitung Plattform. Alle Rechte vorbehalten.</p>
+    </footer>
+
+    <!-- Platzhalter für JavaScript Funktionen -->
+    <script>
+        function openWysiwygEditor(page) {
+            alert('WYSIWYG Editor für ' + page + ' wird geöffnet...');
+            // Hier würde die Logik zum Öffnen eines Editors implementiert
+        }
+        function createNewArticle() {
+            alert('Neuer Artikel-Editor wird geöffnet...');
+            // Hier würde die Logik zum Erstellen eines neuen Artikels implementiert
+        }
+        function managePublishedArticles() {
+            alert('Verwaltung veröffentlichter Artikel...');
+            // Hier würde die Logik zur Verwaltung geladen
+        }
+        function reviewSubmittedArticles() {
+            alert('Prüfung eingereichter Beiträge...');
+            // Hier würde die Logik zur Prüfung geladen
+        }
+        function reviewSubmittedAds() {
+            alert('Prüfung eingereichter Anzeigen...');
+            // Hier würde die Logik zur Prüfung geladen
+        }
+        function managePublishedAds() {
+            alert('Verwaltung veröffentlichter Anzeigen...');
+            // Hier würde die Logik zur Verwaltung geladen
+        }
+        function manageUsers() {
+            alert('Benutzerverwaltung wird geöffnet...');
+            // Hier würde die Logik zur Nutzerverwaltung geladen
+        }
+        function addArchiveEdition() {
+            alert('Formular zum Hinzufügen einer neuen Ausgabe wird geöffnet...');
+            // Hier würde die Logik zum Hinzufügen geladen
+        }
+        function manageArchive() {
+            alert('Archivverwaltung wird geladen...');
+            // Hier würde die Logik zur Archivverwaltung geladen
+        }
+        function showLivePreview() {
+            alert('Live-Vorschau wird gestartet...');
+            // Hier würde die Logik zur Vorschau implementiert
+        }
+    </script>
+    <script src="script.js"></script> <!-- Platzhalter für allgemeines JavaScript -->
+</body>
+</html>
+```
+
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redakteursbereich</title>
+    <link rel="stylesheet" href="style.css"> <!-- Platzhalter für CSS -->
+</head>
+<body>
+
+    <header>
+        <h1>Redakteursbereich</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Zurück zur Startseite</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </header>
+
+    <main>
+        <h2>Willkommen im Redakteursbereich</h2>
+        <p>Hier können Sie Ihre Artikel erstellen, bearbeiten und zur Freigabe einreichen.</p>
+
+        <section id="redakteur-artikel">
+            <h3>Meine Artikel</h3>
+            <button onclick="openWysiwygEditor('new_article')">Neuen Artikel schreiben</button>
+            <button onclick="editMyArticles()">Meine Artikel bearbeiten</button>
+            <button onclick="submitArticlesForReview()">Artikel zur Freigabe einreichen</button>
+            <p><em>(Nutzen Sie den Editor, um Ihre Inhalte zu erstellen oder zu bearbeiten.)</em></p>
+        </section>
+
+        <section id="zugewiesene-artikel">
+            <h3>Zugewiesene Artikel</h3>
+            <button onclick="editAssignedArticles()">Zugewiesene Artikel bearbeiten</button>
+            <p><em>(Hier finden Sie Artikel, die Ihnen von Administratoren zugewiesen wurden.)</em></p>
+        </section>
+
+        <section id="kommentar-moderation">
+            <h3>Kommentar-Moderation</h3>
+            <button onclick="moderateComments()">Kommentare prüfen und bearbeiten</button>
+            <p><em>(Wenn Sie die Berechtigung haben, können Sie hier Leserkommentare moderieren.)</em></p>
+        </section>
+
+        <section id="eingereichte-beitraege-einsicht">
+            <h3>Eingereichte Beiträge (Einsicht)</h3>
+            <button onclick="viewSubmittedContributions()">Eingereichte Beiträge ansehen</button>
+            <p><em>(Sie können eingereichte Anzeigen oder Beiträge einsehen, je nach Ihren Berechtigungen.)</em></p>
+        </section>
+
+        <section id="redakteur-vorschau">
+            <h3>Vorschau meiner Inhalte</h3>
+            <button onclick="showEditorPreview()">Vorschau starten</button>
+            <p><em>(Sehen Sie, wie Ihre bearbeiteten oder erstellten Artikel aussehen.)</em></p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Schulzeitung Plattform. Alle Rechte vorbehalten.</p>
+    </footer>
+
+    <!-- Platzhalter für JavaScript Funktionen -->
+    <script>
+        function openWysiwygEditor(type) {
+            alert('WYSIWYG Editor für ' + type + ' wird geöffnet...');
+            // Hier würde die Logik zum Öffnen eines Editors implementiert
+        }
+        function editMyArticles() {
+            alert('Liste Ihrer eigenen Artikel wird geladen...');
+            // Hier würde die Logik zum Bearbeiten geladen
+        }
+        function submitArticlesForReview() {
+            alert('Artikel werden zur Freigabe vorbereitet...');
+            // Hier würde die Logik zur Einreichung geladen
+        }
+        function editAssignedArticles() {
+            alert('Liste zugewiesener Artikel wird geladen...');
+            // Hier würde die Logik zum Bearbeiten geladen
+        }
+        function moderateComments() {
+            alert('Kommentar-Moderation wird geöffnet...');
+            // Hier würde die Logik zur Moderation geladen
+        }
+        function viewSubmittedContributions() {
+            alert('Eingereichte Beiträge werden angezeigt...');
+            // Hier würde die Logik zur Ansicht geladen
+        }
+        function showEditorPreview() {
+            alert('Vorschau Ihrer Inhalte wird gestartet...');
+            // Hier würde die Logik zur Vorschau implementiert
+        }
+    </script>
+    <script src="script.js"></script> <!-- Platzhalter für allgemeines JavaScript -->
+</body>
+</html>
+``````html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schulzeitung Plattform</title>
+    <link rel="stylesheet" href="style.css"> <!-- Platzhalter für CSS -->
+</head>
+<body>
+
+    <header>
+        <h1>Unsere Schulzeitung</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Startseite</a></li>
+                <li><a href="#archiv">Archiv</a></li>
+                <li><a href="#highlights">Aktuelles</a></li>
+                <li><a href="freeeditor.html">Anzeigen/Beiträge</a></li>
+                <li><a href="login.html">Login</a> / <a href="register.html">Registrieren</a></li>
+            </ul>
+        </header>
+
+    <main>
+        <section id="hero">
+            <h2>Willkommen bei der Schulzeitung!</h2>
+            <p>Hier finden Sie die neuesten Ausgaben und spannende Artikel unserer Schulgemeinschaft.</p>
+            <!-- Optional: Einbinden eines Slider-Banners oder wichtigen Links -->
+        </section>
+
+        <section id="archiv">
+            <h2>Zeitungs-Archiv</h2>
+            <div class="zeitungs-liste">
+                <!-- Beispiel: Dynamisch generierte Liste von Zeitungen -->
+                <article class="zeitungs-entry">
+                    <img src="images/zeitung_logo_sommer2023.png" alt="Logo Sommer 2023">
+                    <h3>Sommerausgabe 2023</h3>
+                    <p>Erschienen am: 15.07.2023</p>
+                    <a href="zeitung1.html">Zur Ausgabe</a>
+                </article>
+                <article class="zeitungs-entry">
+                    <img src="images/zeitung_logo_fruehling2024.png" alt="Logo Frühling 2024">
+                    <h3>Frühlingsausgabe 2024</h3>
+                    <p>Erschienen am: 20.04.2024</p>
+                    <a href="zeitung2.html">Zur Ausgabe</a>
+                </article>
+                <!-- Weitere Ausgaben hier -->
+            </div>
+        </section>
+
+        <section id="highlights">
+            <h2>Neueste Artikel & Highlights</h2>
+            <div class="artikel-liste">
+                <article class="artikel-highlight">
+                    <h3>Schulfest ein voller Erfolg!</h3>
+                    <p>Ein Rückblick auf das diesjährige Schulfest mit vielen Bildern und Eindrücken...</p>
+                    <a href="zeitung2.html#artikel1">Weiterlesen</a>
+                </article>
+                <article class="artikel-highlight">
+                    <h3>Neue AGs für das nächste Schuljahr</h3>
+                    <p>Entdecken Sie die spannenden neuen Arbeitsgemeinschaften, die im kommenden Schuljahr angeboten werden...</p>
+                    <a href="zeitung2.html#artikel2">Weiterlesen</a>
+                </article>
+                <!-- Weitere Highlights hier -->
+            </div>
+        </section>
+
+        <section id="info">
+            <h2>Über uns</h2>
+            <p>Die Schulzeitung ist ein Projekt von Schülern für Schüler. Wir möchten aktuelle Informationen, spannende Berichte und die Meinungen unserer Mitschüler teilen. Ziel ist es, die Schulgemeinschaft zu stärken und ein Forum für Austausch zu bieten.</p>
+        </section>
+
+        <section id="kontakt">
+            <h2>Kontakt</h2>
+            <p>Haben Sie Fragen, Anregungen oder möchten Sie Teil des Teams werden? Kontaktieren Sie uns unter:</p>
+            <p>E-Mail: <a href="mailto:redaktion@schulzeitung.de">redaktion@schulzeitung.de</a></p>
+            <!-- Optional: Link zu einer separaten Kontaktseite -->
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Schulzeitung Plattform. Alle Rechte vorbehalten.</p>
+        <!-- Optional: Links zu Impressum, Datenschutz -->
+    </footer>
+
+    <!-- Hier könnten JavaScript-Dateien eingebunden werden -->
+    <script src="script.js"></script> <!-- Platzhalter für JavaScript -->
+</body>
+</html>
+```
+
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeitung Ausgabe [X]</title>
+    <link rel="stylesheet" href="style.css"> <!-- Platzhalter für CSS -->
+</head>
+<body>
+
+    <header>
+        <h1>Schulzeitung Ausgabe [X]</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Startseite</a></li>
+                <!-- Dynamisch generierte Navigation für Artikel dieser Ausgabe -->
+                <li><a href="#artikel1">Artikel 1 Titel</a></li>
+                <li><a href="#artikel2">Artikel 2 Titel</a></li>
+                <!-- ... -->
+            </ul>
+        </header>
+
+    <main>
+        <h2>[Name der Ausgabe, z.B. Sommerausgabe 2024]</h2>
+        <p>Erschienen am: [Datum]</p>
+
+        <aside class="seitenleiste-navigation">
+            <h3>Inhalt dieser Ausgabe:</h3>
+            <ul>
+                <li><a href="#artikel1">[Titel Artikel 1]</a></li>
+                <li><a href="#artikel2">[Titel Artikel 2]</a></li>
+                <!-- Weitere Artikel hier -->
+            </ul>
+        </aside>
+
+        <section class="artikel-bereich">
+            <article id="artikel1">
+                <h3>[Titel Artikel 1]</h3>
+                <h4>[Untertitel Artikel 1]</h4>
+                <p class="autor-datum">Von: [Autor] | Am: [Datum]</p>
+                <img src="images/artikel1_bild.jpg" alt="Bild zu Artikel 1">
+                <div class="artikel-inhalt">
+                    <p>Dies ist der erste Absatz des Artikels. Hier beginnt die spannende Geschichte unserer Schulgemeinschaft, die wir Ihnen gerne näherbringen möchten. Mit viel Engagement und Kreativität haben die Redakteure diesen Inhalt für Sie aufbereitet.</p>
+                    <p>Ein weiterer Absatz, der Details und Hintergründe liefert. Wir hoffen, dass die Lektüre für Sie informativ und unterhaltsam ist. Achten Sie auch auf die eingebetteten Medien, die das Leseerlebnis noch weiter bereichern.</p>
+                    <ul>
+                        <li>Ein wichtiger Punkt</li>
+                        <li>Ein weiterer relevanter Aspekt</li>
+                    </ul>
+                    <blockquote>
+                        "Dies ist ein zitierter Satz, der besondere Aufmerksamkeit verdient." - Ein Experte
+                    </blockquote>
+                    <p>Hier könnte auch ein eingebettetes Video sein:</p>
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <!-- Weitere Inhalte wie Absätze, Listen, Bilder, Videos -->
+                </div>
+                <div class="artikel-aktionen">
+                    <p>Teilen Sie diesen Artikel:</p>
+                    <a href="#" class="share-button facebook">Facebook</a>
+                    <a href="#" class="share-button twitter">Twitter</a>
+                    <a href="#" class="share-button whatsapp">WhatsApp</a>
+                    <a href="mailto:?subject=Artikel: [Titel Artikel 1]&body=Ich%20möchte%20diesen%20Artikel%20mit%20dir%20teilen:%20[Link%20zum%20Artikel]" class="share-button email">E-Mail</a>
+                </div>
+            </article>
+
+            <article id="artikel2">
+                <h3>[Titel Artikel 2]</h3>
+                <p class="autor-datum">Von: [Autor] | Am: [Datum]</p>
+                <div class="artikel-inhalt">
+                    <p>Der zweite Artikel in dieser Ausgabe befasst sich mit einem anderen wichtigen Thema. Wir beleuchten die Hintergründe und geben Einblicke in die Entwicklungen, die unsere Schule betreffen.</p>
+                    <!-- Weitere Inhalte -->
+                </div>
+            </article>
+            <!-- Weitere Artikel hier -->
+
+            <!-- Optional: Kommentarfunktion -->
+            <section class="kommentar-sektion">
+                <h4>Kommentare</h4>
+                <div class="kommentar-form">
+                    <h5>Hinterlassen Sie einen Kommentar</h5>
+                    <form action="submit_comment.php" method="post"> <!-- Platzhalter für Backend-Endpunkt -->
+                        <label for="kommentar-name">Name:</label><br>
+                        <input type="text" id="kommentar-name" name="name" required><br><br>
+                        <label for="kommentar-text">Ihr Kommentar:</label><br>
+                        <textarea id="kommentar-text" name="comment" rows="4" required></textarea><br><br>
+                        <button type="submit">Kommentar absenden</button>
+                    </form>
+                </div>
+                <div class="bestehende-kommentare">
+                    <h6>Vorhandene Kommentare:</h6>
+                    <div class="kommentar">
+                        <p class="kommentar-autor">Max Mustermann am [Datum]:</p>
+                        <p>Sehr interessanter Artikel! Vielen Dank für die ausführliche Darstellung.</p>
+                    </div>
+                    <div class="kommentar">
+                        <p class="kommentar-autor">Anna Schmidt am [Datum]:</p>
+                        <p>Ich stimme dem Autor voll und ganz zu. Das ist ein wichtiges Thema.</p>
+                    </div>
+                    <!-- Weitere Kommentare -->
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Schulzeitung Plattform. Alle Rechte vorbehalten.</p>
+    </footer>
+
+    <script src="script.js"></script> <!-- Platzhalter für JavaScript -->
+</body>
+</html>
+```
+
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anzeigen & Beiträge einreichen</title>
+    <link rel="stylesheet" href="style.css"> <!-- Platzhalter für CSS -->
+</head>
+<body>
+
+    <header>
+        <h1>Anzeigen & Beiträge einreichen</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Startseite</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </header>
+
+    <main>
+        <section>
+            <h2>Haben Sie etwas zu verkaufen, zu suchen oder möchten Sie einen Beitrag einreichen?</h2>
+            <p>Nutzen Sie dieses Formular, um Ihre Anzeige zu schalten oder einen Leserbrief/Vorschlag einzureichen.</p>
+        </section>
+
+        <section id="anzeigen-formular">
+            <h3>Anzeige aufgeben</h3>
+            <form action="submit_ad.php" method="post" enctype="multipart/form-data"> <!-- Platzhalter für Backend-Endpunkt -->
+                <label for="anzeige-titel">Titel der Anzeige:</label><br>
+                <input type="text" id="anzeige-titel" name="title" required><br><br>
+
+                <label for="anzeige-beschreibung">Beschreibung:</label><br>
+                <textarea id="anzeige-beschreibung" name="description" rows="6" required></textarea><br><br>
+
+                <label for="anzeige-kategorie">Kategorie:</label><br>
+                <select id="anzeige-kategorie" name="category">
+                    <option value="verkaufen">Verkaufe</option>
+                    <option value="suchen">Suche</option>
+                    <option value="sonstiges">Sonstiges</option>
+                    <!-- Weitere Kategorien -->
+                </select><br><br>
+
+                <label for="anzeige-preis">Preis (optional):</label><br>
+                <input type="text" id="anzeige-preis" name="price"><br><br>
+
+                <label for="anzeige-bilder">Bilder hochladen (optional):</label><br>
+                <input type="file" id="anzeige-bilder" name="images[]" multiple accept="image/*"><br><br>
+
+                <label for="anzeige-kontakt-name">Ihr Name:</label><br>
+                <input type="text" id="anzeige-kontakt-name" name="contact_name" required><br><br>
+
+                <label for="anzeige-kontakt-email">Ihre E-Mail:</label><br>
+                <input type="email" id="anzeige-kontakt-email" name="contact_email" required><br><br>
+
+                <button type="submit">Anzeige einreichen</button>
+            </form>
+        </section>
+
+        <section id="beitrags-einreichung">
+            <h3>Beitrag einreichen (Leserbrief, Vorschlag, etc.)</h3>
+            <form action="submit_contribution.php" method="post"> <!-- Platzhalter für Backend-Endpunkt -->
+                <label for="beitrag-titel">Titel des Beitrags:</label><br>
+                <input type="text" id="beitrag-titel" name="title" required><br><br>
+
+                <label for="beitrag-inhalt">Ihr Beitrag:</label><br>
+                <textarea id="beitrag-inhalt" name="content" rows="8" required></textarea><br><br>
+
+                <label for="beitrag-name">Ihr Name:</label><br>
+                <input type="text" id="beitrag-name" name="name" required><br><br>
+
+                <label for="beitrag-email">Ihre E-Mail:</label><br>
+                <input type="email" id="beitrag-email" name="email" required><br><br>
+
+                <button type="submit">Beitrag einreichen</button>
+            </form>
+        </section>
+
+        <!-- Optional: Bereich für Status-Anzeige nach Login -->
+        <section id="status-anzeige" style="display: none;"> <!-- Standardmäßig ausgeblendet, wird bei Login sichtbar -->
+            <h3>Meine eingereichten Beiträge/Anzeigen</h3>
+            <div class="status-liste">
+                <!-- Hier werden die Einträge des Nutzers geladen -->
+                <div class="status-item">
+                    <p><strong>Anzeige:</strong> "Fahrrad gesucht"</p>
+                    <p>Status: Eingereicht</p>
+                </div>
+                 <div class="status-item">
+                    <p><strong>Beitrag:</strong> "Idee für neues Schulfest"</p>
+                    <p>Status: In Prüfung</p>
+                </div>
+                <!-- ... -->
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Schulzeitung Plattform. Alle Rechte vorbehalten.</p>
+    </footer>
+
+    <script src="script.js"></script> <!-- Platzhalter für JavaScript -->
+</body>
+</html>
+```
+
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Bereich</title>
+    <link rel="stylesheet" href="style.css"> <!-- Platzhalter für CSS -->
+</head>
+<body>
+
+    <header>
+        <h1>Admin Dashboard</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Zurück zur Startseite</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </header>
+
+    <main>
+        <h2>Willkommen im Admin-Bereich</h2>
+        <p>Hier verwalten Sie alle Inhalte und Benutzer der Schulzeitungs-Plattform.</p>
+
+        <section id="admin-dashboard">
+            <h3>Startseiten-Management</h3>
+            <button onclick="openWysiwygEditor('index')">Startseite bearbeiten</button>
+            <p><em>(Öffnet einen WYSIWYG-Editor zum Anpassen von Texten und Bildern auf der Startseite.)</em></p>
+        </section>
+
+        <section id="artikel-verwaltung">
+            <h3>Artikelverwaltung</h3>
+            <button onclick="createNewArticle()">Neuen Artikel erstellen</button>
+            <button onclick="managePublishedArticles()">Veröffentlichte Artikel verwalten</button>
+            <button onclick="reviewSubmittedArticles()">Eingereichte Beiträge prüfen</button>
+            <p><em>(Hier können Sie Artikel erstellen, bearbeiten, löschen und zu Ausgaben zuordnen.)</em></p>
+        </section>
+
+        <section id="anzeigen-verwaltung">
+            <h3>Anzeigenverwaltung</h3>
+            <button onclick="reviewSubmittedAds()">Eingereichte Anzeigen prüfen</button>
+            <button onclick="managePublishedAds()">Veröffentlichte Anzeigen verwalten</button>
+            <p><em>(Überprüfen und genehmigen Sie Anzeigen von Nutzern.)</em></p>
+        </section>
+
+        <section id="nutzer-verwaltung">
+            <h3>Nutzerverwaltung</h3>
+            <button onclick="manageUsers()">Benutzerkonten verwalten</button>
+            <p><em>(Erstellen, bearbeiten und löschen Sie Benutzerkonten und weisen Sie Rollen zu.)</em></p>
+        </section>
+
+        <section id="archiv-verwaltung">
+            <h3>Zeitungs-Archivverwaltung</h3>
+            <button onclick="addArchiveEdition()">Neue Ausgabe hinzufügen</button>
+            <button onclick="manageArchive()">Archiv verwalten</button>
+            <p><em>(Verwalten Sie bestehende und fügen Sie neue Ausgaben Ihrer Schulzeitung hinzu.)</em></p>
+        </section>
+
+        <section id="live-vorschau">
+            <h3>Live-Vorschau</h3>
+            <button onclick="showLivePreview()">Vorschau starten</button>
+            <p><em>(Sehen Sie Ihre Änderungen, bevor sie live gehen.)</em></p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Schulzeitung Plattform. Alle Rechte vorbehalten.</p>
+    </footer>
+
+    <!-- Platzhalter für JavaScript Funktionen -->
+    <script>
+        function openWysiwygEditor(page) {
+            alert('WYSIWYG Editor für ' + page + ' wird geöffnet...');
+            // Hier würde die Logik zum Öffnen eines Editors implementiert
+        }
+        function createNewArticle() {
+            alert('Neuer Artikel-Editor wird geöffnet...');
+            // Hier würde die Logik zum Erstellen eines neuen Artikels implementiert
+        }
+        function managePublishedArticles() {
+            alert('Verwaltung veröffentlichter Artikel...');
+            // Hier würde die Logik zur Verwaltung geladen
+        }
+        function reviewSubmittedArticles() {
+            alert('Prüfung eingereichter Beiträge...');
+            // Hier würde die Logik zur Prüfung geladen
+        }
+        function reviewSubmittedAds() {
+            alert('Prüfung eingereichter Anzeigen...');
+            // Hier würde die Logik zur Prüfung geladen
+        }
+        function managePublishedAds() {
+            alert('Verwaltung veröffentlichter Anzeigen...');
+            // Hier würde die Logik zur Verwaltung geladen
+        }
+        function manageUsers() {
+            alert('Benutzerverwaltung wird geöffnet...');
+            // Hier würde die Logik zur Nutzerverwaltung geladen
+        }
+        function addArchiveEdition() {
+            alert('Formular zum Hinzufügen einer neuen Ausgabe wird geöffnet...');
+            // Hier würde die Logik zum Hinzufügen geladen
+        }
+        function manageArchive() {
+            alert('Archivverwaltung wird geladen...');
+            // Hier würde die Logik zur Archivverwaltung geladen
+        }
+        function showLivePreview() {
+            alert('Live-Vorschau wird gestartet...');
+            // Hier würde die Logik zur Vorschau implementiert
+        }
+    </script>
+    <script src="script.js"></script> <!-- Platzhalter für allgemeines JavaScript -->
+</body>
+</html>
+```
+
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redakteursbereich</title>
+    <link rel="stylesheet" href="style.css"> <!-- Platzhalter für CSS -->
+</head>
+<body>
+
+    <header>
+        <h1>Redakteursbereich</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Zurück zur Startseite</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </header>
+
+    <main>
+        <h2>Willkommen im Redakteursbereich</h2>
+        <p>Hier können Sie Ihre Artikel erstellen, bearbeiten und zur Freigabe einreichen.</p>
+
+        <section id="redakteur-artikel">
+            <h3>Meine Artikel</h3>
+            <button onclick="openWysiwygEditor('new_article')">Neuen Artikel schreiben</button>
+            <button onclick="editMyArticles()">Meine Artikel bearbeiten</button>
+            <button onclick="submitArticlesForReview()">Artikel zur Freigabe einreichen</button>
+            <p><em>(Nutzen Sie den Editor, um Ihre Inhalte zu erstellen oder zu bearbeiten.)</em></p>
+        </section>
+
+        <section id="zugewiesene-artikel">
+            <h3>Zugewiesene Artikel</h3>
+            <button onclick="editAssignedArticles()">Zugewiesene Artikel bearbeiten</button>
+            <p><em>(Hier finden Sie Artikel, die Ihnen von Administratoren zugewiesen wurden.)</em></p>
+        </section>
+
+        <section id="kommentar-moderation">
+            <h3>Kommentar-Moderation</h3>
+            <button onclick="moderateComments()">Kommentare prüfen und bearbeiten</button>
+            <p><em>(Wenn Sie die Berechtigung haben, können Sie hier Leserkommentare moderieren.)</em></p>
+        </section>
+
+        <section id="eingereichte-beitraege-einsicht">
+            <h3>Eingereichte Beiträge (Einsicht)</h3>
+            <button onclick="viewSubmittedContributions()">Eingereichte Beiträge ansehen</button>
+            <p><em>(Sie können eingereichte Anzeigen oder Beiträge einsehen, je nach Ihren Berechtigungen.)</em></p>
+        </section>
+
+        <section id="redakteur-vorschau">
+            <h3>Vorschau meiner Inhalte</h3>
+            <button onclick="showEditorPreview()">Vorschau starten</button>
+            <p><em>(Sehen Sie, wie Ihre bearbeiteten oder erstellten Artikel aussehen.)</em></p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Schulzeitung Plattform. Alle Rechte vorbehalten.</p>
+    </footer>
+
+    <!-- Platzhalter für JavaScript Funktionen -->
+    <script>
+        function openWysiwygEditor(type) {
+            alert('WYSIWYG Editor für ' + type + ' wird geöffnet...');
+            // Hier würde die Logik zum Öffnen eines Editors implementiert
+        }
+        function editMyArticles() {
+            alert('Liste Ihrer eigenen Artikel wird geladen...');
+            // Hier würde die Logik zum Bearbeiten geladen
+        }
+        function submitArticlesForReview() {
+            alert('Artikel werden zur Freigabe vorbereitet...');
+            // Hier würde die Logik zur Einreichung geladen
+        }
+        function editAssignedArticles() {
+            alert('Liste zugewiesener Artikel wird geladen...');
+            // Hier würde die Logik zum Bearbeiten geladen
+        }
+        function moderateComments() {
+            alert('Kommentar-Moderation wird geöffnet...');
+            // Hier würde die Logik zur Moderation geladen
+        }
+        function viewSubmittedContributions() {
+            alert('Eingereichte Beiträge werden angezeigt...');
+            // Hier würde die Logik zur Ansicht geladen
+        }
+        function showEditorPreview() {
+            alert('Vorschau Ihrer Inhalte wird gestartet...');
+            // Hier würde die Logik zur Vorschau implementiert
+        }
+    </script>
+    <script src="script.js"></script> <!-- Platzhalter für allgemeines JavaScript -->
 </body>
 </html>
 

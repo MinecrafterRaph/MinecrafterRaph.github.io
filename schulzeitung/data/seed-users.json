@@ -1,0 +1,30 @@
+[
+  {
+    "id": "u-admin",
+    "email": "admin@schule.example",
+    "password": "admin123",
+    "displayName": "Administrator",
+    "role": "admin"
+  },
+  {
+    "id": "u-editor",
+    "email": "redaktion@schule.example",
+    "password": "editor123",
+    "displayName": "Redaktion Demo",
+    "role": "editor"
+  },
+  {
+    "id": "u-reader",
+    "email": "leser@schule.example",
+    "password": "leser123",
+    "displayName": "Leser Demo",
+    "role": "reader"
+  },
+  {
+    "id": "u-designer",
+    "email": "designer@schule.example",
+    "password": "designer123",
+    "displayName": "Designer Demo",
+    "role": "designer"
+  }
+]

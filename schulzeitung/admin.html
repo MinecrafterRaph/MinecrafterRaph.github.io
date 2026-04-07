@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="de" data-base="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Admin-Bereich der Schulzeitung" />
+    <title>Admin – Schulzeitung</title>
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <header class="site-header" id="site-header"></header>
+    <main id="main" class="section container">
+      <h1 class="ornament-heading">Admin-Bereich</h1>
+      <p class="intro-text">Freigaben, Nutzerrollen und oeffentliche Kommentare zentral verwalten.</p>
+
+      <div class="admin-layout" style="margin-top: var(--space-xl)">
+        <nav class="side-nav" id="admin-nav" aria-label="Admin-Bereiche">
+          <button type="button" class="is-active" data-panel="overview">Uebersicht</button>
+          <button type="button" data-panel="reviews">Artikel-Freigaben</button>
+          <button type="button" data-panel="submissions">Einsendungen</button>
+          <button type="button" data-panel="ads">Werbung</button>
+          <button type="button" data-panel="puzzles">Rätsel</button>
+          <button type="button" data-panel="workflow">Workflow</button>
+          <button type="button" data-panel="roles">Rollen & Rechte</button>
+          <button type="button" data-panel="users">Nutzer</button>
+          <button type="button" data-panel="comments">Kommentare (oeffentlich)</button>
+        </nav>
+        <div>
+          <section class="panel is-visible" id="panel-overview">
+            <h2>Uebersicht</h2>
+            <div class="stat-grid" id="admin-stats"></div>
+          </section>
+
+          <section class="panel" id="panel-reviews">
+            <h2>Artikel zur Freigabe</h2>
+            <div class="table-wrap">
+              <table class="data-table" id="table-reviews">
+                <thead>
+                  <tr><th>Titel</th><th>Ausgabe</th><th>Aktionen</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-submissions">
+            <h2>Einsendungen</h2>
+            <div id="admin-submissions"></div>
+          </section>
+
+          <section class="panel" id="panel-ads">
+            <h2>Werbungs-Editor</h2>
+            <div class="card">
+              <div class="form-group">
+                <label><input type="checkbox" id="ads-enabled" /> Werbung auf der Startseite anzeigen</label>
+                <p class="form-hint">Ist standardmäßig deaktiviert und kann hier zentral ein- und ausgeschaltet werden.</p>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table" id="table-ads">
+                  <thead><tr><th>Titel</th><th>Kontakt</th><th>Status</th><th>Aktion</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+              <button class="btn btn--primary" id="ads-save" type="button" style="margin-top: var(--space-md)">Werbung speichern</button>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-puzzles">
+            <h2>Rätsel-Builder</h2>
+            <div class="card">
+              <div class="form-group">
+                <label for="pz-edition">Ausgabe</label>
+                <select id="pz-edition"></select>
+              </div>
+              <div class="form-group">
+                <label for="pz-title">Titel</label>
+                <input id="pz-title" />
+              </div>
+              <div class="form-group">
+                <label for="pz-intro">Intro</label>
+                <textarea id="pz-intro" rows="2"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="pz-items">Fragen und Antworten (JSON)</label>
+                <textarea id="pz-items" rows="8"></textarea>
+                <p class="form-hint">Format: [{"prompt":"Frage","answer":"lösung"}]</p>
+              </div>
+              <button class="btn btn--primary" id="pz-save" type="button">Rätsel speichern</button>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-workflow">
+            <h2>Workflow-Steuerung</h2>
+            <div class="table-wrap">
+              <table class="data-table" id="table-workflow">
+                <thead>
+                  <tr><th>Titel</th><th>Stufe</th><th>Zuweisung</th><th>Aktionen</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="card" style="margin-top: var(--space-lg)">
+              <h3>Ausgewähltes Workflow-Element</h3>
+              <input type="hidden" id="wf-id" />
+              <div class="form-group">
+                <label for="wf-title">Titel</label>
+                <input id="wf-title" />
+              </div>
+              <div class="form-group">
+                <label for="wf-summary">Kurzbeschreibung</label>
+                <textarea id="wf-summary" rows="3"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="wf-rewrite">Admin-Umschreibung</label>
+                <textarea id="wf-rewrite" rows="6"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="wf-notes">Notiz fuer Redaktion</label>
+                <textarea id="wf-notes" rows="3"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="wf-editor">Redaktoer zuweisen</label>
+                <select id="wf-editor"></select>
+              </div>
+              <button class="btn btn--primary" id="wf-save" type="button">Speichern und an Redaktion senden</button>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-users">
+            <h2>Nutzerverwaltung</h2>
+            <p class="form-hint">Rollen koennen direkt angepasst werden. Mindestens ein Admin sollte erhalten bleiben.</p>
+            <div class="table-wrap">
+              <table class="data-table" id="table-users">
+                <thead>
+                  <tr><th>Name</th><th>E-Mail</th><th>Rolle</th><th>Aktionen</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-roles">
+            <h2>Rollen und Berechtigungen</h2>
+            <div class="card">
+              <div class="form-group">
+                <label for="new-role-id">Neue Rolle hinzufügen</label>
+                <input id="new-role-id" placeholder="z. B. moderation" />
+              </div>
+              <button class="btn btn--primary" id="btn-add-role" type="button">Rolle anlegen</button>
+              <div id="roles-permissions" style="margin-top: var(--space-lg)"></div>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-comments">
+            <h2>Oeffentliche Kommentare</h2>
+            <p class="form-hint">Diese JSON-Datei kann gespeichert und bei Bedarf wieder eingelesen werden.</p>
+            <div class="form-group">
+              <label><input type="checkbox" id="comments-guest-mode" /> Gast Modus für Kommentare aktivieren</label>
+              <p class="form-hint">Wenn aktiv, dürfen auch nicht angemeldete Besucher kommentieren.</p>
+            </div>
+            <div class="form-group">
+              <button class="btn btn--primary" type="button" id="btn-export-comments">comments-public.json herunterladen</button>
+            </div>
+            <div class="form-group">
+              <label for="comments-import">Kommentare aus JSON importieren</label>
+              <input id="comments-import" type="file" accept="application/json" />
+            </div>
+            <div class="form-group">
+              <label for="comments-json">Vorschau</label>
+              <textarea id="comments-json" rows="10" readonly></textarea>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+    <footer class="site-footer" id="site-footer"></footer>
+    <script type="module" src="assets/js/pages/admin.js"></script>
+  </body>
+</html>

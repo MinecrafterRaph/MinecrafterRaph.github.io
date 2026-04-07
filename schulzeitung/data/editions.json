@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "slug": "ausgabe-maerz-2026",
+    "title": "Ausgabe März 2026",
+    "issueNumber": 12,
+    "publishedAt": "2026-03-15",
+    "description": "Schwerpunktthema: Nachhaltigkeit an unserer Schule.",
+    "coverImage": "assets/images/cover-1.svg"
+  },
+  {
+    "id": "2",
+    "slug": "ausgabe-februar-2026",
+    "title": "Ausgabe Februar 2026",
+    "issueNumber": 11,
+    "publishedAt": "2026-02-10",
+    "description": "Fasching, Projektwoche und Sportberichte.",
+    "coverImage": "assets/images/cover-2.svg"
+  },
+  {
+    "id": "3",
+    "slug": "ausgabe-januar-2026",
+    "title": "Ausgabe Januar 2026",
+    "issueNumber": 10,
+    "publishedAt": "2026-01-12",
+    "description": "Neujahrsvorsätze und Rückblick auf das vergangene Halbjahr.",
+    "coverImage": "assets/images/cover-3.svg"
+  },
+  {
+    "id": "4",
+    "slug": "muster-ausgabe-fruehjahr-2026",
+    "title": "Muster-Ausgabe Fruehjahr 2026",
+    "issueNumber": 13,
+    "publishedAt": "2026-04-01",
+    "description": "Voll integrierte Demo-Ausgabe, die im Redaktionssystem bearbeitet werden kann.",
+    "coverImage": "assets/images/cover-1.svg"
+  }
+]

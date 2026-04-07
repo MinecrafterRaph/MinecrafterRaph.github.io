@@ -1,0 +1,206 @@
+@import "variables.css";
+
+/* Index: edition cards */
+.edition-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.edition-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.edition-card__cover {
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  width: 100%;
+  background: var(--color-paper-dark);
+}
+
+.edition-card__body {
+  padding: var(--space-lg);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.edition-card__meta {
+  font-size: 0.85rem;
+  color: var(--color-ink-muted);
+  margin-bottom: var(--space-sm);
+}
+
+/* Article list in issue */
+.issue-slider {
+  position: relative;
+}
+
+.issue-slider__viewport {
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.issue-slider__track {
+  display: flex;
+}
+
+.issue-slide {
+  min-width: 100%;
+  padding: var(--space-lg);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  box-sizing: border-box;
+}
+
+.issue-slider__nav {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.edition-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 260px) 1fr;
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+.edition-sidebar {
+  position: sticky;
+  top: calc(var(--header-height) + var(--space-md));
+}
+
+@media (max-width: 900px) {
+  .edition-layout {
+    grid-template-columns: 1fr;
+  }
+  .edition-sidebar {
+    position: static;
+  }
+}
+
+/* Share row */
+.share-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+  margin: var(--space-lg) 0;
+  padding: var(--space-md);
+  background: var(--color-paper-dark);
+  border-radius: var(--radius-sm);
+}
+
+.share-row span {
+  font-weight: 600;
+  margin-right: var(--space-sm);
+}
+
+/* Comments */
+.comment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.comment-item {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-meta {
+  font-size: 0.85rem;
+  color: var(--color-ink-muted);
+}
+
+/* Search highlight */
+mark {
+  background: #ffe08a;
+  padding: 0 0.15em;
+}
+
+/* Stats */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-md);
+}
+
+.stat-box {
+  text-align: center;
+  padding: var(--space-lg);
+  background: var(--color-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.stat-box__value {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--color-accent);
+}
+
+/* Poll */
+.poll-options label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+  cursor: pointer;
+}
+
+.poll-bar {
+  height: 8px;
+  background: var(--color-paper-dark);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: var(--space-xs);
+}
+
+.poll-bar__fill {
+  height: 100%;
+  background: var(--color-accent);
+}
+
+/* Puzzle in editions */
+.puzzle-card {
+  margin-top: var(--space-2xl);
+}
+
+.puzzle-grid {
+  display: grid;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.puzzle-item label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+
+.puzzle-item input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+}
+
+.puzzle-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}

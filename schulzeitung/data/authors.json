@@ -1,0 +1,30 @@
+[
+  {
+    "id": "a1",
+    "name": "Lena Hoffmann",
+    "role": "Chefredaktion",
+    "bio": "Oberstufe, liebt investigativen Schulsport und Podcasts.",
+    "avatar": "assets/images/avatar-a1.svg"
+  },
+  {
+    "id": "a2",
+    "name": "Jonas Weber",
+    "role": "Sportredakteur",
+    "bio": "Trainiert Leichtathletik und dokumentiert jedes Turnier.",
+    "avatar": "assets/images/avatar-a2.svg"
+  },
+  {
+    "id": "a3",
+    "name": "Mira Scholz",
+    "role": "Kultur",
+    "bio": "Theater, Musik und Kunst – immer nah am Geschehen.",
+    "avatar": "assets/images/avatar-a3.svg"
+  },
+  {
+    "id": "a4",
+    "name": "Redaktion",
+    "role": "Team",
+    "bio": "Gemeinsame Texte der Schulzeitungsredaktion.",
+    "avatar": "assets/images/avatar-team.svg"
+  }
+]

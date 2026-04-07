@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="520" viewBox="0 0 400 520">
+  <defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#8b3a62"/><stop offset="100%" style="stop-color:#4a1f36"/></linearGradient></defs>
+  <rect width="400" height="520" fill="url(#g2)"/>
+  <text x="200" y="240" fill="#f4efe4" font-family="Georgia,serif" font-size="28" text-anchor="middle">Ausgabe 11</text>
+  <text x="200" y="290" fill="#e8dcc8" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle">Februar 2026</text>
+</svg>

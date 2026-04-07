@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="de" data-base="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Redaktionsbereich Schulzeitung" />
+    <title>Redaktion – Schulzeitung</title>
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet" />
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <header class="site-header" id="site-header"></header>
+    <main id="main" class="section container">
+      <h1 class="ornament-heading">Redaktionsbereich</h1>
+      <div class="editor-intro">
+        <p class="intro-text">Bearbeiten Sie Entwuerfe strukturiert, reichen Sie Artikel sauber zur Freigabe ein und behalten Sie Rueckmeldungen aus der Leserschaft im Blick.</p>
+      </div>
+
+      <div class="admin-layout" style="margin-top: var(--space-xl)">
+        <nav class="side-nav" id="editor-nav" aria-label="Bereiche">
+          <button type="button" class="is-active" data-panel="articles">Artikel</button>
+          <button type="button" data-panel="comments">Kommentare</button>
+          <button type="button" data-panel="ads">Werbung</button>
+          <button type="button" data-panel="inbox">Einsendungen</button>
+          <button type="button" data-panel="preview">Live-Vorschau</button>
+        </nav>
+        <div>
+          <section class="panel is-visible" id="panel-articles" aria-labelledby="ed-art-h">
+            <h2 id="ed-art-h">Artikel (Entwuerfe und Freigabe)</h2>
+            <p class="form-hint">Hier erscheinen ausschliesslich Entwuerfe und eingereichte Artikel. Bereits veroeffentlichte Inhalte verwaltet die Administration.</p>
+            <div class="card" style="margin: var(--space-md) 0">
+              <div class="form-group">
+                <label for="article-search">Suche nach Titel</label>
+                <input id="article-search" type="search" placeholder="z. B. Editorial oder Sportbericht" />
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label for="article-status-filter">Statusfilter</label>
+                <select id="article-status-filter">
+                  <option value="all">Alle</option>
+                  <option value="draft">Entwurf</option>
+                  <option value="review">Zur Freigabe</option>
+                  <option value="published">Veroeffentlicht</option>
+                </select>
+              </div>
+            </div>
+            <button type="button" class="btn btn--primary" id="btn-new-article" style="margin: var(--space-md) 0">Neuer Artikel</button>
+            <div class="table-wrap">
+              <table class="data-table" id="table-editor-articles">
+                <thead>
+                  <tr>
+                    <th>Titel</th>
+                    <th>Status</th>
+                    <th>Aktionen</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+
+            <div class="card" id="editor-form-wrap" style="margin-top: var(--space-xl); display: none">
+              <h3 id="form-article-title">Artikel bearbeiten</h3>
+              <form id="form-article">
+                <input type="hidden" id="art-id" />
+                <div class="form-group">
+                  <label for="art-title">Titel</label>
+                  <input id="art-title" required />
+                </div>
+                <div class="form-group">
+                  <label for="art-excerpt">Kurztext</label>
+                  <textarea id="art-excerpt" required rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="art-edition">Ausgabe</label>
+                  <select id="art-edition" required></select>
+                </div>
+                <div class="form-group">
+                  <label for="art-category">Kategorie</label>
+                  <select id="art-category" required></select>
+                </div>
+                <div class="form-group">
+                  <label for="editor">Inhalt</label>
+                  <div class="editor-shell">
+                    <div id="editor"></div>
+                  </div>
+                  <p class="form-hint" id="editor-stats">0 Woerter</p>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: var(--space-sm)">
+                  <button type="submit" class="btn btn--primary" name="save" value="draft" id="btn-save-draft">Als Entwurf speichern</button>
+                  <button type="submit" class="btn btn--ghost" name="save" value="review">Zur Freigabe einreichen</button>
+                  <button type="submit" class="btn btn--ghost" name="save" value="published" id="btn-save-published" style="display:none">Direkt veroeffentlichen</button>
+                </div>
+              </form>
+              <section class="card" style="margin-top: var(--space-lg)" aria-labelledby="version-heading">
+                <h4 id="version-heading">Versionen</h4>
+                <p class="form-hint">Aeltere Staende koennen mit einem Klick wiederhergestellt werden.</p>
+                <ul id="version-list" style="list-style:none; padding:0; margin:0"></ul>
+              </section>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-comments" aria-labelledby="ed-com-h">
+            <h2 id="ed-com-h">Kommentare moderieren</h2>
+            <div class="table-wrap">
+              <table class="data-table" id="table-comments">
+                <thead>
+                  <tr>
+                    <th>Artikel-ID</th>
+                    <th>Autor</th>
+                    <th>Text</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-ads" aria-labelledby="ed-ads-h">
+            <h2 id="ed-ads-h">Werbung bearbeiten</h2>
+            <div class="form-group">
+              <label><input type="checkbox" id="editor-ads-enabled" /> Werbung auf der Startseite anzeigen</label>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table" id="table-editor-ads">
+                <thead>
+                  <tr><th>Titel</th><th>Kontakt</th><th>Status</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <button class="btn btn--primary" type="button" id="btn-save-editor-ads" style="margin-top: var(--space-md)">Werbung speichern</button>
+          </section>
+
+          <section class="panel" id="panel-inbox" aria-labelledby="ed-inbox-h">
+            <h2 id="ed-inbox-h">Einsendungen (nur Ansicht)</h2>
+            <p class="form-hint">Freigaben erfolgen zentral durch die Administration.</p>
+            <div id="inbox-ads"></div>
+            <div id="inbox-ideas" style="margin-top: var(--space-lg)"></div>
+          </section>
+
+          <section class="panel" id="panel-preview" aria-labelledby="ed-prev-h">
+            <h2 id="ed-prev-h">Live-Vorschau</h2>
+            <div class="form-group">
+              <label for="preview-select">Artikel wählen</label>
+              <select id="preview-select"></select>
+            </div>
+            <article class="card prose" id="preview-box" style="margin-top: var(--space-md)"></article>
+          </section>
+        </div>
+      </div>
+    </main>
+    <footer class="site-footer" id="site-footer"></footer>
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <script type="module" src="assets/js/pages/manageeditor.js"></script>
+  </body>
+</html>

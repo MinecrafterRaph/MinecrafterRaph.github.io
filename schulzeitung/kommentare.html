@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de" data-base="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Kommentare zur Schulzeitung" />
+    <title>Kommentare – Schulzeitung</title>
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <header class="site-header" id="site-header"></header>
+    <main id="main" class="section container" style="max-width: 52rem">
+      <h1 class="ornament-heading">Kommentare</h1>
+      <p class="intro-text">Hier sehen Sie alle Kommentare zu einem Artikel und koennen selbst kommentieren.</p>
+
+      <section class="card" aria-labelledby="comments-filter-heading">
+        <h2 id="comments-filter-heading">Artikel auswaehlen</h2>
+        <div class="form-group">
+          <label for="comment-article">Artikel</label>
+          <select id="comment-article"></select>
+        </div>
+      </section>
+
+      <section class="card" style="margin-top: var(--space-lg)" aria-labelledby="comments-list-heading">
+        <h2 id="comments-list-heading">Alle Kommentare</h2>
+        <ul class="comment-list" id="comment-list"></ul>
+      </section>
+
+      <section class="card" style="margin-top: var(--space-lg)" aria-labelledby="comments-add-heading">
+        <h2 id="comments-add-heading">Kommentar schreiben</h2>
+        <form id="comment-form">
+          <div class="form-group">
+            <label for="c-name">Name</label>
+            <input id="c-name" type="text" required />
+          </div>
+          <div class="form-group">
+            <label for="c-text">Kommentar</label>
+            <textarea id="c-text" required rows="5"></textarea>
+          </div>
+          <button type="submit" class="btn btn--primary">Kommentar speichern</button>
+          <p class="form-hint">Neue Kommentare werden lokal gespeichert und sofort angezeigt.</p>
+        </form>
+      </section>
+    </main>
+    <footer class="site-footer" id="site-footer"></footer>
+    <script type="module" src="assets/js/pages/kommentare.js"></script>
+  </body>
+</html>

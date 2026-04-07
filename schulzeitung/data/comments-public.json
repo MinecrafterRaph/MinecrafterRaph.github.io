@@ -1,0 +1,18 @@
+{
+  "art-001": [
+    {
+      "id": "pub-c-1",
+      "authorName": "Lina",
+      "text": "Der Schulgarten-Bericht ist richtig gelungen. Bitte mehr zu den AG-Projekten.",
+      "createdAt": "2026-03-16T10:00:00.000Z"
+    }
+  ],
+  "art-002": [
+    {
+      "id": "pub-c-2",
+      "authorName": "Tom",
+      "text": "Starker Kommentar und gut verstaendlich geschrieben.",
+      "createdAt": "2026-03-13T15:20:00.000Z"
+    }
+  ]
+}

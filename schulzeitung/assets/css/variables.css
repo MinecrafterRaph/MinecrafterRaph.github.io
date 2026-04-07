@@ -1,0 +1,39 @@
+/**
+ * Design-Tokens – Editorial / Schulzeitung
+ * Passe Farben an Midjourney-Mockups an (CSS-Variablen).
+ */
+:root {
+  --color-paper: #f8f5ef;
+  --color-paper-dark: #efe7da;
+  --color-ink: #1f1b17;
+  --color-ink-muted: #5a5349;
+  --color-accent: #a67c1b;
+  --color-accent-hover: #8f6913;
+  --color-accent-soft: rgba(166, 124, 27, 0.14);
+  --color-border: #d8ccba;
+  --color-card: #fffdfa;
+  --color-success: #1d6f5c;
+  --color-warning: #a67c1b;
+  --color-danger: #a83232;
+
+  --font-display: "Georgia", "Times New Roman", serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --shadow-sm: 0 1px 3px rgba(26, 26, 31, 0.08);
+  --shadow-md: 0 10px 26px rgba(31, 27, 23, 0.11);
+  --max-width: 1120px;
+  --header-height: 64px;
+  --transition: 0s;
+}

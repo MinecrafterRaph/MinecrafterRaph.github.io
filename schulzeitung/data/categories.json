@@ -1,0 +1,7 @@
+[
+  { "id": "sport", "label": "Sport", "color": "#1d6f5c" },
+  { "id": "kultur", "label": "Kultur", "color": "#8b3a62" },
+  { "id": "meinungen", "label": "Meinungen", "color": "#c45c26" },
+  { "id": "schulleben", "label": "Schulleben", "color": "#2f5f8f" },
+  { "id": "wissen", "label": "Wissen", "color": "#5c4b8a" }
+]

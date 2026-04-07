@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de" data-base="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Artikel der Schulzeitungsausgabe" />
+    <title>Zeitungsausgabe – Schulzeitung</title>
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body data-edition-id="3">
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <header class="site-header" id="site-header"></header>
+    <main id="main" class="section container">
+      <nav aria-label="Brotkrumen" style="font-size: 0.9rem; margin-bottom: var(--space-lg)">
+        <a href="index.html">Start</a> / <span id="edition-title">Ausgabe</span>
+      </nav>
+      <header style="margin-bottom: var(--space-xl)">
+        <h1 id="edition-h1">Ausgabe</h1>
+        <p id="edition-desc" style="color: var(--color-ink-muted); max-width: 40rem"></p>
+        <img id="edition-cover" src="" alt="" width="400" height="520" style="margin-top: var(--space-lg); border-radius: var(--radius-md); max-height: 320px; width: auto; object-fit: cover" loading="lazy" />
+      </header>
+
+      <div class="edition-layout">
+        <aside class="edition-sidebar card" aria-label="Ausgabenavigation">
+          <h2 style="margin-bottom: var(--space-sm)">Ausgabenavigation</h2>
+          <p class="form-hint" id="edition-nav-links"></p>
+          <h3 style="margin-top: var(--space-lg)">Inhaltsverzeichnis</h3>
+          <ul id="edition-toc" style="list-style:none; padding:0; margin:0"></ul>
+        </aside>
+        <section>
+          <h2 class="section__title">Artikel dieser Ausgabe</h2>
+          <p style="color: var(--color-ink-muted)">Mit den Pfeilen durch die Artikel blättern oder die Liste unten nutzen.</p>
+          <div class="issue-slider" id="slider">
+            <div class="issue-slider__viewport">
+              <div class="issue-slider__track" id="slider-track"></div>
+            </div>
+            <div class="issue-slider__nav">
+              <button type="button" class="btn btn--ghost" id="slider-prev" aria-label="Vorheriger Artikel">← Zurück</button>
+              <button type="button" class="btn btn--ghost" id="slider-next" aria-label="Nächster Artikel">Weiter →</button>
+            </div>
+          </div>
+          <section style="margin-top: var(--space-2xl)" aria-labelledby="list-heading">
+            <h2 id="list-heading">Alle Artikel (Liste)</h2>
+            <ul id="article-list" style="list-style: none; padding: 0"></ul>
+          </section>
+        </section>
+      </div>
+    </main>
+    <footer class="site-footer" id="site-footer"></footer>
+    <script type="module" src="assets/js/pages/zeitung.js"></script>
+  </body>
+</html>

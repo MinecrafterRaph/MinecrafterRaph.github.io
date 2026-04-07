@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de" data-base="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Online-Schulzeitung: Ausgaben, Artikel, Mitmach-Bereich und Redaktion – alles für die Schulgemeinschaft."
+    />
+    <title>Schulzeitung – Startseite</title>
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <header class="site-header" id="site-header"></header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__inner">
+          <p class="hero__eyebrow" id="hero-eyebrow">Schulzeitung</p>
+          <h1 id="hero-title">Stimmen aus dem Schulalltag</h1>
+          <p id="hero-subtitle" class="hero__subtitle" style="max-width: 36rem; color: var(--color-ink-muted)">
+            Lade Inhalte …
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#ausgaben">Ausgaben entdecken</a>
+            <a class="btn btn--ghost" href="freeeditor.html">Mitmachen</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section container" id="ausgaben" aria-labelledby="editions-heading">
+        <h2 class="section__title" id="editions-heading">Alle Zeitungsausgaben</h2>
+        <p style="color: var(--color-ink-muted); margin-bottom: var(--space-lg)">
+          Jede Ausgabe enthält alle Artikel der jeweiligen Nummer – durchklickbar und teilbar.
+        </p>
+        <div class="card-grid" id="editions-grid"></div>
+      </section>
+
+      <section class="section container" style="background: var(--color-paper-dark); margin: 0; padding: var(--space-2xl) var(--space-lg); border-block: 1px solid var(--color-border)">
+        <h2 class="section__title">Neueste Artikel &amp; Highlights</h2>
+        <div class="card-grid" id="highlights"></div>
+      </section>
+
+      <section class="section container" aria-labelledby="ads-heading" id="ads-section" style="display:none">
+        <h2 class="section__title" id="ads-heading">Aktuelle Werbung</h2>
+        <div class="card-grid" id="ads-grid"></div>
+      </section>
+
+      <section class="section container" aria-labelledby="cats-heading">
+        <h2 class="section__title" id="cats-heading">Kategorien</h2>
+        <p id="category-chips" style="display: flex; flex-wrap: wrap; gap: 0.5rem"></p>
+      </section>
+
+      <section class="section container" id="ueber" aria-labelledby="about-heading">
+        <h2 class="section__title" id="about-heading">Unsere Schulzeitung</h2>
+        <div class="card prose" id="about-html"></div>
+      </section>
+
+      <section class="section container" id="kontakt" aria-labelledby="contact-heading">
+        <h2 class="section__title" id="contact-heading">Kontakt</h2>
+        <div class="card" style="max-width: 32rem">
+          <p><strong>E-Mail:</strong> <a id="contact-email" href="#">zeitung@schule.example</a></p>
+          <p><strong>Telefon:</strong> <span id="contact-phone"></span></p>
+          <p><strong>Sprechstunde:</strong> <span id="contact-room"></span></p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="site-footer"></footer>
+
+    <script type="module" src="assets/js/pages/home.js"></script>
+  </body>
+</html>

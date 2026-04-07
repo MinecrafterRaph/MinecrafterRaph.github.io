@@ -1,6 +1,6 @@
 import { seedUsersIfNeeded, getSession, canPermission, PERMISSIONS } from "../core/auth.js";
 import { mountShell } from "../ui/shell.js";
-import { loadAllData, getCached, getSiteContent } from "../core/data-service.js";
+import { loadAllData, getCached } from "../core/data-service.js";
 import { loadPublicComments, getComments, addComment, subscribeToCommentsRealtime } from "../core/comments.js";
 
 function escapeHtml(s) {
@@ -45,7 +45,6 @@ async function main() {
   await loadAllData();
   await loadPublicComments();
   mountShell();
-  const site = getSiteContent();
   const session = getSession();
 
   const articles = (getCached().articles || []).filter((a) => a.status === "published");
@@ -72,22 +71,37 @@ async function main() {
   });
 
   const form = document.getElementById("comment-form");
+  const guestToggle = document.getElementById("comment-guest-mode");
+  const guestToggleWrap = document.getElementById("guest-toggle-wrap");
   const nameInput = document.getElementById("c-name");
-  if (!site.commentsGuestMode) {
-    if (!session) {
-      form.innerHTML = `<p>Zum Kommentieren bitte <a href="login.html">anmelden</a> oder den Gastmodus im Admin aktivieren.</p>`;
-      return;
+  const canLoggedInWrite = !!session && canPermission(session, PERMISSIONS.COMMENTS_WRITE);
+  const isGuest = () => !session || guestToggle.checked;
+
+  function syncCommentMode() {
+    if (session) {
+      guestToggleWrap.style.display = "";
+      if (!canLoggedInWrite) guestToggle.checked = true;
+      if (guestToggle.checked) {
+        nameInput.readOnly = false;
+        nameInput.value = nameInput.value || "";
+      } else {
+        nameInput.readOnly = true;
+        nameInput.value = session.displayName || "";
+      }
+    } else {
+      guestToggleWrap.style.display = "none";
+      nameInput.readOnly = false;
     }
-    if (!canPermission(session, PERMISSIONS.COMMENTS_WRITE)) {
-      form.innerHTML = `<p>Deine Rolle darf aktuell keine Kommentare schreiben.</p>`;
-      return;
-    }
-    nameInput.value = session.displayName;
-    nameInput.readOnly = true;
   }
+  syncCommentMode();
+  guestToggle?.addEventListener("change", syncCommentMode);
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (!isGuest() && !canLoggedInWrite) {
+      alert("Deine Rolle darf aktuell keine Kommentare schreiben. Nutze den Gastmodus.");
+      return;
+    }
     await addComment(select.value, {
       authorName: nameInput.value,
       text: document.getElementById("c-text").value,

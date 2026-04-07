@@ -31,6 +31,10 @@
       <section class="card" style="margin-top: var(--space-lg)" aria-labelledby="comments-add-heading">
         <h2 id="comments-add-heading">Kommentar schreiben</h2>
         <form id="comment-form">
+          <div class="form-group" id="guest-toggle-wrap">
+            <label><input id="comment-guest-mode" type="checkbox" /> Als Gast kommentieren</label>
+            <p class="form-hint">Wenn aktiviert, kannst du deinen Namen frei eingeben.</p>
+          </div>
           <div class="form-group">
             <label for="c-name">Name</label>
             <input id="c-name" type="text" required />

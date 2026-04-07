@@ -446,7 +446,6 @@ async function initPublicComments() {
   const fromOverride = readPublicCommentsOverride();
   const merged = { ...fromData, ...fromOverride };
   byId("comments-json").value = JSON.stringify(merged, null, 2);
-  byId("comments-guest-mode").checked = !!getSiteContent().commentsGuestMode;
 }
 
 function exportPublicComments() {
@@ -549,9 +548,6 @@ function bindEvents() {
     } catch {
       alert("Import fehlgeschlagen: keine gueltige JSON-Datei.");
     }
-  });
-  byId("comments-guest-mode").addEventListener("change", () => {
-    saveSiteContent({ ...getSiteContent(), commentsGuestMode: !!byId("comments-guest-mode").checked });
   });
 }
 

@@ -6,9 +6,10 @@
   top: 0;
   z-index: 100;
   height: var(--header-height);
-  background: rgba(247, 242, 233, 0.92);
+  background: rgba(247, 239, 227, 0.82);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 10px 20px -22px rgba(0, 0, 0, 0.5);
 }
 
 .site-header__inner {
@@ -25,10 +26,31 @@
 .site-logo {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   color: var(--color-ink);
   text-decoration: none;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  position: relative;
+  padding-inline: 0.5rem;
+}
+
+.site-logo::before,
+.site-logo::after {
+  content: "✦";
+  color: var(--color-accent);
+  font-size: 0.68rem;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.site-logo::before {
+  left: -0.15rem;
+}
+
+.site-logo::after {
+  right: -0.15rem;
 }
 
 .site-logo:hover {
@@ -47,14 +69,16 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 0.95rem;
-  padding: 0.15rem 0.2rem;
+  padding: 0.2rem 0.28rem;
   border-bottom: 2px solid transparent;
+  transition: color var(--transition), border-color var(--transition), transform var(--transition);
 }
 
 .site-nav a:hover,
 .site-nav a.is-active {
   color: var(--color-accent);
   border-bottom-color: var(--color-accent);
+  transform: translateY(-1px);
 }
 
 .site-nav__actions {
@@ -103,7 +127,9 @@
 .site-footer {
   margin-top: var(--space-3xl);
   padding: var(--space-2xl) var(--space-lg);
-  background: var(--color-ink);
+  background:
+    radial-gradient(circle at 9% 12%, rgba(230, 196, 118, 0.14), transparent 30%),
+    linear-gradient(180deg, #272017 0%, var(--color-ink) 100%);
   color: var(--color-paper-dark);
 }
 
@@ -139,23 +165,26 @@
   font-size: 0.95rem;
   font-weight: 600;
   border-radius: var(--radius-sm);
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   cursor: pointer;
   text-decoration: none;
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition), color var(--transition), border-color var(--transition);
 }
 
 .btn--primary {
-  background: var(--color-accent);
+  background: linear-gradient(140deg, #b18225, var(--color-accent));
   color: #fff;
+  box-shadow: 0 12px 22px -18px rgba(0, 0, 0, 0.65);
 }
 
 .btn--primary:hover {
   background: var(--color-accent-hover);
   color: #fff;
+  transform: translateY(-1px);
 }
 
 .btn--ghost {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.64);
   border-color: var(--color-border);
   color: var(--color-ink);
 }
@@ -163,6 +192,7 @@
 .btn--ghost:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
+  transform: translateY(-1px);
 }
 
 .btn--small {
@@ -191,12 +221,15 @@
 }
 
 .card {
-  background: var(--color-card);
+  background:
+    radial-gradient(circle at 95% 8%, rgba(169, 122, 26, 0.08), transparent 30%),
+    var(--color-card);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-lg);
   box-shadow: var(--shadow-sm);
   position: relative;
+  transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
 }
 
 .card::before {
@@ -207,6 +240,11 @@
   top: 0;
   height: 2px;
   background: linear-gradient(90deg, transparent 0%, rgba(166, 124, 27, 0.55) 50%, transparent 100%);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(169, 122, 26, 0.42);
 }
 
 .intro-text {
@@ -344,7 +382,10 @@
 /* ——— Hero ——— */
 .hero {
   padding: var(--space-3xl) 0 var(--space-2xl);
-  background: linear-gradient(165deg, var(--color-paper-dark) 0%, var(--color-paper) 45%);
+  background:
+    radial-gradient(circle at 15% 15%, rgba(169, 122, 26, 0.18), transparent 28%),
+    radial-gradient(circle at 85% 18%, rgba(169, 122, 26, 0.12), transparent 22%),
+    linear-gradient(165deg, var(--color-paper-dark) 0%, var(--color-paper) 45%);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -361,6 +402,16 @@
   font-weight: 700;
   color: var(--color-accent);
   margin-bottom: var(--space-sm);
+  position: relative;
+  padding-left: 1.05rem;
+}
+
+.hero__eyebrow::before {
+  content: "✦";
+  position: absolute;
+  left: 0;
+  top: 0.02rem;
+  font-size: 0.7rem;
 }
 
 .hero__actions {
@@ -377,6 +428,15 @@
 
 .prose .article-body {
   margin-top: var(--space-lg);
+}
+
+.prose .article-body p:first-of-type::first-letter {
+  font-family: var(--font-display);
+  float: left;
+  font-size: 3rem;
+  line-height: 0.95;
+  margin-right: 0.35rem;
+  color: var(--color-accent);
 }
 
 .prose .article-body h3 {
@@ -407,6 +467,10 @@
 .data-table th {
   background: var(--color-paper-dark);
   font-weight: 700;
+}
+
+.data-table tr:hover td {
+  background: rgba(169, 122, 26, 0.06);
 }
 
 /* ——— Tabs / editor layout ——— */
@@ -460,4 +524,76 @@
   min-height: 200px;
   font-family: var(--font-body);
   font-size: 1rem;
+}
+
+.mini-canva {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, #fffef9 0%, #f9f2e7 100%);
+  overflow: hidden;
+}
+
+.mini-canva__toolbar {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  flex-wrap: wrap;
+  padding: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+  background: #fff8ea;
+}
+
+.mini-canva__toolbar label {
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+#idea-canvas {
+  width: 100%;
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.site-notice-host {
+  position: fixed;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 300;
+  pointer-events: none;
+}
+
+.site-notice-card {
+  width: min(90vw, 360px);
+  background: #fffdf7;
+  border: 1px solid rgba(166, 124, 27, 0.45);
+  border-radius: var(--radius-md);
+  box-shadow: 0 1rem 1.8rem -1.2rem rgba(0, 0, 0, 0.42);
+  padding: 0.75rem 0.9rem;
+  animation: slideInNotice 420ms ease;
+}
+
+.site-notice-card strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--color-accent);
+}
+
+.site-notice-card p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+@keyframes slideInNotice {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateX(0);
+  }
 }

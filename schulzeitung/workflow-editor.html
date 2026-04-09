@@ -38,6 +38,15 @@
           <label for="wf-editor-box">Layout/Content</label>
           <div class="editor-shell"><div id="wf-editor-box"></div></div>
         </div>
+        <div class="form-group">
+          <label for="wf-pdf">Zeitungs-PDF (optional)</label>
+          <input id="wf-pdf" type="file" accept="application/pdf" />
+          <div id="wf-pdf-info" class="form-hint">Kein PDF hinterlegt.</div>
+          <div style="display:flex;gap:var(--space-sm);flex-wrap:wrap;margin-top:var(--space-sm)">
+            <button class="btn btn--ghost btn--small" type="button" id="wf-pdf-remove">PDF entfernen</button>
+            <a class="btn btn--ghost btn--small" id="wf-pdf-open" href="#" target="_blank" rel="noopener" style="display:none">PDF öffnen</a>
+          </div>
+        </div>
         <div style="display:flex; gap: var(--space-sm); flex-wrap: wrap">
           <button class="btn btn--ghost" type="button" id="wf-save-draft">Zwischenstand speichern</button>
           <button class="btn btn--primary" type="button" id="wf-send-designer">An Designer senden</button>

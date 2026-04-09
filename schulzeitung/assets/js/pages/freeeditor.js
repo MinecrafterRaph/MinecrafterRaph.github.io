@@ -51,6 +51,55 @@ async function main() {
   }
   showEditorForLoggedInUser();
 
+  const canvas = document.getElementById("idea-canvas");
+  const ctx = canvas.getContext("2d");
+  const colorInput = document.getElementById("canva-color");
+  const sizeInput = document.getElementById("canva-size");
+  const clearBtn = document.getElementById("canva-clear");
+  let drawing = false;
+
+  function pointerPos(event) {
+    const rect = canvas.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * canvas.width;
+    const y = ((event.clientY - rect.top) / rect.height) * canvas.height;
+    return { x, y };
+  }
+
+  function drawStart(event) {
+    drawing = true;
+    const { x, y } = pointerPos(event);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+  }
+
+  function drawMove(event) {
+    if (!drawing) return;
+    const { x, y } = pointerPos(event);
+    ctx.strokeStyle = colorInput.value;
+    ctx.lineWidth = Number(sizeInput.value);
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  }
+
+  function drawEnd() {
+    drawing = false;
+    ctx.closePath();
+  }
+
+  ctx.fillStyle = "#fffef9";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  canvas.addEventListener("pointerdown", drawStart);
+  canvas.addEventListener("pointermove", drawMove);
+  canvas.addEventListener("pointerup", drawEnd);
+  canvas.addEventListener("pointerleave", drawEnd);
+  clearBtn.addEventListener("click", () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#fffef9";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  });
+
   document.getElementById("form-ad").addEventListener("submit", async (e) => {
     e.preventDefault();
     const title = document.getElementById("ad-title").value.trim();
@@ -77,7 +126,9 @@ async function main() {
     const authorName = document.getElementById("idea-name").value.trim();
     const title = document.getElementById("idea-title").value.trim();
     const body = document.getElementById("idea-text").value.trim();
-    addPendingContribution({ authorName, title, body });
+    const subcategory = document.getElementById("idea-subcategory").value;
+    const sketchDataUrl = canvas.toDataURL("image/png");
+    addPendingContribution({ authorName, title, body, subcategory, sketchDataUrl });
     sessionStorage.setItem(CONFIRM_TOKEN_KEY, crypto.randomUUID());
     window.location.href = "freeeditor-bestaetigung.html?typ=beitrag";
   });

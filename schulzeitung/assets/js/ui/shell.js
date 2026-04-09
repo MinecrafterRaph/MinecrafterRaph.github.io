@@ -4,11 +4,12 @@
 import { getSession, logout } from "../core/auth.js";
 import { getPendingAds, getPendingContributions } from "../core/pending.js";
 import { getWorkflowItems } from "../core/workflow.js";
+import { getSiteNotice, onNoticeSignal } from "../core/notifications.js";
+import { getSiteContent } from "../core/data-service.js";
 
 const navLinks = [
   { href: "index.html", label: "Start" },
   { href: "index.html#ausgaben", label: "Ausgaben" },
-  { href: "kommentare.html", label: "Kommentare" },
   { href: "zeitung4.html", label: "Muster-Zeitung" },
   { href: "freeeditor.html", label: "Mitmachen" },
 ];
@@ -24,6 +25,8 @@ export function mountShell() {
   if (!headerMount || !footerMount) return;
 
   const session = getSession();
+  const siteContent = getSiteContent();
+  document.documentElement.dataset.theme = siteContent.theme || "classic";
   const page = currentPage();
 
   const extraNav = [];
@@ -110,10 +113,38 @@ export function mountShell() {
     logout();
     window.location.href = "index.html";
   });
+
+  mountSiteNotice();
 }
 
 function escapeHtml(s) {
   const d = document.createElement("div");
   d.textContent = s;
   return d.innerHTML;
+}
+
+function mountSiteNotice() {
+  let host = document.getElementById("site-notice-host");
+  if (!host) {
+    host = document.createElement("div");
+    host.id = "site-notice-host";
+    host.className = "site-notice-host";
+    document.body.appendChild(host);
+  }
+
+  function render(notice) {
+    if (!notice?.message) {
+      host.innerHTML = "";
+      return;
+    }
+    host.innerHTML = `
+      <aside class="site-notice-card" role="status" aria-live="polite">
+        <strong>Info der Redaktion</strong>
+        <p>${escapeHtml(notice.message)}</p>
+      </aside>
+    `;
+  }
+
+  render(getSiteNotice());
+  onNoticeSignal(render);
 }

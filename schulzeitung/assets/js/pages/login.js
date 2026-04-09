@@ -1,6 +1,6 @@
 import { seedUsersIfNeeded, loginWithPassword, redirectAfterLogin, getSession } from "../core/auth.js";
 import { mountShell } from "../ui/shell.js";
-import { createMathCaptcha, verifyCaptcha } from "../core/captcha.js";
+import { createVisualCaptcha, verifyCaptcha } from "../core/captcha.js";
 
 async function main() {
   await seedUsersIfNeeded();
@@ -15,11 +15,9 @@ async function main() {
   const captchaTask = document.getElementById("captcha-task");
   const captchaRefresh = document.getElementById("captcha-refresh");
   const captchaAnswer = document.getElementById("captcha-answer");
-  let captcha = createMathCaptcha();
-  captchaTask.textContent = captcha.prompt;
+  let captcha = createVisualCaptcha(captchaTask);
   captchaRefresh.addEventListener("click", () => {
-    captcha = createMathCaptcha();
-    captchaTask.textContent = captcha.prompt;
+    captcha = createVisualCaptcha(captchaTask);
     captchaAnswer.value = "";
     captchaAnswer.focus();
   });
@@ -27,10 +25,16 @@ async function main() {
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     msg.innerHTML = "";
-    if (!verifyCaptcha(captchaAnswer.value, captcha.answer)) {
-      msg.innerHTML = `<div class="message message--error">Die Sicherheitsabfrage ist nicht korrekt.</div>`;
-      captcha = createMathCaptcha();
-      captchaTask.textContent = captcha.prompt;
+    const check = verifyCaptcha(captchaAnswer.value, captcha);
+    if (!check.ok) {
+      const text =
+        check.reason === "expired"
+          ? "Captcha abgelaufen. Bitte neu laden."
+          : check.reason === "attempt-limit"
+            ? "Zu viele Fehlversuche. Neues Captcha laden."
+            : "Die Captcha-Eingabe ist nicht korrekt.";
+      msg.innerHTML = `<div class="message message--error">${text}</div>`;
+      captcha = createVisualCaptcha(captchaTask);
       captchaAnswer.value = "";
       return;
     }

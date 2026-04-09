@@ -100,8 +100,6 @@ async function main() {
     }
   });
 
-  const commentsLink = document.getElementById("comments-link");
-  commentsLink.href = `kommentare.html?id=${encodeURIComponent(id)}`;
 }
 
 main().catch(console.error);

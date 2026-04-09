@@ -50,6 +50,8 @@ function importWorkflowAsArticle(id) {
     featured: false,
     embed: null,
     contentHtml: wf.editorHtml || `<p>${escapeHtml(wf.rewrittenText || "")}</p>`,
+    pdfDataUrl: wf.pdfDataUrl || null,
+    pdfFileName: wf.pdfFileName || "",
     versions: [],
   });
   saveArticles(articles);

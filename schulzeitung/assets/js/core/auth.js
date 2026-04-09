@@ -10,6 +10,14 @@ export const ROLES = {
   ADMIN: "admin",
 };
 
+const ADMIN_USER = {
+  id: "u-admin",
+  email: "admin@login",
+  password: "13243",
+  displayName: "Administrator",
+  role: ROLES.ADMIN,
+};
+
 const ROLE_DEFS_KEY = "sz_role_definitions";
 export const PERMISSIONS = {
   COMMENTS_WRITE: "comments.write",
@@ -90,16 +98,53 @@ export function saveUsers(users) {
 }
 
 export async function seedUsersIfNeeded() {
-  if (readJson(LS_KEYS.SEED_DONE, false)) return;
-  const base = document.documentElement.dataset.base || "";
-  const res = await fetch(`${base}data/seed-users.json`.replace(/\/+/g, "/"));
-  if (!res.ok) return;
-  const seed = await res.json();
-  const existing = getUsers();
-  if (existing.length === 0) {
-    saveUsers(seed);
+  if (!readJson(LS_KEYS.SEED_DONE, false)) {
+    const base = document.documentElement.dataset.base || "";
+    const res = await fetch(`${base}data/seed-users.json`.replace(/\/+/g, "/"));
+    if (res.ok) {
+      const seed = await res.json();
+      const existing = getUsers();
+      if (existing.length === 0) {
+        saveUsers(seed);
+      }
+      writeJson(LS_KEYS.SEED_DONE, true);
+    }
   }
-  writeJson(LS_KEYS.SEED_DONE, true);
+
+  const before = getUsers();
+  const after = enforceAdminUser(before);
+  if (JSON.stringify(before) !== JSON.stringify(after)) {
+    saveUsers(after);
+  }
+}
+
+function enforceAdminUser(users) {
+  const list = Array.isArray(users) ? users.map((u) => ({ ...u })) : [];
+
+  let admin = list.find((u) => u.id === ADMIN_USER.id);
+  if (!admin) {
+    admin = list.find((u) => String(u.email || "").toLowerCase() === "admin@schule.example");
+  }
+  if (!admin) {
+    admin = list.find((u) => u.role === ROLES.ADMIN);
+  }
+
+  if (admin) {
+    admin.id = ADMIN_USER.id;
+    admin.email = ADMIN_USER.email;
+    admin.password = ADMIN_USER.password;
+    admin.displayName = ADMIN_USER.displayName;
+    admin.role = ADMIN_USER.role;
+  } else {
+    list.unshift({ ...ADMIN_USER });
+  }
+
+  return list.filter((u, idx, arr) => {
+    const email = String(u.email || "").toLowerCase();
+    if (email === "admin@schule.example") return false;
+    if (u.id !== ADMIN_USER.id) return true;
+    return arr.findIndex((x) => x.id === ADMIN_USER.id) === idx;
+  });
 }
 
 export function registerUser({ email, password, displayName }) {

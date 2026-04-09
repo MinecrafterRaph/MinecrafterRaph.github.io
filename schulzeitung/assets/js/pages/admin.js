@@ -11,12 +11,10 @@ import {
 } from "../core/auth.js";
 import { loadAllData, getCached, saveArticles, saveAds, getSiteContent, saveSiteContent } from "../core/data-service.js";
 import { getPendingAds, getPendingContributions, removePendingAd, removePendingContribution } from "../core/pending.js";
-import { loadPublicComments } from "../core/comments.js";
+import { publishSiteNotice, clearSiteNotice, getSiteNotice } from "../core/notifications.js";
 import { getWorkflowItems, createWorkflowItem, updateWorkflowItem } from "../core/workflow.js";
 import { getPuzzles, savePuzzles } from "../core/puzzles.js";
 import { mountShell } from "../ui/shell.js";
-
-const LS_PUBLIC = "sz_public_comments_override";
 
 function byId(id) {
   return document.getElementById(id);
@@ -26,18 +24,6 @@ function escapeHtml(value) {
   const el = document.createElement("div");
   el.textContent = value == null ? "" : String(value);
   return el.innerHTML;
-}
-
-function readPublicCommentsOverride() {
-  try {
-    return JSON.parse(localStorage.getItem(LS_PUBLIC) || "{}");
-  } catch {
-    return {};
-  }
-}
-
-function writePublicCommentsOverride(data) {
-  localStorage.setItem(LS_PUBLIC, JSON.stringify(data));
 }
 
 function switchPanel(panelId) {
@@ -141,7 +127,7 @@ function renderSubmissions() {
     <h3 style="margin-top:var(--space-lg)">Leserbeitraege</h3>
     <div class="table-wrap">
       <table class="data-table">
-        <thead><tr><th>Titel</th><th>Name</th><th>Aktionen</th></tr></thead>
+        <thead><tr><th>Titel</th><th>Name</th><th>Unterkategorie</th><th>Aktionen</th></tr></thead>
         <tbody>
         ${
           ideas.length
@@ -150,6 +136,7 @@ function renderSubmissions() {
                   (i) => `<tr>
               <td>${escapeHtml(i.title)}</td>
               <td>${escapeHtml(i.authorName || "-")}</td>
+              <td>${escapeHtml(i.subcategory || "-")}</td>
               <td>
                 <button class="btn btn--primary btn--small" data-workflow-idea="${escapeHtml(i.id)}">In Workflow</button>
                 <button class="btn btn--ghost btn--small" data-reject-idea="${escapeHtml(i.id)}">Archivieren</button>
@@ -157,7 +144,7 @@ function renderSubmissions() {
             </tr>`
                 )
                 .join("")
-            : '<tr><td colspan="3">Keine offenen Beitraege.</td></tr>'
+            : '<tr><td colspan="4">Keine offenen Beitraege.</td></tr>'
         }
         </tbody>
       </table>
@@ -301,9 +288,10 @@ function createWorkflowFromIdea(id) {
     sourceType: "contribution",
     sourceId: idea.id,
     title: idea.title,
-    summary: idea.body || "",
+    summary: `[${idea.subcategory || "beitrag"}] ${idea.body || ""}`,
     rewrittenText: idea.body || "",
     adminNotes: "",
+    sketchDataUrl: idea.sketchDataUrl || null,
   });
   removePendingContribution(id);
   renderSubmissions();
@@ -441,21 +429,10 @@ function deleteUser(id) {
   renderStats();
 }
 
-async function initPublicComments() {
-  const fromData = await loadPublicComments();
-  const fromOverride = readPublicCommentsOverride();
-  const merged = { ...fromData, ...fromOverride };
-  byId("comments-json").value = JSON.stringify(merged, null, 2);
-}
-
-function exportPublicComments() {
-  const blob = new Blob([byId("comments-json").value], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "comments-public.json";
-  a.click();
-  URL.revokeObjectURL(url);
+function initSiteNoticeForm() {
+  const current = getSiteNotice();
+  byId("site-notice-message").value = current?.message || "";
+  byId("site-theme").value = getSiteContent().theme || "classic";
 }
 
 function bindEvents() {
@@ -534,20 +511,25 @@ function bindEvents() {
     deleteUser(delBtn.dataset.deleteUser);
   });
 
-  byId("btn-export-comments").addEventListener("click", exportPublicComments);
-
-  byId("comments-import").addEventListener("change", async (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    try {
-      const text = await file.text();
-      const parsed = JSON.parse(text);
-      byId("comments-json").value = JSON.stringify(parsed, null, 2);
-      writePublicCommentsOverride(parsed);
-      alert("Kommentare importiert. Diese Version ist lokal gespeichert.");
-    } catch {
-      alert("Import fehlgeschlagen: keine gueltige JSON-Datei.");
+  byId("site-notice-send").addEventListener("click", () => {
+    const message = byId("site-notice-message").value.trim();
+    if (!message) {
+      alert("Bitte zuerst eine Nachricht eingeben.");
+      return;
     }
+    publishSiteNotice(message);
+    alert("Benachrichtigung wurde gesendet.");
+  });
+  byId("site-notice-clear").addEventListener("click", () => {
+    clearSiteNotice();
+    byId("site-notice-message").value = "";
+    alert("Benachrichtigung entfernt.");
+  });
+  byId("site-theme-save").addEventListener("click", () => {
+    const theme = byId("site-theme").value || "classic";
+    saveSiteContent({ ...getSiteContent(), theme });
+    document.documentElement.dataset.theme = theme;
+    alert("Theme gespeichert.");
   });
 }
 
@@ -565,7 +547,7 @@ async function main() {
   renderWorkflow();
   renderRoleManager();
   renderUsers();
-  await initPublicComments();
+  initSiteNoticeForm();
   bindEvents();
 }
 

@@ -9,6 +9,9 @@ let editingId = null;
 let canPublishDirectly = false;
 const DRAFT_BACKUP_KEY = "sz_editor_live_backup";
 let hasUnsavedChanges = false;
+let pendingPdfDataUrl = null;
+let pendingPdfFileName = "";
+let removePdfOnSave = false;
 
 function byId(id) {
   return document.getElementById(id);
@@ -87,6 +90,10 @@ function openForm(article = null) {
   byId("art-edition").value = article?.editionId || (getCached().editions?.[0]?.id ?? "");
   byId("art-category").value = article?.categoryId || (getCached().categories?.[0]?.id ?? "");
   quill.root.innerHTML = article?.contentHtml || "<p></p>";
+  pendingPdfDataUrl = article?.pdfDataUrl || null;
+  pendingPdfFileName = article?.pdfFileName || "";
+  removePdfOnSave = false;
+  renderPdfState();
   renderVersionList(article);
   updateEditorStats();
   hasUnsavedChanges = false;
@@ -97,6 +104,11 @@ function closeForm() {
   editingId = null;
   localStorage.removeItem(DRAFT_BACKUP_KEY);
   byId("version-list").innerHTML = "<li class=\"form-hint\">Keine Versionen vorhanden.</li>";
+  byId("art-pdf").value = "";
+  pendingPdfDataUrl = null;
+  pendingPdfFileName = "";
+  removePdfOnSave = false;
+  renderPdfState();
   hasUnsavedChanges = false;
 }
 
@@ -109,6 +121,8 @@ function upsertArticle(status) {
 
   const all = [...(getCached().articles || [])];
   const now = new Date().toISOString().slice(0, 10);
+  const nextPdfDataUrl = removePdfOnSave ? null : pendingPdfDataUrl;
+  const nextPdfFileName = removePdfOnSave ? "" : pendingPdfFileName;
 
   if (editingId) {
     const index = all.findIndex((a) => a.id === editingId);
@@ -133,6 +147,8 @@ function upsertArticle(status) {
         categoryId,
         contentHtml,
         status,
+        pdfDataUrl: nextPdfDataUrl,
+        pdfFileName: nextPdfFileName,
         publishedAt: previous.publishedAt || now,
         versions: [snapshot, ...previousVersions].slice(0, 20),
       };
@@ -152,6 +168,8 @@ function upsertArticle(status) {
       featured: false,
       embed: null,
       contentHtml,
+      pdfDataUrl: nextPdfDataUrl,
+      pdfFileName: nextPdfFileName,
       versions: [],
     });
   }
@@ -170,8 +188,11 @@ function wordCountFromHtmlText(text) {
 }
 
 function updateEditorStats() {
-  const count = wordCountFromHtmlText(quill.getText());
-  byId("editor-stats").textContent = `${count} Woerter`;
+  const plain = quill.getText();
+  const words = wordCountFromHtmlText(plain);
+  const chars = String(plain || "").trim().length;
+  const readingMinutes = Math.max(1, Math.ceil(words / 180));
+  byId("editor-stats").textContent = `${words} Woerter · ${chars} Zeichen · ca. ${readingMinutes} min Lesezeit`;
 }
 
 function persistDraftBackup() {
@@ -181,6 +202,9 @@ function persistDraftBackup() {
     editionId: byId("art-edition").value,
     categoryId: byId("art-category").value,
     contentHtml: quill.root.innerHTML,
+    pdfDataUrl: pendingPdfDataUrl,
+    pdfFileName: pendingPdfFileName,
+    removePdfOnSave,
     updatedAt: new Date().toISOString(),
   };
   localStorage.setItem(DRAFT_BACKUP_KEY, JSON.stringify(backup));
@@ -201,11 +225,29 @@ function restoreDraftBackupIfUseful() {
     if (b.editionId) byId("art-edition").value = b.editionId;
     if (b.categoryId) byId("art-category").value = b.categoryId;
     quill.root.innerHTML = b.contentHtml || "<p></p>";
+    pendingPdfDataUrl = b.pdfDataUrl || null;
+    pendingPdfFileName = b.pdfFileName || "";
+    removePdfOnSave = !!b.removePdfOnSave;
+    renderPdfState();
     updateEditorStats();
     hasUnsavedChanges = true;
   } catch {
     // ignore broken backup data
   }
+}
+
+function renderPdfState() {
+  const info = byId("art-pdf-info");
+  const open = byId("art-pdf-open");
+  if (!pendingPdfDataUrl || removePdfOnSave) {
+    info.textContent = "Kein PDF hinterlegt.";
+    open.style.display = "none";
+    open.removeAttribute("href");
+    return;
+  }
+  info.textContent = `PDF hinterlegt: ${pendingPdfFileName || "Unbenanntes Dokument"}`;
+  open.href = pendingPdfDataUrl;
+  open.style.display = "inline-flex";
 }
 
 function renderVersionList(article) {
@@ -263,6 +305,46 @@ function setupEditorImageUpload() {
       quill.insertEmbed(range.index, "image", dataUrl, "user");
       quill.setSelection(range.index + 1, 0);
     });
+  });
+}
+
+function setupPdfUpload() {
+  byId("art-pdf").addEventListener("change", async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (file.type !== "application/pdf") {
+      alert("Bitte nur PDF-Dateien hochladen.");
+      event.target.value = "";
+      return;
+    }
+    if (file.size > 3 * 1024 * 1024) {
+      alert("PDF ist zu gross. Bitte maximal 3 MB hochladen.");
+      event.target.value = "";
+      return;
+    }
+    try {
+      const dataUrl = await new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(String(r.result || ""));
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      });
+      pendingPdfDataUrl = dataUrl;
+      pendingPdfFileName = file.name || "Zeitung.pdf";
+      removePdfOnSave = false;
+      renderPdfState();
+      persistDraftBackup();
+    } catch {
+      alert("PDF konnte nicht gelesen werden.");
+    } finally {
+      event.target.value = "";
+    }
+  });
+  byId("btn-art-pdf-remove").addEventListener("click", () => {
+    if (!pendingPdfDataUrl) return;
+    removePdfOnSave = true;
+    renderPdfState();
+    persistDraftBackup();
   });
 }
 
@@ -376,7 +458,11 @@ function renderPreview() {
     box.innerHTML = "<p>Keine Vorschau verfuegbar.</p>";
     return;
   }
-  box.innerHTML = `<h3>${escapeHtml(article.title)}</h3><p>${escapeHtml(article.excerpt || "")}</p><hr class="ornament-divider" />${
+  box.innerHTML = `<h3>${escapeHtml(article.title)}</h3><p>${escapeHtml(article.excerpt || "")}</p>${
+    article.pdfDataUrl
+      ? `<p><a class="btn btn--ghost btn--small" href="${escapeHtml(article.pdfDataUrl)}" target="_blank" rel="noopener">PDF-Vorschau öffnen</a></p>`
+      : ""
+  }<hr class="ornament-divider" />${
     article.contentHtml || "<p>Kein Inhalt vorhanden.</p>"
   }`;
 }
@@ -442,13 +528,16 @@ function initEditor() {
       toolbar: [
         [{ header: [2, 3, false] }],
         ["bold", "italic", "underline"],
+        [{ color: [] }, { background: [] }],
         [{ list: "ordered" }, { list: "bullet" }],
+        [{ align: [] }],
         ["link", "blockquote", "image"],
         ["clean"],
       ],
     },
   });
   setupEditorImageUpload();
+  setupPdfUpload();
   quill.on("text-change", () => {
     updateEditorStats();
     persistDraftBackup();

@@ -14,7 +14,7 @@
     <main id="main" class="section container" style="max-width: 46rem">
       <h1 class="ornament-heading">Mitmachen</h1>
       <p class="intro-text">
-        Reichen Sie Ihre Anzeige oder Ihren Leserbeitrag unkompliziert ein. Jede Einsendung wird redaktionell gesichtet und vor einer moeglichen Veroeffentlichung geprueft.
+        Reichen Sie Anzeigen und Artikelideen direkt fuer die Redaktion ein. Jeder Beitrag wird redaktionell geprueft, sprachlich verbessert und erst danach veroeffentlicht.
       </p>
       <hr class="ornament-divider" />
 
@@ -67,20 +67,43 @@
       </section>
 
       <section class="card" style="margin-top: var(--space-xl)" aria-labelledby="idea-heading">
-        <h2 id="idea-heading">Leserbeitrag / Idee</h2>
-        <p class="form-hint">Kurze Erfahrungsberichte, Kommentare zum Schulleben oder Ideen fuer kommende Ausgaben.</p>
+        <h2 id="idea-heading">Leserbeitrag / Artikelentwurf</h2>
+        <p class="form-hint">Du kannst hier direkt einen vollstaendigen Entwurf schreiben und auf einer kleinen Zeichenflaeche Skizzen fuer Layout oder Infografiken zeichnen.</p>
         <form id="form-idea">
           <div class="form-group">
             <label for="idea-name">Dein Name</label>
             <input id="idea-name" required />
           </div>
           <div class="form-group">
-            <label for="idea-title">Titel der Idee</label>
+            <label for="idea-title">Titel des Artikels</label>
             <input id="idea-title" required />
           </div>
           <div class="form-group">
-            <label for="idea-text">Text</label>
-            <textarea id="idea-text" required rows="6"></textarea>
+            <label for="idea-subcategory">Unterkategorie</label>
+            <select id="idea-subcategory" required>
+              <option value="">Bitte waehlen</option>
+              <option value="reportage">Reportage</option>
+              <option value="interview">Interview</option>
+              <option value="kommentar">Kommentar</option>
+              <option value="event">Eventbericht</option>
+              <option value="wissen-kompakt">Wissen kompakt</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="idea-text">Artikeltext</label>
+            <textarea id="idea-text" required rows="10" placeholder="Schreibe hier deinen kompletten Artikelentwurf ..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Skizzen-Editor (einfacher Canva-Modus)</label>
+            <div class="mini-canva" id="mini-canva">
+              <div class="mini-canva__toolbar">
+                <label>Farbe <input id="canva-color" type="color" value="#1f1b17" /></label>
+                <label>Staerke <input id="canva-size" type="range" min="1" max="18" value="3" /></label>
+                <button class="btn btn--ghost btn--small" id="canva-clear" type="button">Leeren</button>
+              </div>
+              <canvas id="idea-canvas" width="900" height="420" aria-label="Zeichenflaeche fuer Artikelskizzen"></canvas>
+            </div>
+            <p class="form-hint">Hinweis: Hier kann nur der Artikelentwurf bearbeitet und skizziert werden.</p>
           </div>
           <button type="submit" class="btn btn--primary">Beitrag einreichen</button>
         </form>

@@ -15,52 +15,50 @@
     <a class="skip-link" href="#main">Zum Inhalt springen</a>
     <header class="site-header" id="site-header"></header>
 
-    <main id="main">
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero__inner">
-          <p class="hero__eyebrow" id="hero-eyebrow">Schulzeitung</p>
-          <h1 id="hero-title">Stimmen aus dem Schulalltag</h1>
-          <p id="hero-subtitle" class="hero__subtitle" style="max-width: 36rem; color: var(--color-ink-muted)">
-            Lade Inhalte …
-          </p>
-          <div class="hero__actions">
-            <a class="btn btn--primary" href="#ausgaben">Ausgaben entdecken</a>
-            <a class="btn btn--ghost" href="freeeditor.html">Mitmachen</a>
-          </div>
+    <main id="main" class="home-rework">
+      <section class="home-lead container" aria-labelledby="hero-title">
+        <p class="home-lead__eyebrow" id="hero-eyebrow">Schulzeitung</p>
+        <h1 id="hero-title">Was an unserer Schule wirklich passiert</h1>
+        <p id="hero-subtitle" class="home-lead__text">Lade Inhalte …</p>
+        <div class="home-lead__actions">
+          <a class="btn btn--primary" href="#ausgaben">Ausgaben lesen</a>
+          <a class="btn btn--ghost" href="freeeditor.html">Text einreichen</a>
         </div>
       </section>
 
-      <section class="section container" id="ausgaben" aria-labelledby="editions-heading">
-        <h2 class="section__title" id="editions-heading">Alle Zeitungsausgaben</h2>
-        <p style="color: var(--color-ink-muted); margin-bottom: var(--space-lg)">
-          Jede Ausgabe enthält alle Artikel der jeweiligen Nummer – durchklickbar und teilbar.
-        </p>
+      <section class="section container home-editions" id="ausgaben" aria-labelledby="editions-heading">
+        <div class="home-editions__header">
+          <h2 class="section__title" id="editions-heading">Ausgaben</h2>
+          <p>Jede Ausgabe ist anders aufgebaut. Du kannst direkt springen oder als Flipbook lesen.</p>
+        </div>
         <div class="card-grid" id="editions-grid"></div>
       </section>
 
-      <section class="section container" style="background: var(--color-paper-dark); margin: 0; padding: var(--space-2xl) var(--space-lg); border-block: 1px solid var(--color-border)">
-        <h2 class="section__title">Neueste Artikel &amp; Highlights</h2>
-        <div class="card-grid" id="highlights"></div>
+      <section class="section container home-highlights" aria-labelledby="highlights-heading">
+        <aside class="home-highlights__note">
+          <h2 id="highlights-heading">Gerade wichtig</h2>
+          <p>Hier stehen die Artikel, die im Schulhaus gerade diskutiert werden.</p>
+        </aside>
+        <div class="home-highlights__list" id="highlights"></div>
       </section>
 
-      <section class="section container" aria-labelledby="ads-heading" id="ads-section" style="display:none">
-        <h2 class="section__title" id="ads-heading">Aktuelle Werbung</h2>
+      <section class="section container home-cats" aria-labelledby="cats-heading">
+        <h2 class="section__title" id="cats-heading">Schnell in eine Kategorie</h2>
+        <p id="category-chips" class="home-cats__chips"></p>
+      </section>
+
+      <section class="section container home-ads" aria-labelledby="ads-heading" id="ads-section" style="display:none">
+        <h2 class="section__title" id="ads-heading">Aushänge & Hinweise</h2>
         <div class="card-grid" id="ads-grid"></div>
       </section>
 
-      <section class="section container" aria-labelledby="cats-heading">
-        <h2 class="section__title" id="cats-heading">Kategorien</h2>
-        <p id="category-chips" style="display: flex; flex-wrap: wrap; gap: 0.5rem"></p>
-      </section>
-
-      <section class="section container" id="ueber" aria-labelledby="about-heading">
-        <h2 class="section__title" id="about-heading">Unsere Schulzeitung</h2>
-        <div class="card prose" id="about-html"></div>
-      </section>
-
-      <section class="section container" id="kontakt" aria-labelledby="contact-heading">
-        <h2 class="section__title" id="contact-heading">Kontakt</h2>
-        <div class="card" style="max-width: 32rem">
+      <section class="section container home-about-contact" id="ueber" aria-labelledby="about-heading">
+        <div class="home-about-contact__about">
+          <h2 class="section__title" id="about-heading">Wie wir arbeiten</h2>
+          <div class="card prose" id="about-html"></div>
+        </div>
+        <div class="home-about-contact__contact card" id="kontakt" aria-labelledby="contact-heading">
+          <h2 id="contact-heading">Kontakt Redaktion</h2>
           <p><strong>E-Mail:</strong> <a id="contact-email" href="#">zeitung@schule.example</a></p>
           <p><strong>Telefon:</strong> <span id="contact-phone"></span></p>
           <p><strong>Sprechstunde:</strong> <span id="contact-room"></span></p>

@@ -1,8 +1,8 @@
 [
   {
     "id": "u-admin",
-    "email": "admin@schule.example",
-    "password": "admin123",
+    "email": "admin@login",
+    "password": "13243",
     "displayName": "Administrator",
     "role": "admin"
   },

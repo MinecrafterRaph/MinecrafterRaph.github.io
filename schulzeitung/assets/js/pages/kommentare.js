@@ -74,6 +74,7 @@ async function main() {
   const guestToggle = document.getElementById("comment-guest-mode");
   const guestToggleWrap = document.getElementById("guest-toggle-wrap");
   const nameInput = document.getElementById("c-name");
+  const textInput = document.getElementById("c-text");
   const canLoggedInWrite = !!session && canPermission(session, PERMISSIONS.COMMENTS_WRITE);
   const isGuest = () => !session || guestToggle.checked;
 
@@ -104,9 +105,13 @@ async function main() {
     }
     await addComment(select.value, {
       authorName: nameInput.value,
-      text: document.getElementById("c-text").value,
+      text: textInput.value,
     });
-    event.target.reset();
+    textInput.value = "";
+    if (session && !guestToggle.checked) {
+      nameInput.value = session.displayName || "";
+    }
+    syncCommentMode();
     await renderComments(select.value);
   });
 }

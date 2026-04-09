@@ -30,12 +30,12 @@
         </div>
         <div class="form-group">
           <label for="captcha-answer">Sicherheitsabfrage</label>
-          <p class="form-hint">Bitte loese die Rechnung zur Verifizierung.</p>
+          <p class="form-hint">Bitte gib die Zeichen aus dem Bild ein (Groß-/Kleinschreibung egal).</p>
           <div style="display:flex; gap: var(--space-sm); align-items: center; flex-wrap: wrap">
-            <strong id="captcha-task" class="badge"></strong>
+            <strong id="captcha-task" aria-live="polite"></strong>
             <button type="button" class="btn btn--ghost btn--small" id="captcha-refresh">Neu</button>
           </div>
-          <input id="captcha-answer" name="captcha-answer" inputmode="numeric" required />
+          <input id="captcha-answer" name="captcha-answer" inputmode="text" autocapitalize="characters" autocomplete="off" spellcheck="false" required />
         </div>
         <button type="submit" class="btn btn--primary">Konto anlegen</button>
         <p class="form-hint" style="margin-top: var(--space-md)">

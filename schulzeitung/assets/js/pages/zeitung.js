@@ -33,6 +33,38 @@ function normalizeAnswer(v) {
     .replace(/[ß]/g, "ss");
 }
 
+function renderEditionPdfs(edition, articles) {
+  const withPdf = articles.filter((a) => a.pdfDataUrl);
+  if (!withPdf.length) return;
+  const host = document.createElement("section");
+  host.className = "card";
+  host.style.marginBottom = "var(--space-lg)";
+  host.setAttribute("aria-labelledby", "edition-pdf-heading");
+  host.innerHTML = `
+    <h2 id="edition-pdf-heading">Digitale Zeitung (PDF)</h2>
+    <p class="form-hint">Hier findest du gestaltete PDF-Seiten der Ausgabe ${escapeHtml(String(edition.issueNumber || ""))}. Du kannst sie direkt lesen oder herunterladen.</p>
+    <div class="edition-pdf-grid">
+      ${withPdf
+        .map(
+          (a, idx) => `
+          <article class="edition-pdf-item">
+            <h3>${escapeHtml(a.title)}</h3>
+            <div class="edition-pdf-frame">
+              <iframe title="PDF ${escapeHtml(a.title)}" src="${escapeHtml(a.pdfDataUrl)}#toolbar=0&view=FitH" loading="lazy"></iframe>
+            </div>
+            <p>
+              <a class="btn btn--primary btn--small" href="${escapeHtml(a.pdfDataUrl)}" target="_blank" rel="noopener">PDF lesen</a>
+              <a class="btn btn--ghost btn--small" href="${escapeHtml(a.pdfDataUrl)}" download="${escapeHtml(a.pdfFileName || `ausgabe-${edition.id}-${idx + 1}.pdf`)}">Download</a>
+            </p>
+          </article>`
+        )
+        .join("")}
+    </div>
+  `;
+  const slider = document.getElementById("slider");
+  slider?.insertAdjacentElement("beforebegin", host);
+}
+
 function renderPuzzle(editionId) {
   const puzzle = getPuzzles()[editionId];
   if (!puzzle) return;
@@ -132,26 +164,39 @@ async function main() {
     .filter((a) => a.editionId === editionId && a.status === "published")
     .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
 
+  renderEditionPdfs(edition, articles);
+
   const track = document.getElementById("slider-track");
   track.innerHTML = articles
     .map((a) => {
       const cat = categoryById(a.categoryId);
       const url = window.location.origin + window.location.pathname.replace(/[^/]+$/, `artikel.html?id=${encodeURIComponent(a.id)}`);
+      const excerpt = escapeHtml(a.excerpt || "In diesem Beitrag findest du Hintergründe, Stimmen und spannende Details aus dem Schulalltag.");
       return `
-      <div class="issue-slide">
-        <span class="badge" style="background:${cat?.color}22;color:${cat?.color}">${escapeHtml(cat?.label || "")}</span>
-        <h3 style="margin-top:0.75rem">${escapeHtml(a.title)}</h3>
-        <p>${escapeHtml(a.excerpt)}</p>
-        <p style="font-size:0.9rem;color:var(--color-ink-muted)">${formatDate(a.publishedAt)}</p>
-        <p style="margin-top:var(--space-md)">
+      <article class="issue-slide">
+        <div class="issue-slide__ornament" aria-hidden="true">✦ ✦ ✦</div>
+        <p class="issue-slide__kicker">${escapeHtml(cat?.label || "Schulzeitung")}</p>
+        <h3 class="issue-slide__title">${escapeHtml(a.title)}</h3>
+        <p class="issue-slide__meta">${formatDate(a.publishedAt)} · Ausgabe ${escapeHtml(edition.issueNumber)}</p>
+        <div class="issue-slide__columns">
+          <p>${excerpt}</p>
+          <p>
+            ${excerpt}
+            Der Artikel bringt Perspektiven aus Unterricht, Projekten und Schulalltag zusammen und ist als lange Magazinseite gedacht.
+          </p>
+        </div>
+        <blockquote class="issue-slide__quote">
+          „${escapeHtml(a.title)}“ ist eine Geschichte, die unsere Schulgemeinschaft direkt betrifft.
+        </blockquote>
+        <p class="issue-slide__cta">
           <a class="btn btn--primary" href="artikel.html?id=${encodeURIComponent(a.id)}">Vollständig lesen</a>
         </p>
-        <div class="share-row" style="margin-top:var(--space-lg)">
+        <div class="share-row issue-slide__share">
           <span>Teilen:</span>
           <a class="btn btn--ghost btn--small" href="mailto:?subject=${encodeURIComponent(a.title)}&body=${encodeURIComponent(url)}">E-Mail</a>
           <a class="btn btn--ghost btn--small" href="https://twitter.com/intent/tweet?text=${encodeURIComponent(a.title)}&url=${encodeURIComponent(url)}" rel="noopener">X</a>
         </div>
-      </div>`;
+      </article>`;
     })
     .join("");
 
@@ -159,14 +204,23 @@ async function main() {
   const total = articles.length;
   function updateSlider() {
     if (total === 0) return;
-    track.style.transform = `translateX(-${index * 100}%)`;
+    const slides = Array.from(track.querySelectorAll(".issue-slide"));
+    slides.forEach((slide, i) => {
+      const rel = i - index;
+      slide.classList.remove("is-active", "is-prev", "is-next");
+      if (rel === 0) slide.classList.add("is-active");
+      else if (rel < 0) slide.classList.add("is-prev");
+      else slide.classList.add("is-next");
+    });
   }
 
   document.getElementById("slider-prev").addEventListener("click", () => {
+    if (!total) return;
     index = (index - 1 + total) % total;
     updateSlider();
   });
   document.getElementById("slider-next").addEventListener("click", () => {
+    if (!total) return;
     index = (index + 1) % total;
     updateSlider();
   });

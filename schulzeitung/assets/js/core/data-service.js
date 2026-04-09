@@ -78,6 +78,7 @@ export function getSiteContent() {
     contactPhone: "+49 123 456789",
     contactRoom: "Raum 2.14, Mittwoch 7. Stunde",
     adsEnabled: false,
+    theme: "classic",
   };
   return { ...defaults, ...readJson(LS_KEYS.SITE_CONTENT, {}) };
 }

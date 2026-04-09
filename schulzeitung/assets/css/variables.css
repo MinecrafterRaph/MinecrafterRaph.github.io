@@ -3,15 +3,15 @@
  * Passe Farben an Midjourney-Mockups an (CSS-Variablen).
  */
 :root {
-  --color-paper: #f8f5ef;
-  --color-paper-dark: #efe7da;
-  --color-ink: #1f1b17;
-  --color-ink-muted: #5a5349;
-  --color-accent: #a67c1b;
-  --color-accent-hover: #8f6913;
-  --color-accent-soft: rgba(166, 124, 27, 0.14);
-  --color-border: #d8ccba;
-  --color-card: #fffdfa;
+  --color-paper: #f6f1e7;
+  --color-paper-dark: #ebdeca;
+  --color-ink: #211b14;
+  --color-ink-muted: #5f5648;
+  --color-accent: #a97a1a;
+  --color-accent-hover: #8b6111;
+  --color-accent-soft: rgba(169, 122, 26, 0.14);
+  --color-border: #d6c5ab;
+  --color-card: #fffdf8;
   --color-success: #1d6f5c;
   --color-warning: #a67c1b;
   --color-danger: #a83232;
@@ -28,12 +28,36 @@
   --space-2xl: 3rem;
   --space-3xl: 4rem;
 
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --shadow-sm: 0 1px 3px rgba(26, 26, 31, 0.08);
-  --shadow-md: 0 10px 26px rgba(31, 27, 23, 0.11);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --shadow-sm: 0 10px 24px -20px rgba(31, 27, 23, 0.55);
+  --shadow-md: 0 24px 50px -34px rgba(31, 27, 23, 0.5);
   --max-width: 1120px;
   --header-height: 64px;
-  --transition: 0s;
+  --transition: 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root[data-theme="dark"] {
+  --color-paper: #1e1a16;
+  --color-paper-dark: #2a231c;
+  --color-ink: #f1e8d8;
+  --color-ink-muted: #ccbfa8;
+  --color-accent: #d5a446;
+  --color-accent-hover: #e0b35e;
+  --color-accent-soft: rgba(213, 164, 70, 0.18);
+  --color-border: #4b3f31;
+  --color-card: #262019;
+}
+
+:root[data-theme="school-blue"] {
+  --color-paper: #eef3fb;
+  --color-paper-dark: #dce7f7;
+  --color-ink: #14253d;
+  --color-ink-muted: #415c82;
+  --color-accent: #2a5ea8;
+  --color-accent-hover: #1f4a86;
+  --color-accent-soft: rgba(42, 94, 168, 0.14);
+  --color-border: #bfd1eb;
+  --color-card: #f8fbff;
 }

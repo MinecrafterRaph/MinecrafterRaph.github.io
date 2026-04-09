@@ -86,6 +86,16 @@
                   </div>
                   <p class="form-hint" id="editor-stats">0 Woerter</p>
                 </div>
+                <div class="form-group">
+                  <label for="art-pdf">Zeitungs-PDF (optional)</label>
+                  <input id="art-pdf" type="file" accept="application/pdf" />
+                  <p class="form-hint">Hier kannst du eine fertige PDF-Seite oder komplette Ausgabe hochladen. Sie wird in der Ausgabe als digitale Zeitung angezeigt.</p>
+                  <div id="art-pdf-info" class="form-hint" style="margin-top: var(--space-sm)">Kein PDF hinterlegt.</div>
+                  <div style="display:flex;gap:var(--space-sm);flex-wrap:wrap;margin-top:var(--space-sm)">
+                    <button type="button" class="btn btn--ghost btn--small" id="btn-art-pdf-remove">PDF entfernen</button>
+                    <a href="#" class="btn btn--ghost btn--small" id="art-pdf-open" target="_blank" rel="noopener" style="display:none">PDF öffnen</a>
+                  </div>
+                </div>
                 <div style="display: flex; flex-wrap: wrap; gap: var(--space-sm)">
                   <button type="submit" class="btn btn--primary" name="save" value="draft" id="btn-save-draft">Als Entwurf speichern</button>
                   <button type="submit" class="btn btn--ghost" name="save" value="review">Zur Freigabe einreichen</button>

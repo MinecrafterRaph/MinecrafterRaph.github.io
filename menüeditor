@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Externer Banner-Editor fuer das Projekt-Menue." />
+    <title>Menü-Editor - Projekt-Banner</title>
+    <link rel="icon" href="./schulzeitung/assets/images/favicon.svg" type="image/svg+xml" />
+    <style>
+      :root {
+        --bg: #070d12;
+        --panel: #101c26;
+        --line: #284156;
+        --text: #e6f2ff;
+        --muted: #8ca9c3;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+        color: var(--text);
+        background: linear-gradient(160deg, #070d12 0%, #0e1520 100%);
+        min-height: 100vh;
+      }
+
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+
+      .head {
+        margin: 0 0 1rem;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.25rem, 3vw, 2rem);
+      }
+
+      .sub {
+        margin: 0.5rem 0 0;
+        color: var(--muted);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 1rem;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--panel);
+        padding: 1rem;
+      }
+
+      .field {
+        display: grid;
+        gap: 0.45rem;
+        margin-bottom: 0.8rem;
+      }
+
+      label {
+        font-size: 0.85rem;
+        color: #b9d5ee;
+      }
+
+      input,
+      select {
+        width: 100%;
+        border: 1px solid #31506a;
+        border-radius: 10px;
+        background: #0b141c;
+        color: var(--text);
+        padding: 0.52rem 0.7rem;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.7rem;
+      }
+
+      .actions {
+        display: flex;
+        gap: 0.6rem;
+        margin-top: 0.9rem;
+      }
+
+      button,
+      .back {
+        border: 1px solid #3a6284;
+        border-radius: 999px;
+        background: #163048;
+        color: #d8ecff;
+        padding: 0.5rem 0.95rem;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.86rem;
+      }
+
+      .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.85rem;
+      }
+
+      .project-card {
+        min-height: 125px;
+        border: 1px solid #2f455c;
+        border-radius: 12px;
+        background: linear-gradient(180deg, rgba(40, 65, 90, 0.25), rgba(9, 18, 28, 0.6));
+        padding: 0.95rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .project-name {
+        margin: 0;
+        font-weight: 600;
+      }
+
+      .project-note {
+        margin: 0.45rem 0 0;
+        font-size: 0.9rem;
+        color: #9bb6cd;
+      }
+
+      .banner {
+        position: absolute;
+        top: 0.6rem;
+        right: -3.1rem;
+        width: 10.5rem;
+        text-align: center;
+        font-size: 0.67rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.38rem 0.6rem;
+        color: #fff;
+        box-shadow: 0 10px 26px -20px #000;
+      }
+
+      @media (max-width: 860px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="head">
+        <h1>Projekt-Banner im Menü bearbeiten</h1>
+        <p class="sub">
+          Dieser Editor arbeitet extern nur fuer `menu.html`. Die Schuelerzeitung selbst wird dabei nicht veraendert.
+        </p>
+      </header>
+
+      <section class="layout">
+        <form class="panel" id="editor-form">
+          <div class="field">
+            <label for="project">Projekt</label>
+            <select id="project"></select>
+          </div>
+
+          <div class="field">
+            <label for="text">Banner-Text</label>
+            <input id="text" maxlength="28" />
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="color-start">Farbe links</label>
+              <input id="color-start" type="color" />
+            </div>
+            <div class="field">
+              <label for="color-end">Farbe rechts</label>
+              <input id="color-end" type="color" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="angle">Winkel (schraeg)</label>
+            <input id="angle" type="range" min="-40" max="40" step="1" />
+          </div>
+
+          <div class="actions">
+            <button type="submit">Speichern</button>
+            <button type="button" id="reset-btn">Projekt reset</button>
+            <a class="back" href="./menu.html">Zurueck zum Menü</a>
+          </div>
+        </form>
+
+        <section class="panel">
+          <div class="preview-grid" id="preview"></div>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      const bannerStorageKey = "menuProjectBannersV1";
+      const defaults = {
+        schuelerzeitung: { name: "Schuelerzeitung", text: "Aktuell", colorStart: "#ff6a3d", colorEnd: "#ff2f70", angle: -20 },
+        capthas: { name: "Capthas", text: "Neu", colorStart: "#2f9bff", colorEnd: "#675cff", angle: -20 },
+        "project-void": { name: "PROJECT//VOID", text: "Beta", colorStart: "#5f6f87", colorEnd: "#29384f", angle: -20 },
+        "neural-draft": { name: "NEURAL_DRAFT", text: "Entwurf", colorStart: "#ac42ff", colorEnd: "#6d27b8", angle: -20 },
+        "system-patcher": { name: "SYSTEM_PATCHER", text: "Intern", colorStart: "#0aa571", colorEnd: "#0b5b50", angle: -20 },
+      };
+
+      function loadStore() {
+        try {
+          const raw = localStorage.getItem(bannerStorageKey);
+          return raw ? JSON.parse(raw) : {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function mergedConfig() {
+        return { ...defaults, ...loadStore() };
+      }
+
+      function saveConfig(config) {
+        localStorage.setItem(bannerStorageKey, JSON.stringify(config));
+      }
+
+      const projectEl = document.getElementById("project");
+      const textEl = document.getElementById("text");
+      const colorStartEl = document.getElementById("color-start");
+      const colorEndEl = document.getElementById("color-end");
+      const angleEl = document.getElementById("angle");
+      const previewEl = document.getElementById("preview");
+      const formEl = document.getElementById("editor-form");
+      const resetBtnEl = document.getElementById("reset-btn");
+
+      function renderProjectOptions() {
+        const cfg = mergedConfig();
+        projectEl.innerHTML = "";
+        Object.keys(defaults).forEach((key) => {
+          const option = document.createElement("option");
+          option.value = key;
+          option.textContent = cfg[key].name;
+          projectEl.append(option);
+        });
+      }
+
+      function fillForm(projectId) {
+        const cfg = mergedConfig()[projectId];
+        textEl.value = cfg.text;
+        colorStartEl.value = cfg.colorStart;
+        colorEndEl.value = cfg.colorEnd;
+        angleEl.value = String(cfg.angle);
+      }
+
+      function renderPreview() {
+        const cfg = mergedConfig();
+        previewEl.innerHTML = "";
+        Object.entries(cfg).forEach(([key, value]) => {
+          const card = document.createElement("article");
+          card.className = "project-card";
+          card.innerHTML = `
+            <span class="banner" data-key="${key}"></span>
+            <h2 class="project-name">${value.name}</h2>
+            <p class="project-note">Banner frei editierbar wie ein Label.</p>
+          `;
+          previewEl.append(card);
+          const badge = card.querySelector(".banner");
+          badge.textContent = value.text || "";
+          badge.style.background = `linear-gradient(90deg, ${value.colorStart}, ${value.colorEnd})`;
+          badge.style.transform = `rotate(${Number(value.angle) || 0}deg)`;
+        });
+      }
+
+      projectEl.addEventListener("change", () => fillForm(projectEl.value));
+
+      formEl.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const selected = projectEl.value;
+        const store = loadStore();
+        store[selected] = {
+          ...defaults[selected],
+          text: textEl.value.trim() || defaults[selected].text,
+          colorStart: colorStartEl.value,
+          colorEnd: colorEndEl.value,
+          angle: Number(angleEl.value),
+        };
+        saveConfig(store);
+        renderPreview();
+      });
+
+      resetBtnEl.addEventListener("click", () => {
+        const selected = projectEl.value;
+        const store = loadStore();
+        delete store[selected];
+        saveConfig(store);
+        fillForm(selected);
+        renderPreview();
+      });
+
+      ["input", "change"].forEach((evt) => {
+        textEl.addEventListener(evt, renderPreview);
+        colorStartEl.addEventListener(evt, renderPreview);
+        colorEndEl.addEventListener(evt, renderPreview);
+        angleEl.addEventListener(evt, renderPreview);
+      });
+
+      renderProjectOptions();
+      projectEl.value = Object.keys(defaults)[0];
+      fillForm(projectEl.value);
+      renderPreview();
+    </script>
+  </body>
+</html>

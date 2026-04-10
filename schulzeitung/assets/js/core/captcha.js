@@ -1,7 +1,8 @@
 const CAPTCHA_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-const CAPTCHA_LENGTH = 6;
-const CAPTCHA_TTL_MS = 1000 * 60 * 2;
-const CAPTCHA_MAX_ATTEMPTS = 5;
+const CAPTCHA_LENGTH = 7;
+const CAPTCHA_TTL_MS = 1000 * 90;
+const CAPTCHA_MIN_SOLVE_MS = 900;
+const CAPTCHA_MAX_ATTEMPTS = 4;
 
 function randomCode() {
   let code = "";
@@ -73,6 +74,7 @@ export function createVisualCaptcha(hostEl) {
     answer: code,
     createdAt: now,
     expiresAt: now + CAPTCHA_TTL_MS,
+    minSolveAt: now + CAPTCHA_MIN_SOLVE_MS,
     attempts: 0,
     maxAttempts: CAPTCHA_MAX_ATTEMPTS,
   };
@@ -99,6 +101,9 @@ export function verifyCaptcha(inputValue, challenge) {
   const now = Date.now();
   if (now > challenge.expiresAt) {
     return { ok: false, reason: "expired" };
+  }
+  if (now < challenge.minSolveAt) {
+    return { ok: false, reason: "too-fast" };
   }
   if (challenge.attempts >= challenge.maxAttempts) {
     return { ok: false, reason: "attempt-limit" };

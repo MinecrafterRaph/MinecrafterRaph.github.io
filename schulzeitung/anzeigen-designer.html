@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de" data-base="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Anzeige auf eigener Seite designen" />
+    <title>Anzeigen-Designer – Schulzeitung</title>
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <header class="site-header" id="site-header"></header>
+    <main id="main" class="section container" style="max-width: 74rem">
+      <h1 class="ornament-heading">Anzeigen-Designer</h1>
+      <p class="intro-text">Gestalte deine Anzeige auf einer eigenen Seite mit Farben, Stil und Live-Vorschau. Danach wird sie automatisch in den Mitmachen-Bereich übernommen.</p>
+
+      <div class="ad-designer-layout">
+        <section class="card">
+          <h2>Einstellungen</h2>
+          <div class="form-group">
+            <label for="ad-title">Titel</label>
+            <input id="ad-title" />
+          </div>
+          <div class="form-group">
+            <label for="ad-desc">Beschreibung</label>
+            <textarea id="ad-desc" rows="4"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="ad-contact">Kontakt</label>
+            <input id="ad-contact" />
+          </div>
+          <div class="form-group">
+            <label for="ad-price">Preis / Hinweis</label>
+            <input id="ad-price" />
+          </div>
+          <div class="form-group">
+            <label for="ad-tone">Design-Stil</label>
+            <select id="ad-tone">
+              <option value="classic">Klassisch</option>
+              <option value="event">Event</option>
+              <option value="job">Job/Aushilfe</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="ad-color">Akzentfarbe</label>
+            <input id="ad-color" type="color" value="#a67c1b" />
+          </div>
+          <button class="btn btn--primary" type="button" id="ad-save-design">Design in Mitmachen übernehmen</button>
+        </section>
+
+        <section class="card">
+          <h2>Live-Vorschau</h2>
+          <div id="ad-preview-host"></div>
+        </section>
+      </div>
+    </main>
+    <footer class="site-footer" id="site-footer"></footer>
+    <script type="module" src="assets/js/pages/anzeigen-designer.js"></script>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "default": {
+    "className": "Unbekannt",
+    "tasks": [
+      "Feedback aus der Klasse sammeln",
+      "Wichtige Termine im Klassenchat teilen",
+      "Themenvorschläge an die Redaktion senden"
+    ],
+    "notice": "Bitte Rückmeldungen bis Freitag einreichen."
+  },
+  "u-klassensprecher": {
+    "className": "10B",
+    "tasks": [
+      "Interviewpartner aus 10B für Sportausgabe benennen",
+      "Stimmungsbild zur Projektwoche erfassen",
+      "Fotos für die Rubrik Klasseneinblicke freigeben"
+    ],
+    "notice": "Die nächste Redaktionsrunde ist am Dienstag um 13:30 Uhr."
+  }
+}

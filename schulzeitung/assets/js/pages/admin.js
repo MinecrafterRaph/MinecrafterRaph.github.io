@@ -16,6 +16,9 @@ import { getWorkflowItems, createWorkflowItem, updateWorkflowItem } from "../cor
 import { getPuzzles, savePuzzles } from "../core/puzzles.js";
 import { mountShell } from "../ui/shell.js";
 
+const LOGIN_GUARD_KEY = "sz_login_guard_v1";
+const ADMIN_AUDIT_KEY = "sz_admin_audit_v1";
+
 function byId(id) {
   return document.getElementById(id);
 }
@@ -32,6 +35,78 @@ function switchPanel(panelId) {
   });
   document.querySelectorAll(".panel").forEach((panel) => {
     panel.classList.toggle("is-visible", panel.id === `panel-${panelId}`);
+  });
+}
+
+function readLoginGuard() {
+  try {
+    return JSON.parse(localStorage.getItem(LOGIN_GUARD_KEY)) || { fails: 0, lockUntil: 0 };
+  } catch {
+    return { fails: 0, lockUntil: 0 };
+  }
+}
+
+function readAuditLog() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(ADMIN_AUDIT_KEY)) || [];
+    return Array.isArray(raw) ? raw : [];
+  } catch {
+    return [];
+  }
+}
+
+function pushAudit(action, detail = "") {
+  const item = {
+    at: new Date().toISOString(),
+    action,
+    detail,
+  };
+  const next = [item, ...readAuditLog()].slice(0, 60);
+  localStorage.setItem(ADMIN_AUDIT_KEY, JSON.stringify(next));
+  renderAuditLog();
+}
+
+function clearAuditLog() {
+  localStorage.removeItem(ADMIN_AUDIT_KEY);
+  renderAuditLog();
+}
+
+function renderAuditLog() {
+  const host = byId("admin-audit-list");
+  if (!host) return;
+  const rows = readAuditLog();
+  host.innerHTML = rows.length
+    ? rows
+        .map(
+          (row) =>
+            `<li><strong>${escapeHtml(new Date(row.at).toLocaleString("de-DE"))}</strong> · ${escapeHtml(row.action)} ${row.detail ? `(${escapeHtml(row.detail)})` : ""}</li>`
+        )
+        .join("")
+    : "<li>Noch keine protokollierten Aktionen.</li>";
+}
+
+function renderSecurityPanel() {
+  const host = byId("security-status");
+  if (!host) return;
+  const guard = readLoginGuard();
+  const now = Date.now();
+  const locked = guard.lockUntil && now < guard.lockUntil;
+  const remaining = locked ? Math.ceil((guard.lockUntil - now) / 1000) : 0;
+  host.innerHTML = `
+    <h3 style="margin-top:0">Sicherheitsstatus</h3>
+    <ul>
+      <li>Fehlversuche im Login-Guard: <strong>${escapeHtml(guard.fails || 0)}</strong></li>
+      <li>Globale Login-Sperre aktiv: <strong>${locked ? "Ja" : "Nein"}</strong></li>
+      <li>Verbleibende Sperrzeit: <strong>${locked ? `${remaining} Sekunden` : "0 Sekunden"}</strong></li>
+    </ul>
+    <div style="margin-top:var(--space-md);display:flex;gap:var(--space-sm);flex-wrap:wrap">
+      <button class="btn btn--ghost btn--small" id="security-reset-guard" type="button">Login-Guard zurücksetzen</button>
+    </div>
+  `;
+  byId("security-reset-guard")?.addEventListener("click", () => {
+    localStorage.setItem(LOGIN_GUARD_KEY, JSON.stringify({ fails: 0, lockUntil: 0 }));
+    pushAudit("Login-Guard zurückgesetzt");
+    renderSecurityPanel();
   });
 }
 
@@ -91,6 +166,7 @@ function updateArticleStatus(id, status) {
   if (idx < 0) return;
   all[idx] = { ...all[idx], status };
   saveArticles(all);
+  pushAudit("Artikelstatus geändert", `${id} -> ${status}`);
   renderReviews();
   renderStats();
 }
@@ -183,11 +259,13 @@ function saveAdsFromEditor() {
   saveAds(rows);
   const site = getSiteContent();
   saveSiteContent({ ...site, adsEnabled: !!byId("ads-enabled").checked });
+  pushAudit("Werbung gespeichert", `Anzahl: ${rows.length}`);
   renderAdsEditor();
 }
 
 function removeAd(id) {
   saveAds((getCached().ads || []).filter((a) => a.id !== id));
+  pushAudit("Werbung gelöscht", id);
   renderAdsEditor();
 }
 
@@ -224,6 +302,7 @@ function savePuzzleFromBuilder() {
     questions: items,
   };
   savePuzzles(puzzles);
+  pushAudit("Rätsel gespeichert", editionId);
   alert("Rätsel gespeichert.");
 }
 
@@ -311,6 +390,7 @@ function saveWorkflowFromForm() {
     stage: "editor",
     status: "ready_for_editor",
   });
+  pushAudit("Workflow aktualisiert", id);
   renderWorkflow();
   renderStats();
 }
@@ -331,6 +411,7 @@ function approveAd(id) {
   });
   saveAds(allAds);
   removePendingAd(id);
+  pushAudit("Anzeige freigegeben", id);
   renderSubmissions();
   renderStats();
 }
@@ -410,9 +491,12 @@ function toggleRolePermission(roleId, permission, enabled) {
 }
 
 function updateRole(id, role) {
+  const changed = getUsers().find((u) => u.id === id);
+  const fromRole = changed?.role || "-";
   const users = getUsers();
   const next = users.map((u) => (u.id === id ? { ...u, role } : u));
   saveUsers(next);
+  pushAudit("Rolle geändert", `${id}: ${fromRole} -> ${role}`);
   renderUsers();
 }
 
@@ -424,7 +508,9 @@ function deleteUser(id) {
     alert("Der letzte Admin kann nicht geloescht werden.");
     return;
   }
+  if (!confirm("Nutzer wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.")) return;
   saveUsers(users.filter((u) => u.id !== id));
+  pushAudit("Nutzer gelöscht", id);
   renderUsers();
   renderStats();
 }
@@ -433,6 +519,72 @@ function initSiteNoticeForm() {
   const current = getSiteNotice();
   byId("site-notice-message").value = current?.message || "";
   byId("site-theme").value = getSiteContent().theme || "classic";
+}
+
+function initWebsiteSettingsForm() {
+  const site = getSiteContent();
+  byId("site-hero-eyebrow").value = site.heroEyebrow || "";
+  byId("site-hero-title").value = site.heroTitle || "";
+  byId("site-hero-subtitle").value = site.heroSubtitle || "";
+  byId("site-about-html").value = site.aboutHtml || "";
+  byId("site-contact-email").value = site.contactEmail || "";
+  byId("site-contact-phone").value = site.contactPhone || "";
+  byId("site-contact-room").value = site.contactRoom || "";
+  byId("site-highlights-count").value = String(site.highlightsCount || 4);
+  byId("site-photo-band-enabled").checked = site.photoBandEnabled !== false;
+  byId("site-redakteur-notice").value = site.redakteurNotice || "";
+  byId("site-editor-notice").value = site.editorNotice || "";
+  byId("site-vip-notice").value = site.vipNotice || "";
+  byId("site-sponsor-notice").value = site.sponsorNotice || "";
+}
+
+function saveWebsiteSettings() {
+  const prev = getSiteContent();
+  const next = {
+    ...prev,
+    heroEyebrow: byId("site-hero-eyebrow").value.trim() || prev.heroEyebrow,
+    heroTitle: byId("site-hero-title").value.trim() || prev.heroTitle,
+    heroSubtitle: byId("site-hero-subtitle").value.trim() || prev.heroSubtitle,
+    aboutHtml: byId("site-about-html").value.trim() || prev.aboutHtml,
+    contactEmail: byId("site-contact-email").value.trim() || prev.contactEmail,
+    contactPhone: byId("site-contact-phone").value.trim() || prev.contactPhone,
+    contactRoom: byId("site-contact-room").value.trim() || prev.contactRoom,
+    highlightsCount: Math.max(1, Math.min(8, Number(byId("site-highlights-count").value || 4))),
+    photoBandEnabled: !!byId("site-photo-band-enabled").checked,
+    redakteurNotice: byId("site-redakteur-notice").value.trim() || prev.redakteurNotice,
+    editorNotice: byId("site-editor-notice").value.trim() || prev.editorNotice,
+    vipNotice: byId("site-vip-notice").value.trim() || prev.vipNotice,
+    sponsorNotice: byId("site-sponsor-notice").value.trim() || prev.sponsorNotice,
+  };
+  saveSiteContent(next);
+  pushAudit("Website-Einstellungen gespeichert");
+  alert("Website-Einstellungen gespeichert.");
+}
+
+function resetWebsiteSettingsToDefault() {
+  const prev = getSiteContent();
+  const reset = {
+    ...prev,
+    heroEyebrow: "Schulzeitung",
+    heroTitle: "Stimmen aus dem Schulleben",
+    heroSubtitle:
+      "Reportagen, Meinungen und Hintergruende aus Unterricht, Projekten, Kultur und Sport - von Schuelerinnen und Schuelern fuer die ganze Schulgemeinschaft.",
+    aboutHtml:
+      "<p>Unsere Schulzeitung erscheint mehrmals im Jahr und begleitet das Schulleben mit klaren, sorgfaeltig recherchierten Beitraegen.</p><p>Wir berichten ueber Unterricht, Projekte, Sport, Kultur und Themen, die die Schulgemeinschaft bewegen. Mitmachen ist ausdruecklich erwuenscht.</p>",
+    contactEmail: "zeitung@schule.example",
+    contactPhone: "+49 123 456789",
+    contactRoom: "Raum 2.14, Mittwoch 7. Stunde",
+    highlightsCount: 4,
+    photoBandEnabled: true,
+    redakteurNotice: "Hier steuerst du Themenplanung, Leitlinien und redaktionelle Prioritäten.",
+    editorNotice: "Hier steuerst du Abgabe-Regeln und Arbeitsmodus für Editoren.",
+    vipNotice: "Willkommen im VIP-Bereich. Hier erscheinen exklusive Inhalte und Vorabinfos.",
+    sponsorNotice: "Willkommen im Sponsor-Bereich. Hier stehen Sponsoring-Infos und Kontaktpunkte.",
+  };
+  saveSiteContent(reset);
+  pushAudit("Website-Einstellungen auf Standard zurückgesetzt");
+  initWebsiteSettingsForm();
+  alert("Standardwerte wurden wiederhergestellt.");
 }
 
 function bindEvents() {
@@ -465,6 +617,7 @@ function bindEvents() {
     const rejectAdBtn = event.target.closest("[data-reject-ad]");
     if (rejectAdBtn) {
       removePendingAd(rejectAdBtn.dataset.rejectAd);
+      pushAudit("Anzeige abgelehnt", rejectAdBtn.dataset.rejectAd);
       renderSubmissions();
       renderStats();
       return;
@@ -472,6 +625,7 @@ function bindEvents() {
     const rejectIdeaBtn = event.target.closest("[data-reject-idea]");
     if (rejectIdeaBtn) {
       removePendingContribution(rejectIdeaBtn.dataset.rejectIdea);
+      pushAudit("Beitrag archiviert", rejectIdeaBtn.dataset.rejectIdea);
       renderSubmissions();
       renderStats();
     }
@@ -518,19 +672,34 @@ function bindEvents() {
       return;
     }
     publishSiteNotice(message);
+    pushAudit("Site-Notice gesendet");
     alert("Benachrichtigung wurde gesendet.");
   });
   byId("site-notice-clear").addEventListener("click", () => {
     clearSiteNotice();
     byId("site-notice-message").value = "";
+    pushAudit("Site-Notice entfernt");
     alert("Benachrichtigung entfernt.");
   });
   byId("site-theme-save").addEventListener("click", () => {
     const theme = byId("site-theme").value || "classic";
     saveSiteContent({ ...getSiteContent(), theme });
     document.documentElement.dataset.theme = theme;
+    pushAudit("Theme geändert", theme);
     alert("Theme gespeichert.");
   });
+  byId("site-settings-save").addEventListener("click", saveWebsiteSettings);
+  byId("site-settings-reset").addEventListener("click", resetWebsiteSettingsToDefault);
+  byId("admin-refresh-all").addEventListener("click", () => {
+    renderStats();
+    renderSubmissions();
+    renderReviews();
+    renderWorkflow();
+    renderUsers();
+    renderSecurityPanel();
+    pushAudit("Admin-Ansicht aktualisiert");
+  });
+  byId("admin-audit-clear").addEventListener("click", clearAuditLog);
 }
 
 async function main() {
@@ -547,7 +716,10 @@ async function main() {
   renderWorkflow();
   renderRoleManager();
   renderUsers();
+  renderSecurityPanel();
+  renderAuditLog();
   initSiteNoticeForm();
+  initWebsiteSettingsForm();
   bindEvents();
 }
 

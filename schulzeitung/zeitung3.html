@@ -15,10 +15,11 @@
       <nav aria-label="Brotkrumen" style="font-size: 0.9rem; margin-bottom: var(--space-lg)">
         <a href="index.html">Start</a> / <span id="edition-title">Ausgabe</span>
       </nav>
-      <header style="margin-bottom: var(--space-xl)">
+      <header class="edition-header" style="margin-bottom: var(--space-xl)">
         <h1 id="edition-h1">Ausgabe</h1>
         <p id="edition-desc" style="color: var(--color-ink-muted); max-width: 40rem"></p>
-        <img id="edition-cover" src="" alt="" width="400" height="520" style="margin-top: var(--space-lg); border-radius: var(--radius-md); max-height: 320px; width: auto; object-fit: cover" loading="lazy" />
+        <div id="edition-visuals" class="edition-visual-grid"></div>
+        <img id="edition-cover" src="" alt="" width="400" height="520" style="display:none" loading="lazy" />
       </header>
 
       <div class="edition-layout">

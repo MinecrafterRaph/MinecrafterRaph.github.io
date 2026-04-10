@@ -30,6 +30,8 @@ async function main() {
       const text =
         check.reason === "expired"
           ? "Captcha abgelaufen. Bitte neu laden."
+          : check.reason === "too-fast"
+            ? "Bitte kurz warten und das Captcha erneut eingeben."
           : check.reason === "attempt-limit"
             ? "Zu viele Fehlversuche. Neues Captcha laden."
             : "Die Captcha-Eingabe ist nicht korrekt.";

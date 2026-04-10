@@ -159,6 +159,17 @@ async function main() {
   const cover = document.getElementById("edition-cover");
   cover.src = resolveAssetUrl(edition.coverImage);
   cover.alt = `Titelbild ${edition.title}`;
+  const visuals = document.getElementById("edition-visuals");
+  if (visuals) {
+    visuals.innerHTML = `
+      <figure class="edition-visual-grid__main">
+        <img src="${resolveAssetUrl(edition.coverImage)}" alt="Titelbild ${escapeHtml(edition.title)}" loading="lazy" />
+      </figure>
+      <figure><img src="${resolveAssetUrl("assets/images/avatar-team.svg")}" alt="Redaktionsteam" loading="lazy" /></figure>
+      <figure><img src="${resolveAssetUrl("assets/images/avatar-a1.svg")}" alt="Autorin" loading="lazy" /></figure>
+      <figure><img src="${resolveAssetUrl("assets/images/avatar-a2.svg")}" alt="Autor" loading="lazy" /></figure>
+    `;
+  }
 
   const articles = (getCached().articles || [])
     .filter((a) => a.editionId === editionId && a.status === "published")

@@ -41,6 +41,9 @@
       <section class="card" style="margin-top: var(--space-xl)" aria-labelledby="ad-heading">
         <h2 id="ad-heading">Anzeige aufgeben</h2>
         <p class="form-hint">Geeignet fuer Aushilfen, Veranstaltungen, Nachhilfe, Flohmarkt oder schulnahe Angebote.</p>
+        <p style="margin-top:0">
+          <a class="btn btn--ghost btn--small" href="anzeigen-designer.html">Anzeige auf eigener Design-Seite gestalten</a>
+        </p>
         <form id="form-ad">
           <div class="form-group">
             <label for="ad-title">Titel</label>
@@ -61,6 +64,10 @@
           <div class="form-group">
             <label for="ad-image">Bild (optional, wird lokal als Data-URL gespeichert)</label>
             <input id="ad-image" type="file" accept="image/*" />
+          </div>
+          <div class="form-group">
+            <label for="ad-designed-html">Anzeige-Design (automatisch vom Designer, optional)</label>
+            <textarea id="ad-designed-html" rows="4" readonly placeholder="Wenn du den Anzeigen-Designer nutzt, erscheint hier dein Layout-Code."></textarea>
           </div>
           <button type="submit" class="btn btn--primary">Anzeige einreichen</button>
         </form>
@@ -92,6 +99,15 @@
           <div class="form-group">
             <label for="idea-text">Artikeltext</label>
             <textarea id="idea-text" required rows="10" placeholder="Schreibe hier deinen kompletten Artikelentwurf ..."></textarea>
+            <div style="display:flex;gap:var(--space-sm);flex-wrap:wrap;margin-top:var(--space-sm);align-items:center">
+              <label for="idea-word-target" style="margin:0">Textlänge</label>
+              <select id="idea-word-target" style="max-width:180px">
+                <option value="80">Kurz (ca. 80 Wörter)</option>
+                <option value="150" selected>Mittel (ca. 150 Wörter)</option>
+                <option value="300">Lang (ca. 300 Wörter)</option>
+              </select>
+              <button type="button" class="btn btn--ghost btn--small" id="idea-generate">Textvorschlag erzeugen</button>
+            </div>
           </div>
           <div class="form-group">
             <label>Skizzen-Editor (einfacher Canva-Modus)</label>

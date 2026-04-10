@@ -14,10 +14,19 @@
     <main id="main" class="section container">
       <h1 class="ornament-heading">Admin-Bereich</h1>
       <p class="intro-text">Freigaben, Nutzerrollen, Einsendungen und Systemmeldungen zentral verwalten.</p>
+      <div class="card admin-topbar" style="margin-top: var(--space-md)">
+        <div>
+          <strong>Admin-Kontrollzentrum</strong>
+          <p class="form-hint" style="margin:0.25rem 0 0">Sicherheitsstatus, Moderation und letzte Aktionen auf einen Blick.</p>
+        </div>
+        <button class="btn btn--ghost btn--small" id="admin-refresh-all" type="button">Ansicht aktualisieren</button>
+      </div>
 
       <div class="admin-layout" style="margin-top: var(--space-xl)">
         <nav class="side-nav" id="admin-nav" aria-label="Admin-Bereiche">
           <button type="button" class="is-active" data-panel="overview">Uebersicht</button>
+          <button type="button" data-panel="security">Sicherheit</button>
+          <button type="button" data-panel="website">Website-Einstellungen</button>
           <button type="button" data-panel="reviews">Artikel-Freigaben</button>
           <button type="button" data-panel="submissions">Einsendungen</button>
           <button type="button" data-panel="ads">Werbung</button>
@@ -31,6 +40,84 @@
           <section class="panel is-visible" id="panel-overview">
             <h2>Uebersicht</h2>
             <div class="stat-grid" id="admin-stats"></div>
+          </section>
+
+          <section class="panel" id="panel-security">
+            <h2>Sicherheit & Audit</h2>
+            <div class="card" id="security-status"></div>
+            <div class="card" style="margin-top: var(--space-md)">
+              <div style="display:flex;gap:var(--space-sm);flex-wrap:wrap;align-items:center;justify-content:space-between">
+                <h3 style="margin:0">Letzte Admin-Aktionen</h3>
+                <button class="btn btn--ghost btn--small" id="admin-audit-clear" type="button">Audit-Log löschen</button>
+              </div>
+              <ul id="admin-audit-list" style="margin-top:var(--space-md)"></ul>
+            </div>
+          </section>
+
+          <section class="panel" id="panel-website">
+            <h2>Website-Einstellungen</h2>
+            <div class="card">
+              <h3>Startseite</h3>
+              <div class="form-group">
+                <label for="site-hero-eyebrow">Hero-Eyebrow</label>
+                <input id="site-hero-eyebrow" />
+              </div>
+              <div class="form-group">
+                <label for="site-hero-title">Hero-Titel</label>
+                <input id="site-hero-title" />
+              </div>
+              <div class="form-group">
+                <label for="site-hero-subtitle">Hero-Untertitel</label>
+                <textarea id="site-hero-subtitle" rows="3"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="site-highlights-count">Anzahl Highlights</label>
+                <input id="site-highlights-count" type="number" min="1" max="8" />
+              </div>
+              <div class="form-group">
+                <label><input id="site-photo-band-enabled" type="checkbox" /> Fotoband auf Startseite anzeigen</label>
+              </div>
+              <hr class="ornament-divider" />
+              <h3>Über uns & Kontakt</h3>
+              <div class="form-group">
+                <label for="site-about-html">Über uns (HTML erlaubt)</label>
+                <textarea id="site-about-html" rows="6"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="site-contact-email">Kontakt E-Mail</label>
+                <input id="site-contact-email" type="email" />
+              </div>
+              <div class="form-group">
+                <label for="site-contact-phone">Kontakt Telefon</label>
+                <input id="site-contact-phone" />
+              </div>
+              <div class="form-group">
+                <label for="site-contact-room">Sprechstunde / Raum</label>
+                <input id="site-contact-room" />
+              </div>
+              <div style="display:flex;gap:var(--space-sm);flex-wrap:wrap">
+                <button class="btn btn--primary" id="site-settings-save" type="button">Website-Einstellungen speichern</button>
+                <button class="btn btn--ghost" id="site-settings-reset" type="button">Auf Standard zurücksetzen</button>
+              </div>
+              <hr class="ornament-divider" />
+              <h3>Rollen-Portale</h3>
+              <div class="form-group">
+                <label for="site-redakteur-notice">Hinweis für Redakteur-Admin</label>
+                <textarea id="site-redakteur-notice" rows="2"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="site-editor-notice">Hinweis für Editor-Admin</label>
+                <textarea id="site-editor-notice" rows="2"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="site-vip-notice">Hinweis für VIP-Bereich</label>
+                <textarea id="site-vip-notice" rows="2"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="site-sponsor-notice">Hinweis für Sponsor-Bereich</label>
+                <textarea id="site-sponsor-notice" rows="2"></textarea>
+              </div>
+            </div>
           </section>
 
           <section class="panel" id="panel-reviews">

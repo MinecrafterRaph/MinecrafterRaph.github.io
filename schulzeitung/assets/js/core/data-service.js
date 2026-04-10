@@ -79,6 +79,12 @@ export function getSiteContent() {
     contactRoom: "Raum 2.14, Mittwoch 7. Stunde",
     adsEnabled: false,
     theme: "classic",
+    highlightsCount: 4,
+    photoBandEnabled: true,
+    redakteurNotice: "Hier steuerst du Themenplanung, Leitlinien und redaktionelle Prioritäten.",
+    editorNotice: "Hier steuerst du Abgabe-Regeln und Arbeitsmodus für Editoren.",
+    vipNotice: "Willkommen im VIP-Bereich. Hier erscheinen exklusive Inhalte und Vorabinfos.",
+    sponsorNotice: "Willkommen im Sponsor-Bereich. Hier stehen Sponsoring-Infos und Kontaktpunkte.",
   };
   return { ...defaults, ...readJson(LS_KEYS.SITE_CONTENT, {}) };
 }

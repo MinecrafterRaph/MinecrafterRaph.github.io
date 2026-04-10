@@ -22,6 +22,21 @@ function formatDate(iso) {
   }
 }
 
+function sanitizeHtml(input) {
+  const template = document.createElement("template");
+  template.innerHTML = String(input || "");
+  template.content.querySelectorAll("script, iframe, object, embed").forEach((el) => el.remove());
+  template.content.querySelectorAll("*").forEach((el) => {
+    [...el.attributes].forEach((attr) => {
+      const name = attr.name.toLowerCase();
+      const value = String(attr.value || "").toLowerCase();
+      if (name.startsWith("on")) el.removeAttribute(attr.name);
+      if ((name === "href" || name === "src") && value.startsWith("javascript:")) el.removeAttribute(attr.name);
+    });
+  });
+  return template.innerHTML;
+}
+
 async function main() {
   await seedUsersIfNeeded();
   await loadAllData();
@@ -34,7 +49,7 @@ async function main() {
   document.getElementById("hero-subtitle").textContent = content.heroSubtitle;
 
   const aboutEl = document.getElementById("about-html");
-  if (aboutEl) aboutEl.innerHTML = content.aboutHtml;
+  if (aboutEl) aboutEl.innerHTML = sanitizeHtml(content.aboutHtml);
 
   document.getElementById("contact-email").textContent = content.contactEmail;
   document.getElementById("contact-email").href = "mailto:" + content.contactEmail;
@@ -67,7 +82,8 @@ async function main() {
   const articles = publishedArticles()
     .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
   const highlights = document.getElementById("highlights");
-  const top = articles.filter((a) => a.featured).slice(0, 4);
+  const highlightCount = Math.max(1, Math.min(8, Number(content.highlightsCount || 4)));
+  const top = articles.filter((a) => a.featured).slice(0, highlightCount);
   highlights.innerHTML = top
     .map((a, idx) => {
       const cat = categoryById(a.categoryId);
@@ -100,13 +116,35 @@ async function main() {
       .map(
         (a) => `<article class="card">
         <h3>${escapeHtml(a.title)}</h3>
-        <p>${escapeHtml(a.description || "")}</p>
+        ${a.designedHtml ? `<div class="ad-designed-preview">${sanitizeHtml(a.designedHtml)}</div>` : `<p>${escapeHtml(a.description || "")}</p>`}
         <p class="form-hint">Kontakt: ${escapeHtml(a.contact || "-")}</p>
       </article>`
       )
       .join("");
   } else {
     adsSection.style.display = "none";
+  }
+
+  const photoGrid = document.getElementById("home-photo-grid");
+  if (photoGrid) {
+    const photoBandSection = photoGrid.closest(".home-photo-band");
+    if (photoBandSection) photoBandSection.style.display = content.photoBandEnabled === false ? "none" : "";
+    const images = [
+      { src: "assets/images/avatar-team.svg", alt: "Redaktionsteam" },
+      { src: "assets/images/avatar-a1.svg", alt: "Autorin 1" },
+      { src: "assets/images/cover-1.svg", alt: "Cover Ausgabe 1" },
+      { src: "assets/images/cover-2.svg", alt: "Cover Ausgabe 2" },
+      { src: "assets/images/avatar-a2.svg", alt: "Autor 2" },
+      { src: "assets/images/cover-3.svg", alt: "Cover Ausgabe 3" },
+    ];
+    photoGrid.innerHTML = images
+      .map(
+        (img, idx) => `
+        <figure class="home-photo-band__item home-photo-band__item--${(idx % 3) + 1}">
+          <img src="${resolveAssetUrl(img.src)}" alt="${escapeHtml(img.alt)}" loading="lazy" />
+        </figure>`
+      )
+      .join("");
   }
 }
 

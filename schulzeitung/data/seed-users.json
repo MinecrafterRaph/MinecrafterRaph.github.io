@@ -26,5 +26,33 @@
     "password": "designer123",
     "displayName": "Designer Demo",
     "role": "designer"
+  },
+  {
+    "id": "u-redakteur",
+    "email": "redakteur@schule.example",
+    "password": "redaktion123",
+    "displayName": "Chefredaktion Demo",
+    "role": "redakteur"
+  },
+  {
+    "id": "u-vip",
+    "email": "vip@schule.example",
+    "password": "vip12345",
+    "displayName": "VIP Demo",
+    "role": "vip"
+  },
+  {
+    "id": "u-klassensprecher",
+    "email": "klassensprecher@schule.example",
+    "password": "sprecher123",
+    "displayName": "Klassensprecher Demo",
+    "role": "klassensprecher"
+  },
+  {
+    "id": "u-sponsor",
+    "email": "sponsor@schule.example",
+    "password": "sponsor123",
+    "displayName": "Sponsor Demo",
+    "role": "sponsor"
   }
 ]

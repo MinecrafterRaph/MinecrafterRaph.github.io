@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de" data-base="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="VIP-Bereich der Schulzeitung" />
+    <title>VIP-Bereich – Schulzeitung</title>
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <header class="site-header" id="site-header"></header>
+    <main id="main" class="section container vip-page">
+      <section class="vip-hero card" aria-labelledby="vip-title">
+        <p class="vip-eyebrow">Exklusiv</p>
+        <h1 class="ornament-heading" id="vip-title">VIP-Lounge</h1>
+        <p id="vip-notice"></p>
+        <p class="form-hint">Goldene Vorabinfos, exklusive Inhalte und Highlights nur für VIP-Mitglieder.</p>
+      </section>
+
+      <section class="vip-grid" aria-label="VIP-Interaktionen">
+        <article class="card vip-panel">
+          <h2>Interaktive Themen</h2>
+          <div class="vip-icon-grid" id="vip-icon-grid"></div>
+        </article>
+        <article class="card vip-panel">
+          <h2>VIP-Stimmungsbarometer</h2>
+          <p class="form-hint">Klicke auf ein Symbol, um deine Stimmung für die nächste Ausgabe zu markieren.</p>
+          <div class="vip-mood" id="vip-mood" role="radiogroup" aria-label="Stimmung wählen">
+            <button type="button" data-mood="begeistert">🔥 Begeistert</button>
+            <button type="button" data-mood="neugierig">✨ Neugierig</button>
+            <button type="button" data-mood="kritisch">🧠 Kritisch</button>
+          </div>
+          <p id="vip-mood-result" class="form-hint"></p>
+        </article>
+      </section>
+
+      <section class="card vip-panel">
+        <h2>VIP-Notizen</h2>
+        <p class="form-hint">Deine private Notiz bleibt lokal in diesem Browser gespeichert.</p>
+        <label for="vip-note-input">Notiz</label>
+        <textarea id="vip-note-input" rows="4" placeholder="z. B. Thema für exklusives Interview"></textarea>
+        <div style="margin-top: var(--space-sm); display: flex; gap: var(--space-sm); flex-wrap: wrap">
+          <button type="button" class="btn btn--primary btn--small" id="vip-note-save">Notiz speichern</button>
+          <button type="button" class="btn btn--ghost btn--small" id="vip-note-clear">Notiz löschen</button>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer" id="site-footer"></footer>
+    <script type="module" src="assets/js/pages/vip.js"></script>
+  </body>
+</html>

@@ -6,7 +6,11 @@ import { LS_KEYS, readJson, writeJson } from "./storage.js";
 export const ROLES = {
   READER: "reader",
   EDITOR: "editor",
+  REDAKTEUR: "redakteur",
   DESIGNER: "designer",
+  VIP: "vip",
+  KLASSSPRECHER: "klassensprecher",
+  SPONSOR: "sponsor",
   ADMIN: "admin",
 };
 
@@ -37,8 +41,24 @@ function defaultRoleDefinitions() {
       label: "Redaktion",
       permissions: [PERMISSIONS.COMMENTS_WRITE, PERMISSIONS.ADS_MANAGE, PERMISSIONS.PUZZLES_MANAGE],
     },
+    [ROLES.REDAKTEUR]: {
+      label: "Chef-Redakteur",
+      permissions: [PERMISSIONS.COMMENTS_WRITE, PERMISSIONS.WORKFLOW_MANAGE, PERMISSIONS.PUZZLES_MANAGE],
+    },
     [ROLES.DESIGNER]: {
       label: "Designer",
+      permissions: [],
+    },
+    [ROLES.VIP]: {
+      label: "VIP",
+      permissions: [PERMISSIONS.COMMENTS_WRITE],
+    },
+    [ROLES.KLASSSPRECHER]: {
+      label: "Klassensprecher",
+      permissions: [PERMISSIONS.COMMENTS_WRITE],
+    },
+    [ROLES.SPONSOR]: {
+      label: "Sponsor",
       permissions: [],
     },
     [ROLES.READER]: {
@@ -148,16 +168,28 @@ function enforceAdminUser(users) {
 }
 
 export function registerUser({ email, password, displayName }) {
+  const cleanEmail = String(email || "").trim().toLowerCase();
+  const cleanPassword = String(password || "");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+    return { ok: false, message: "Bitte eine gültige E-Mail-Adresse eingeben." };
+  }
+  if (cleanPassword.length < 8) {
+    return { ok: false, message: "Passwort muss mindestens 8 Zeichen lang sein." };
+  }
+  if (!/[A-Za-z]/.test(cleanPassword) || !/\d/.test(cleanPassword)) {
+    return { ok: false, message: "Passwort muss Buchstaben und Zahlen enthalten." };
+  }
+
   const users = getUsers();
-  if (users.some((u) => u.email.toLowerCase() === email.toLowerCase())) {
+  if (users.some((u) => u.email.toLowerCase() === cleanEmail)) {
     return { ok: false, message: "Diese E-Mail ist bereits registriert." };
   }
   const id = "u-" + Math.random().toString(36).slice(2, 10);
   users.push({
     id,
-    email: email.trim().toLowerCase(),
-    password,
-    displayName: displayName.trim() || email.split("@")[0],
+    email: cleanEmail,
+    password: cleanPassword,
+    displayName: String(displayName || "").trim() || cleanEmail.split("@")[0],
     role: availableRoles().includes(ROLES.READER) ? ROLES.READER : availableRoles()[0] || ROLES.READER,
   });
   saveUsers(users);
@@ -165,9 +197,11 @@ export function registerUser({ email, password, displayName }) {
 }
 
 export function loginWithPassword(email, password) {
+  const cleanEmail = String(email || "").trim().toLowerCase();
+  const cleanPassword = String(password || "");
   const users = getUsers();
   const user = users.find(
-    (u) => u.email.toLowerCase() === email.trim().toLowerCase() && u.password === password
+    (u) => u.email.toLowerCase() === cleanEmail && u.password === cleanPassword
   );
   if (!user) return { ok: false, message: "E-Mail oder Passwort ungültig." };
   setSession(user);
@@ -176,8 +210,12 @@ export function loginWithPassword(email, password) {
 
 export function redirectAfterLogin(role) {
   if (role === ROLES.ADMIN) return "admin.html";
+  if (role === ROLES.REDAKTEUR) return "redaktion-admin.html";
   if (role === ROLES.EDITOR) return "manageeditor.html";
   if (role === ROLES.DESIGNER) return "designer.html";
+  if (role === ROLES.VIP) return "vip.html";
+  if (role === ROLES.KLASSSPRECHER) return "klassensprecher.html";
+  if (role === ROLES.SPONSOR) return "sponsor.html";
   return "nutzer.html";
 }
 

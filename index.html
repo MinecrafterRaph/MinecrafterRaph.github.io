@@ -164,7 +164,17 @@
       }
 
       .icon {
-        font-size: 1.35rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2.1rem;
+        height: 2.1rem;
+        padding: 0 0.5rem;
+        border-radius: 999px;
+        border: 1px solid #2f8f60;
+        background: rgba(13, 38, 24, 0.55);
+        font-size: 0.78rem;
+        font-weight: 700;
         margin-bottom: 0.65rem;
       }
 
@@ -249,21 +259,21 @@
       <section class="grid" aria-label="Projektliste">
         <a class="card live" href="./schulzeitung/">
           <span class="card-banner" data-project-banner="schuelerzeitung"></span>
-          <div class="icon">📰</div>
+          <div class="icon">SZ</div>
           <h2 class="title">Schülerzeitung</h2>
           <p class="desc">Online-Zeitung mit Redaktion, Workflow, Ausgabeansicht und Adminbereich.</p>
         </a>
 
         <a class="card live" href="./capthas/">
           <span class="card-banner" data-project-banner="capthas"></span>
-          <div class="icon">🧩</div>
+          <div class="icon">CP</div>
           <h2 class="title">Capthas</h2>
           <p class="desc">Captcha-Projekt und Security-Experimente.</p>
         </a>
 
         <article class="card">
           <span class="card-banner" data-project-banner="project-void"></span>
-          <div class="icon">⚡</div>
+          <div class="icon">PV</div>
           <h2 class="title glitch" data-text="PROJECT//VOID">PROJECT//VOID</h2>
           <p class="desc">Unbekannter Build-Status. Bin gerade am Testen und Aufräumen.</p>
           <p class="soon-tag">(coming soon)</p>
@@ -271,7 +281,7 @@
 
         <article class="card">
           <span class="card-banner" data-project-banner="neural-draft"></span>
-          <div class="icon">🛰️</div>
+          <div class="icon">ND</div>
           <h2 class="title glitch" data-text="NEURAL_DRAFT">NEURAL_DRAFT</h2>
           <p class="desc">Konzeptphase läuft. Oberfläche und Struktur sind noch nicht final.</p>
           <p class="soon-tag">(coming soon)</p>
@@ -279,14 +289,14 @@
 
         <article class="card">
           <span class="card-banner" data-project-banner="system-patcher"></span>
-          <div class="icon">🔧</div>
+          <div class="icon">SP</div>
           <h2 class="title glitch" data-text="SYSTEM_PATCHER">SYSTEM_PATCHER</h2>
           <p class="desc">Interner Prototyp. Noch nicht bereit für den öffentlichen Start.</p>
           <p class="soon-tag">(coming soon)</p>
         </article>
       </section>
 
-      <p class="footer">© <span id="year"></span> MinecrafterRaph/p>
+      <p class="footer">© <span id="year"></span> MinecrafterRaph</p>
     </main>
 
     <script>
@@ -317,9 +327,12 @@
           const key = badge.getAttribute("data-project-banner");
           const cfg = settings[key];
           if (!cfg) return;
-          badge.textContent = cfg.text || "";
+          const text = String(cfg.text || "").slice(0, 28);
+          const angle = Number.isFinite(Number(cfg.angle)) ? Number(cfg.angle) : -20;
+          const safeAngle = Math.max(-40, Math.min(40, angle));
+          badge.textContent = text;
           badge.style.background = `linear-gradient(90deg, ${cfg.colorStart || "#ff6a3d"}, ${cfg.colorEnd || "#ff2f70"})`;
-          badge.style.transform = `rotate(${Number(cfg.angle) || -20}deg)`;
+          badge.style.transform = `rotate(${safeAngle}deg)`;
         });
       }
 

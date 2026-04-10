@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Projekt-Menü MinecrafterRaph" />
+    <title>Projekt-Menü</title>
+    <link rel="icon" href="./schulzeitung/assets/images/favicon.svg" type="image/svg+xml" />
+    <style>
+      :root {
+        --bg: #050a07;
+        --bg-soft: #0f1a14;
+        --text: #e8fff0;
+        --muted: #8fbe9f;
+        --line: #1e4a2f;
+        --accent: #32ff9d;
+        --accent-2: #0fd46d;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 85% 10%, rgba(88, 166, 255, 0.18), transparent 28%),
+          radial-gradient(circle at 12% 15%, rgba(159, 107, 255, 0.15), transparent 32%),
+          var(--bg);
+        min-height: 100vh;
+      }
+
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: clamp(1rem, 2vw, 2rem);
+      }
+
+      .hero {
+        margin-top: clamp(0.3rem, 2vw, 1.2rem);
+        margin-bottom: clamp(1.2rem, 3vw, 2.2rem);
+        display: grid;
+        grid-template-columns: minmax(190px, 290px) 1fr;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .logo-box {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        background: #000;
+        box-shadow: 0 0 0 1px rgba(50, 255, 157, 0.14), 0 12px 30px -22px rgba(50, 255, 157, 0.8);
+      }
+
+      .logo-box img {
+        width: 100%;
+        display: block;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+      }
+
+      .kicker {
+        margin: 0 0 0.35rem;
+        font-size: 0.76rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #79b98f;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.6rem, 3.7vw, 2.9rem);
+        line-height: 1.08;
+      }
+
+      .sub {
+        margin: 0.7rem 0 0;
+        color: var(--muted);
+        max-width: 60ch;
+      }
+
+      .hero-meta {
+        margin-top: 1rem;
+      }
+
+      .editor-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        border: 1px solid #2a8a5a;
+        border-radius: 999px;
+        padding: 0.42rem 0.85rem;
+        color: #b7ffd7;
+        text-decoration: none;
+        font-size: 0.85rem;
+      }
+
+      .editor-link:hover {
+        border-color: #32ff9d;
+        color: #d5ffe8;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 0.9rem;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(15, 52, 30, 0.5), rgba(6, 24, 14, 0.65));
+        border-radius: 14px;
+        padding: 1rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card-banner {
+        position: absolute;
+        top: 0.62rem;
+        right: -3.1rem;
+        width: 10.5rem;
+        text-align: center;
+        font-size: 0.67rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.38rem 0.6rem;
+        color: #ffffff;
+        background: linear-gradient(90deg, #ff6a3d, #ff2f70);
+        transform: rotate(-20deg);
+        box-shadow: 0 10px 26px -20px #000;
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, transparent 0%, rgba(50, 255, 157, 0.1) 100%);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 220ms ease;
+      }
+
+      .card:hover::after {
+        opacity: 1;
+      }
+
+      .live {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        transition: transform 220ms ease, border-color 220ms ease;
+      }
+
+      .live:hover {
+        transform: translateY(-2px);
+        border-color: #2a8a5a;
+      }
+
+      .icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2.1rem;
+        height: 2.1rem;
+        padding: 0 0.5rem;
+        border-radius: 999px;
+        border: 1px solid #2f8f60;
+        background: rgba(13, 38, 24, 0.55);
+        font-size: 0.78rem;
+        font-weight: 700;
+        margin-bottom: 0.65rem;
+      }
+
+      .title {
+        margin: 0;
+        font-size: 1.02rem;
+        font-weight: 700;
+      }
+
+      .desc {
+        margin: 0.45rem 0 0;
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      .soon-tag {
+        font-size: 0.62rem;
+        color: #b5c0e0;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-top: 0.45rem;
+      }
+
+      .glitch {
+        position: relative;
+        display: inline-block;
+      }
+
+      .glitch::before,
+      .glitch::after {
+        content: attr(data-text);
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0.85;
+        pointer-events: none;
+      }
+
+      .glitch::before {
+        color: #77ffd0;
+        transform: translate(1px, 0);
+        clip-path: polygon(0 0, 100% 0, 100% 48%, 0 52%);
+      }
+
+      .glitch::after {
+        color: #19de83;
+        transform: translate(-1px, 0);
+        clip-path: polygon(0 52%, 100% 48%, 100% 100%, 0 100%);
+      }
+
+      .footer {
+        margin-top: 1.6rem;
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      @media (max-width: 820px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="hero">
+        <div class="logo-box">
+          <img src="./schulzeitung/assets/images/favicon.svg" alt="Schülerzeitung Logo" />
+        </div>
+        <div>
+          <p class="kicker">Portfolio Startseite</p>
+          <h1>Meine Projekte</h1>
+          <p class="sub">
+            Wähle ein Projekt. Weitere sind schon sichtbar und kommen bald dazu.
+          </p>
+          <div class="hero-meta">
+            <a class="editor-link" href="./menu-editor.html">Banner im Menü-Editor bearbeiten</a>
+          </div>
+        </div>
+      </header>
+
+      <section class="grid" aria-label="Projektliste">
+        <a class="card live" href="./schulzeitung/">
+          <span class="card-banner" data-project-banner="schuelerzeitung"></span>
+          <div class="icon">SZ</div>
+          <h2 class="title">Schülerzeitung</h2>
+          <p class="desc">Online-Zeitung mit Redaktion, Workflow, Ausgabeansicht und Adminbereich.</p>
+        </a>
+
+        <a class="card live" href="./capthas/">
+          <span class="card-banner" data-project-banner="capthas"></span>
+          <div class="icon">CP</div>
+          <h2 class="title">Capthas</h2>
+          <p class="desc">Captcha-Projekt und Security-Experimente.</p>
+        </a>
+
+        <article class="card">
+          <span class="card-banner" data-project-banner="project-void"></span>
+          <div class="icon">PV</div>
+          <h2 class="title glitch" data-text="PROJECT//VOID">PROJECT//VOID</h2>
+          <p class="desc">Unbekannter Build-Status. Bin gerade am Testen und Aufräumen.</p>
+          <p class="soon-tag">(coming soon)</p>
+        </article>
+
+        <article class="card">
+          <span class="card-banner" data-project-banner="neural-draft"></span>
+          <div class="icon">ND</div>
+          <h2 class="title glitch" data-text="NEURAL_DRAFT">NEURAL_DRAFT</h2>
+          <p class="desc">Konzeptphase läuft. Oberfläche und Struktur sind noch nicht final.</p>
+          <p class="soon-tag">(coming soon)</p>
+        </article>
+
+        <article class="card">
+          <span class="card-banner" data-project-banner="system-patcher"></span>
+          <div class="icon">SP</div>
+          <h2 class="title glitch" data-text="SYSTEM_PATCHER">SYSTEM_PATCHER</h2>
+          <p class="desc">Interner Prototyp. Noch nicht bereit für den öffentlichen Start.</p>
+          <p class="soon-tag">(coming soon)</p>
+        </article>
+      </section>
+
+      <p class="footer">© <span id="year"></span> MinecrafterRaph</p>
+    </main>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      const bannerStorageKey = "menuProjectBannersV1";
+      const defaultBanners = {
+        schuelerzeitung: { text: "Aktuell", colorStart: "#ff6a3d", colorEnd: "#ff2f70", angle: -20 },
+        capthas: { text: "Neu", colorStart: "#2f9bff", colorEnd: "#675cff", angle: -20 },
+        "project-void": { text: "Beta", colorStart: "#5f6f87", colorEnd: "#29384f", angle: -20 },
+        "neural-draft": { text: "Entwurf", colorStart: "#ac42ff", colorEnd: "#6d27b8", angle: -20 },
+        "system-patcher": { text: "Intern", colorStart: "#0aa571", colorEnd: "#0b5b50", angle: -20 },
+      };
+
+      function loadBannerSettings() {
+        try {
+          const raw = localStorage.getItem(bannerStorageKey);
+          const parsed = raw ? JSON.parse(raw) : {};
+          return { ...defaultBanners, ...parsed };
+        } catch (error) {
+          return defaultBanners;
+        }
+      }
+
+      function applyBanners() {
+        const settings = loadBannerSettings();
+        document.querySelectorAll("[data-project-banner]").forEach((badge) => {
+          const key = badge.getAttribute("data-project-banner");
+          const cfg = settings[key];
+          if (!cfg) return;
+          const text = String(cfg.text || "").slice(0, 28);
+          const angle = Number.isFinite(Number(cfg.angle)) ? Number(cfg.angle) : -20;
+          const safeAngle = Math.max(-40, Math.min(40, angle));
+          badge.textContent = text;
+          badge.style.background = `linear-gradient(90deg, ${cfg.colorStart || "#ff6a3d"}, ${cfg.colorEnd || "#ff2f70"})`;
+          badge.style.transform = `rotate(${safeAngle}deg)`;
+        });
+      }
+
+      applyBanners();
+    </script>
+  </body>
+</html>

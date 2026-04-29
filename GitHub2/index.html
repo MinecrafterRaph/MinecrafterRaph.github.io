@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WhatsApp Project Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-logo">W</div>
+          <div>
+            <h1>WhatsApp Projekt</h1>
+            <p>Projekt-Chats</p>
+          </div>
+        </div>
+        <div class="side-section">
+          <div class="side-head">
+            <h4>Chats</h4>
+            <button id="newProjectBtn" class="btn ghost tiny">+ Neu</button>
+          </div>
+          <div id="projectList" class="project-list"></div>
+        </div>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <h2 id="topbarTitle">Kein Projekt ausgewählt</h2>
+            <p id="topbarSubtitle">Melde dich an, um loszulegen</p>
+          </div>
+          <div class="topbar-actions">
+            <button id="chatTabBtn" class="btn ghost">Chat</button>
+            <button id="announcementsTabBtn" class="btn ghost">Ankuendigungen</button>
+            <button id="adminTabBtn" class="btn ghost hidden">Admin</button>
+            <button id="logoutBtn" class="btn ghost hidden">Logout</button>
+          </div>
+        </header>
+        <section id="authView" class="panel"></section>
+        <section id="chatView" class="panel hidden">
+          <div class="split">
+            <div class="card">
+              <h3>Namensliste (nur einmal pro Geraet)</h3>
+              <p class="muted">Jeder darf seinen Namen nur einmal pro Projekt und Geraet eintragen.</p>
+              <form id="nameForm" class="inline-form">
+                <input id="nameInput" type="text" maxlength="60" placeholder="Dein Name" required />
+                <button class="btn" type="submit">Eintragen</button>
+              </form>
+              <ul id="nameList" class="name-list"></ul>
+            </div>
+            <div class="card">
+              <h3>Projekt-Chat</h3>
+              <p class="muted">Projekte sind die Gruppenchats.</p>
+              <form id="messageForm" class="inline-form">
+                <input id="messageInput" type="text" maxlength="500" placeholder="Nachricht schreiben..." required />
+                <button class="btn" type="submit">Senden</button>
+              </form>
+              <div id="messageList" class="message-list chat-thread"></div>
+            </div>
+          </div>
+        </section>
+        <section id="announcementsView" class="panel hidden">
+          <div class="card">
+            <h3>Ankuendigungen</h3>
+            <p class="muted">Neuigkeiten. Nur Admins koennen erstellen und bearbeiten.</p>
+            <div id="announcementComposer" class="hidden">
+              <form id="announcementForm" class="post-form">
+                <input id="announcementTitle" type="text" maxlength="120" placeholder="Titel" required />
+                <textarea id="announcementBody" maxlength="1500" placeholder="Ankuendigung..." required></textarea>
+                <button class="btn" type="submit">Speichern</button>
+              </form>
+            </div>
+            <div id="announcementList" class="post-list"></div>
+          </div>
+        </section>
+        <section id="adminView" class="panel hidden">
+          <div class="card">
+            <h3>Admin-Bereich</h3>
+            <p class="muted">Admin-Login per E-Mail/Passwort + Admin-Code.</p>
+            <form id="adminCodeForm" class="stack-form">
+              <input id="adminEmailInput" type="email" placeholder="Admin E-Mail" required />
+              <input id="adminPasswordInput" type="password" placeholder="Admin Passwort" required />
+              <input id="adminCodeInput" type="password" placeholder="Admin-Code" required />
+              <button class="btn" type="submit">Admin Login</button>
+            </form>
+            <div id="adminTools" class="hidden">
+              <div class="admin-toolbar">
+                <select id="adminTableSelect">
+                  <option value="projects">Projekte</option>
+                  <option value="project_members">Projekt-Mitglieder</option>
+                  <option value="project_names">Namenseintraege</option>
+                  <option value="messages">Nachrichten</option>
+                  <option value="announcements">Ankuendigungen</option>
+                  <option value="app_admins">App-Admins</option>
+                </select>
+                <input id="adminSearchInput" type="text" placeholder="Suche..." />
+                <button id="refreshAdminBtn" class="btn">Neu laden</button>
+                <button id="newAdminRowBtn" class="btn ghost">Neuer Datensatz</button>
+                <button id="duplicateAdminRowBtn" class="btn ghost" type="button">Duplizieren</button>
+                <button id="exportAdminBtn" class="btn ghost" type="button">Export JSON</button>
+                <button id="makeMeAdminBtn" class="btn ghost" type="button">Mich als Admin setzen</button>
+              </div>
+              <div class="admin-toolbar">
+                <input id="bulkJsonInput" type="text" placeholder='Bulk Insert JSON Array, z.B. [{"name":"X"}]' />
+                <button id="bulkInsertBtn" class="btn ghost" type="button">Bulk Insert</button>
+              </div>
+              <p class="muted">Zeile anklicken zum Bearbeiten.</p>
+              <div class="admin-layout">
+                <div id="adminData" class="admin-data"></div>
+                <form id="adminEditorForm" class="card admin-editor">
+                  <h4 id="adminEditorTitle">Editor</h4>
+                  <div id="adminEditorFields" class="stack-form"></div>
+                  <input id="deleteConfirmInput" type="text" placeholder='Zum Loeschen "DELETE" eingeben' />
+                  <div class="post-actions">
+                    <button id="saveAdminRowBtn" class="btn" type="submit">Speichern</button>
+                    <button id="deleteAdminRowBtn" class="btn ghost" type="button">Loeschen</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div id="modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Projekt beitreten</h3>
+        <p>Trage einen Projektschluessel ein oder erstelle ein neues Projekt.</p>
+        <form id="joinProjectForm" class="stack-form">
+          <input id="joinProjectName" type="text" maxlength="80" placeholder="Projektname" required />
+          <input id="joinProjectCode" type="text" maxlength="30" placeholder="Projekt-Code (optional)" />
+          <button class="btn" type="submit">Speichern</button>
+        </form>
+        <button id="closeModalBtn" class="btn ghost">Schliessen</button>
+      </div>
+    </div>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

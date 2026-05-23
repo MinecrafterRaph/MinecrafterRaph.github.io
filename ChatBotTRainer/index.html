@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChatBot Trainer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="toast-root" class="toast-root" aria-live="polite"></div>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="#hero">
+        <span class="brand__mark">CB</span>
+        <span class="brand__text">ChatBot Trainer</span>
+      </a>
+      <nav class="topnav" aria-label="Hauptnavigation">
+        <button type="button" class="topnav__link is-active" data-section="chat-section">Chat</button>
+        <button type="button" class="topnav__link" data-section="trainer-section">Trainer</button>
+        <button type="button" class="topnav__link" data-section="grammar-section">Grammatik</button>
+        <button type="button" class="topnav__link" data-section="data-section">Daten</button>
+      </nav>
+    </header>
+
+    <section class="hero" id="hero">
+      <div class="hero__content">
+        <p class="eyebrow">Lokal im Browser</p>
+        <h1>Eigenen Chatbot trainieren.</h1>
+        <p>Fragen/Antworten anlegen, chatten, Daten exportieren. Mehrere Bots als Tabs.</p>
+        <div class="hero__actions">
+          <button type="button" id="open-chat" class="btn btn--primary">Zum Chat</button>
+          <button type="button" id="open-trainer" class="btn btn--ghost">Zum Trainer</button>
+        </div>
+      </div>
+      <div class="hero__stats">
+        <div class="stat-card"><span id="stat-workspaces">1</span><small>Bots</small></div>
+        <div class="stat-card"><span id="stat-training">0</span><small>Beispiele</small></div>
+        <div class="stat-card"><span id="stat-messages">0</span><small>Nachrichten</small></div>
+      </div>
+    </section>
+
+    <main class="app-main">
+      <!-- CHAT -->
+      <section class="panel app-section is-visible" id="chat-section">
+        <div class="panel__header">
+          <div>
+            <h2>Chat</h2>
+            <p>Ein Bot-Tab = eigener Verlauf + Training.</p>
+          </div>
+          <div class="panel__actions">
+            <button type="button" id="new-workspace" class="btn btn--secondary">+ Neuer Bot</button>
+            <button type="button" id="reset-history" class="btn btn--ghost">Verlauf leeren</button>
+          </div>
+        </div>
+
+        <div class="workspace-tabs" id="workspace-tabs" role="tablist" aria-label="Chat-Bots"></div>
+
+        <div class="chat-toolbar">
+          <button type="button" id="chat-help" class="btn btn--ghost btn--small">Hilfe</button>
+            <button type="button" id="export-chat-only" class="btn btn--ghost btn--small">Verlauf</button>
+            <button type="button" id="export-chat-txt" class="btn btn--ghost btn--small">Als TXT</button>
+            <button type="button" id="rename-workspace" class="btn btn--ghost btn--small" title="Bot umbenennen">Umbenennen</button>
+          <span class="chat-toolbar__hint" id="context-hint">—</span>
+        </div>
+
+        <div class="quick-commands" id="quick-commands" aria-label="Schnellbefehle">
+          <button type="button" class="quick-cmd" data-cmd="/thema">Thema</button>
+          <button type="button" class="quick-cmd" data-cmd="/beispiele">Beispiele</button>
+          <button type="button" class="quick-cmd" data-cmd="/suche ">Suchen</button>
+          <button type="button" class="quick-cmd" data-cmd="/zufall">Zufall</button>
+        </div>
+
+        <div class="chat-window" id="chat-window" aria-live="polite"></div>
+        <form id="chat-form" class="input-row">
+          <button id="open-prompt" type="button" class="btn btn--prompt" title="Zufälliges Wort">+</button>
+          <input id="chat-input" type="text" placeholder="Frage oder /hilfe, /train, /suche …" autocomplete="off" />
+          <button type="submit" class="btn btn--primary">Senden</button>
+        </form>
+      </section>
+
+      <!-- TRAINER -->
+      <section class="panel app-section" id="trainer-section">
+        <div class="panel__header">
+          <div>
+            <h2>Trainer</h2>
+            <p>Frage-Antwort-Paare für den aktiven Bot-Tab.</p>
+          </div>
+          <div class="panel__actions">
+            <button type="button" id="import-training-json" class="btn btn--ghost btn--small">Training import</button>
+            <button type="button" id="clear-data" class="btn btn--ghost">Training leeren</button>
+          </div>
+        </div>
+
+        <input type="search" id="training-search" class="training-search" placeholder="Training durchsuchen…" />
+
+        <form id="training-form" class="training-form">
+          <p class="note"><strong>|</strong> trennt Formulierungen · <strong>#tag</strong> z. B. #mathe · Antwort mit <strong>{name}</strong> nach /set name Max</p>
+          <div class="form-grid">
+            <label>
+              Frage
+              <input id="train-input" type="text" placeholder="Was soll der Bot verstehen?" autocomplete="off" />
+            </label>
+            <label>
+              Antwort
+              <input id="train-answer" type="text" placeholder="Wie soll der Bot antworten?" autocomplete="off" />
+            </label>
+          </div>
+          <button type="submit" class="btn btn--secondary">Beispiel speichern</button>
+        </form>
+
+        <details class="synonyms-panel">
+          <summary>Eigene Synonyme (optional)</summary>
+          <p class="hint">Format pro Zeile: <code>mathe = mathematik, rechnen</code></p>
+          <textarea id="synonyms-input" rows="4" placeholder="mathe = mathematik, rechnen&#10;code = programmieren, python"></textarea>
+          <button type="button" id="save-synonyms" class="btn btn--secondary btn--small">Synonyme speichern</button>
+        </details>
+
+        <div class="training-list" id="training-list"></div>
+      </section>
+
+      <!-- GRAMMATIK -->
+      <section class="panel app-section" id="grammar-section">
+        <div class="panel__header">
+          <div>
+            <h2>Grammatik</h2>
+            <p>Einfach per Formular – oder im Expertenmodus mit Datei-Syntax.</p>
+          </div>
+        </div>
+
+        <div class="mode-toggle" role="tablist" aria-label="Grammatik-Modus">
+          <button type="button" class="mode-toggle__btn is-active" data-grammar-mode="simple">Einfach</button>
+          <button type="button" class="mode-toggle__btn" data-grammar-mode="expert">Experte</button>
+        </div>
+
+        <div id="grammar-simple" class="grammar-block">
+          <form id="grammar-simple-form" class="grammar-simple-form">
+            <label>
+              Was möchtest du tun?
+              <select id="grammar-action">
+                <option value="add-category">Wörter zu Kategorie hinzufügen</option>
+                <option value="replace-category">Kategorie ersetzen</option>
+                <option value="add-template">Satz-Vorlage hinzufügen</option>
+                <option value="add-correction">Rechtschreib-Korrektur hinzufügen</option>
+              </select>
+            </label>
+
+            <div class="grammar-fields" id="grammar-fields-category">
+              <label>
+                Kategorie-Name
+                <input id="grammar-cat-name" type="text" placeholder="z. B. object, verb, adjektiv" />
+              </label>
+              <label>
+                Wörter (mit Komma getrennt)
+                <textarea id="grammar-cat-words" rows="3" placeholder="Mathe, Code, Musik, Sprache"></textarea>
+              </label>
+            </div>
+
+            <div class="grammar-fields is-hidden" id="grammar-fields-template">
+              <label>
+                Satz-Vorlage
+                <input id="grammar-template-text" type="text" placeholder="Ich lerne gerne {object}." />
+              </label>
+              <p class="hint">Platzhalter in geschweiften Klammern: {verb}, {object}, {adjective} …</p>
+            </div>
+
+            <div class="grammar-fields is-hidden" id="grammar-fields-correction">
+              <label>
+                Falsch
+                <input id="grammar-wrong" type="text" placeholder="ich gehe" />
+              </label>
+              <label>
+                Richtig
+                <input id="grammar-right" type="text" placeholder="Ich gehe" />
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn--secondary">Regel speichern</button>
+              <button type="button" id="grammar-upload-txt" class="btn btn--ghost">grammar.txt hochladen</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="grammar-expert" class="grammar-block is-hidden">
+          <form id="grammar-form" class="grammar-form">
+            <label>
+              Regel-Typ
+              <select id="grammar-type">
+                <option value="category">Kategorie (z. B. object:Mathe|Code)</option>
+                <option value="template">Satz-Vorlage</option>
+                <option value="correct">Korrektur</option>
+              </select>
+            </label>
+            <label>
+              Regel (Experten-Syntax)
+              <input id="grammar-rule" type="text" placeholder="object:Mathe|Code|Musik" autocomplete="off" />
+            </label>
+            <div class="form-actions">
+              <button type="submit" class="btn btn--secondary">Regel speichern</button>
+              <label class="checkbox-label">
+                <input type="checkbox" id="grammar-expert-replace" />
+                Bestehende Regeln dieser Art ersetzen
+              </label>
+            </div>
+          </form>
+        </div>
+
+        <div class="grammar-list" id="grammar-list"></div>
+
+        <div class="file-loaders">
+          <button id="load-words" type="button" class="btn btn--ghost">words.txt laden</button>
+          <input id="file-input" type="file" hidden />
+        </div>
+      </section>
+
+      <!-- DATEN -->
+      <section class="panel app-section" id="data-section">
+        <div class="panel__header">
+          <div>
+            <h2>Daten & Backup</h2>
+            <p>Alles herunterladen, hochladen – mit Sicherheitsabfrage vor dem Ersetzen.</p>
+          </div>
+        </div>
+
+        <div class="data-grid">
+          <article class="data-card">
+            <h3>Alles sichern</h3>
+            <p>Komplettes Backup: alle Bots, Verläufe, Training und Grammatik.</p>
+            <button type="button" id="export-all" class="btn btn--primary">Komplett-Backup (.json)</button>
+          </article>
+
+          <article class="data-card">
+            <h3>Einzeln laden</h3>
+            <p>Nur den aktuellen Bot-Tab exportieren.</p>
+            <div class="btn-row">
+              <button type="button" id="export-history" class="btn btn--secondary">Verlauf</button>
+              <button type="button" id="export-training" class="btn btn--secondary">Training</button>
+              <button type="button" id="export-grammar" class="btn btn--secondary">Grammatik</button>
+              <button type="button" id="export-words" class="btn btn--secondary">Wörter</button>
+            </div>
+          </article>
+
+          <article class="data-card data-card--wide">
+            <h3>Hochladen & wiederherstellen</h3>
+            <p>JSON-Backup oder einzelne Dateien. Vor dem Überschreiben fragt dich ein Dialog.</p>
+            <div class="btn-row">
+              <button type="button" id="import-all" class="btn btn--primary">Backup hochladen</button>
+              <button type="button" id="import-partial" class="btn btn--ghost">Einzeldatei hochladen</button>
+            </div>
+            <input id="import-input" type="file" accept=".json,.txt" hidden />
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Import-Dialog -->
+  <dialog id="import-dialog" class="modal">
+    <form method="dialog" class="modal__content">
+      <h3 id="import-dialog-title">Daten importieren</h3>
+      <p id="import-dialog-text" class="modal__text"></p>
+      <div class="modal__options" id="import-dialog-options">
+        <label class="radio-card">
+          <input type="radio" name="import-mode" value="replace" checked />
+          <span>
+            <strong>Ersetzen</strong>
+            <small>Aktuellen Bot-Tab überschreiben (empfohlen: vorher Backup laden)</small>
+          </span>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="import-mode" value="replace-backup" />
+          <span>
+            <strong>Ersetzen + aktuellen Verlauf sichern</strong>
+            <small>Überschreibt den Tab, lädt aber zuerst den alten Verlauf herunter</small>
+          </span>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="import-mode" value="new-tab" />
+          <span>
+            <strong>Neuen Bot-Tab anlegen</strong>
+            <small>Importierte Daten in einem neuen Chat-Bot – nichts wird gelöscht</small>
+          </span>
+        </label>
+        <label class="radio-card" id="import-merge-option">
+          <input type="radio" name="import-mode" value="merge" />
+          <span>
+            <strong>Hinzufügen (zusammenführen)</strong>
+            <small>Training/Grammatik an bestehende Daten anhängen</small>
+          </span>
+        </label>
+      </div>
+      <div class="modal__actions">
+        <button type="button" id="import-cancel" class="btn btn--ghost">Abbrechen</button>
+        <button type="submit" id="import-confirm" class="btn btn--primary">Import starten</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="bot-brain.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

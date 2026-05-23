@@ -1,0 +1,17 @@
+# Grammatik für Fallback-Sätze (kurz, ohne Floskeln)
+
+subject:Ich|Du|Wir
+verb:kenne|lerne|weiß|mag|kann|sage|finde
+object:Mathe|Grammatik|Code|Sprache|Musik|Fragen|Antworten|Logik
+adjective:gut|einfach|klar|schwer|interessant
+connector:und|aber|oder
+
+template:{subject} {verb} {object}.
+template:Ich finde {object} {adjective}.
+template:{object} ist {adjective}.
+template:Ich {verb} {object} {connector} {verb} mehr.
+
+correct:ich gehe -> Ich gehe
+correct:du ist -> du bist
+correct:das ist gut -> Das ist gut
+correct:ich habe nicht -> Ich habe nicht

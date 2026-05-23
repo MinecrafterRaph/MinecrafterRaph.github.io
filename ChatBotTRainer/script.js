@@ -260,6 +260,24 @@ function getConversationContext() {
   };
 }
 
+function isSlashCommand(text) {
+  return text.trim().startsWith('/');
+}
+
+function getLastTrainableQuestion() {
+  const session = ensureWorkspaceSession(getActiveWorkspace());
+  if (session.lastUserQuestion && !isSlashCommand(session.lastUserQuestion)) {
+    return session.lastUserQuestion;
+  }
+  const history = getHistoryData();
+  for (let i = history.length - 1; i >= 0; i -= 1) {
+    const userMsg = history[i].user?.trim();
+    if (userMsg && !isSlashCommand(userMsg)) return userMsg;
+  }
+  const ctx = getConversationContext();
+  return ctx.lastUser && !isSlashCommand(ctx.lastUser) ? ctx.lastUser : '';
+}
+
 // --- Grammar ---
 
 let grammarRules = { categories: {}, templates: [], corrections: [] };
@@ -546,7 +564,6 @@ function handleSlashCommand(message) {
 
   if (cmdLower === '/train') {
     const ws = getActiveWorkspace();
-    const session = ensureWorkspaceSession(ws);
     if (rest.includes('::')) {
       const [q, a] = rest.split('::').map(s => s.trim());
       if (!q || !a) return 'Format: /train Frage :: Antwort';
@@ -554,16 +571,18 @@ function handleSlashCommand(message) {
       saveTrainingData();
       renderTrainingList();
       updateStats();
-      return `OK: ${q}`;
+      showToast('Training gespeichert');
+      return `Gespeichert.\nFrage: ${q}\nAntwort: ${a}`;
     }
-    if (!rest) return '/train Antwort';
-    const question = session.lastUserQuestion || getConversationContext().lastUser;
-    if (!question) return 'Erst Frage stellen.';
+    if (!rest) return 'Nach einer Frage: /train Deine Antwort';
+    const question = getLastTrainableQuestion();
+    if (!question) return 'Zuerst eine normale Frage stellen (ohne /).';
     ws.training.unshift(normalizeTrainingEntry({ question, answer: rest }));
     saveTrainingData();
     renderTrainingList();
     updateStats();
-    return `OK: ${question}`;
+    showToast('Training gespeichert');
+    return `Gespeichert.\nFrage: ${question}\nAntwort: ${rest}`;
   }
 
   return `Unbekannt: ${cmd}. /hilfe`;
@@ -576,10 +595,13 @@ function findBestMatch(message, originalMessage = message) {
 
 function generateBotReply(message) {
   const session = ensureWorkspaceSession(getActiveWorkspace());
-  session.lastUserQuestion = message;
 
   const slashReply = handleSlashCommand(message);
   if (slashReply) return slashReply;
+
+  if (!isSlashCommand(message)) {
+    session.lastUserQuestion = message;
+  }
 
   const n = normalize(message);
   if (/wer bist du|was bist du|was kannst du/.test(n)) {
@@ -605,7 +627,7 @@ function generateBotReply(message) {
     synonyms: getSynonymsForBot(),
     onTrainSuggest: q => {
       trainInput.value = q;
-      setTimeout(() => trainAnswer.focus(), 50);
+      showToast('Unbekannt — /train Antwort oder Trainer nutzen');
     },
   });
 
@@ -888,7 +910,9 @@ function appendHistory(userMessage, botMessage) {
   const w = getActiveWorkspace();
   const time = formatMsgTime();
   w.history.push({ user: userMessage, bot: botMessage, time });
-  ensureWorkspaceSession(w).lastUserQuestion = userMessage;
+  if (!isSlashCommand(userMessage)) {
+    ensureWorkspaceSession(w).lastUserQuestion = userMessage;
+  }
   saveHistory();
   renderHistory();
   updateStats();
@@ -899,8 +923,25 @@ function showSection(sectionId) {
   document.querySelectorAll('.app-section').forEach(s => s.classList.remove('is-visible'));
   document.getElementById(sectionId)?.classList.add('is-visible');
   document.querySelectorAll('.topnav__link').forEach(link => {
-    link.classList.toggle('is-active', link.dataset.section === sectionId);
+    const match = link.dataset.section === sectionId;
+    link.classList.toggle('is-active', match);
   });
+}
+
+function focusFieldForSection(sectionId) {
+  setTimeout(() => {
+    if (sectionId === 'chat-section' && chatInput) {
+      chatInput.focus({ preventScroll: true });
+    } else if (sectionId === 'trainer-section' && trainInput) {
+      trainInput.focus({ preventScroll: true });
+    }
+  }, 350);
+}
+
+function goToApp(sectionId = 'chat-section') {
+  showSection(sectionId);
+  document.getElementById('app')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  focusFieldForSection(sectionId);
 }
 
 // --- Export / Import ---
@@ -1096,8 +1137,8 @@ loadBaseGrammarFromFile().then(() => {
   refreshWorkspaceViews();
 });
 
-document.querySelectorAll('.topnav__link').forEach(link => {
-  link.addEventListener('click', () => showSection(link.dataset.section));
+document.querySelectorAll('.topnav__link[data-section]').forEach(link => {
+  link.addEventListener('click', () => goToApp(link.dataset.section));
 });
 
 document.querySelectorAll('[data-grammar-mode]').forEach(btn => {
@@ -1149,12 +1190,31 @@ chatForm.addEventListener('submit', event => {
   const message = chatInput.value.trim();
   if (!message) return;
   chatInput.value = '';
-  chatInput.disabled = true;
   const reply = generateBotReply(message);
-  chatInput.disabled = false;
   appendHistory(message, reply);
-  chatInput.focus();
+  chatInput.focus({ preventScroll: true });
 });
+
+if (chatInput) {
+  chatInput.addEventListener('mousedown', e => e.stopPropagation());
+  chatInput.addEventListener('click', () => chatInput.focus());
+}
+
+document.querySelectorAll('#train-input, #train-answer, #training-search, #synonyms-input').forEach(el => {
+  if (!el) return;
+  el.addEventListener('mousedown', e => e.stopPropagation());
+  el.addEventListener('click', () => el.focus());
+});
+
+const chatSection = document.getElementById('chat-section');
+if (chatSection) {
+  chatSection.addEventListener('click', e => {
+    if (e.target.closest('button, a, .workspace-tab, .quick-cmd')) return;
+    if (e.target.closest('input, textarea, select')) return;
+    if (e.target.closest('.message__bubble')) return;
+    chatInput?.focus({ preventScroll: true });
+  });
+}
 
 promptButton.addEventListener('click', () => {
   chatInput.value = getRandomWord();
@@ -1256,8 +1316,15 @@ newWorkspaceButton.addEventListener('click', () => {
   refreshWorkspaceViews();
 });
 
-openTrainerButton.addEventListener('click', () => showSection('trainer-section'));
-openChatButton.addEventListener('click', () => showSection('chat-section'));
+openTrainerButton?.addEventListener('click', () => goToApp('trainer-section'));
+openChatButton?.addEventListener('click', () => goToApp('chat-section'));
+
+const openChatNav = document.getElementById('open-chat-nav');
+openChatNav?.addEventListener('click', () => goToApp('chat-section'));
+
+document.querySelectorAll('[data-goto]').forEach(btn => {
+  btn.addEventListener('click', () => goToApp(btn.dataset.goto));
+});
 
 exportAllButton.addEventListener('click', exportAll);
 exportHistoryButton.addEventListener('click', () => exportWorkspacePart('history'));
@@ -1322,3 +1389,5 @@ if (quickCommandsEl) {
 }
 
 updateGrammarFieldsVisibility();
+
+focusFieldForSection('chat-section');

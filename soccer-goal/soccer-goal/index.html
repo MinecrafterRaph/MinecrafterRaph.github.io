@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soccer Goal – Brettspiel</title>
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <link rel="stylesheet" href="./assets/css/thumbnail.css" />
+  </head>
+  <body>
+    <div class="thumb-page">
+      <div class="thumb-window">
+        <div class="title-bar">
+          <span>Soccer Goal</span>
+          <span>v1.0</span>
+        </div>
+
+        <div
+          class="thumb-stage"
+          id="thumbStage"
+          tabindex="0"
+          role="button"
+          aria-label="Spiel starten – Soccer Goal"
+        >
+          <div class="thumb-ball-orbit" aria-hidden="true"></div>
+          <div class="thumb-sparkles" aria-hidden="true">
+            <span class="sparkle"></span>
+            <span class="sparkle"></span>
+            <span class="sparkle"></span>
+            <span class="sparkle"></span>
+            <span class="sparkle"></span>
+            <span class="sparkle"></span>
+          </div>
+          <div class="thumb-goal-flash" aria-hidden="true"></div>
+          <div class="thumb-player-bounce" aria-hidden="true"></div>
+
+          <div class="thumb-image-wrap">
+            <img src="../thumbnail.png" alt="Soccer Goal – SUPER GOAL!" width="608" height="342" />
+          </div>
+
+          <div class="thumb-play-hint" id="playHint">▶ Klicken zum Spielen</div>
+        </div>
+
+        <div class="thumb-dice-row" aria-hidden="true">
+          <div class="thumb-mini-dice"></div>
+          <div class="thumb-mini-dice"></div>
+          <div class="thumb-mini-dice"></div>
+          <div class="thumb-mini-dice"></div>
+          <div class="thumb-mini-dice"></div>
+          <div class="thumb-mini-dice"></div>
+          <div class="thumb-mini-dice"></div>
+          <div class="thumb-mini-dice"></div>
+        </div>
+
+        <div class="thumb-info">
+          <h1>Soccer Goal</h1>
+          <p>
+            Das Fußball-Brettspiel mit Holzwürfeln – Taktik am Teppich-Spielfeld.
+          </p>
+          <div class="thumb-links">
+            <a class="btn" href="./spiel.html">Spiel starten</a>
+          </div>
+        </div>
+
+        <div class="status-bar">
+          <span id="thumbStatus">Bereit.</span>
+          <span>2 Spieler · 8 Würfel · 5×11 Felder</span>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./assets/js/thumbnail.js"></script>
+  </body>
+</html>

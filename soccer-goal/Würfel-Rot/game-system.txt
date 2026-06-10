@@ -1,0 +1,320 @@
+Inhalt
+8 Holzwürfel
+• 3 Richtungswürfel in verschiedenen Rottönen mit Pfeilen, die entweder eine Zahl oder 
+die Symbole „?“ bzw. „X“ zeigen, die zum Angreifen genutzt werden
+■ 1 oranger Würfel für die Ballkontrolle (A): nur kleine Schritte und ein geringes 
+Risiko, den Ball zu verlieren
+■ 1 roter Würfel für die Ballabgabe (B): größere Schritte und mittleres Risiko
+■ 1 violetter Würfel für den Pass (C): die beste Taktik, aber ein höheres Risiko
+• 1  roter Würfel für den Schuss (D)
+• 1  dunkelblauer Würfel für die Verteidigung (E)
+• 1  hellblauer Würfel für den Torwart (F)
+• 1  schwarzer Würfel für den Elfmeter (G)
+• 1  weißer „Meisterwürfel“
+weißer „Meisterwürfel“ für den Meisterschuss (H)
+1 Holzball (J)
+1 Spielfeld (K), das aus 5 senkrechten Spalten 
+und 11 waagerechten Zeilen besteht
+1 Spielanleitung 
+
+
+Kurzübersicht: Worum geht es?
+Eine Partie dauert 15 Minuten und ist in zwei Halbzeiten unterteilt.
+Die beiden Spieler wechseln sich als Angreifer (3 Richtungswürfel) und Verteidiger (1 dunkelblauer 
+Würfel) ab.  
+Der Angreifer ist so lange an der Reihe, bis er den Ball verliert. Er darf immer nur einen der drei 
+Richtungswürfel werfen (auch z. B. fünfmal rot hintereinander). Nur der orange Würfel darf nicht 
+zweimal in Folge geworfen werden.
+Wenn der Angreifer ein „X“ oder „?“ würfelt und den Ball verliert, hat der Verteidiger die Möglichkeit, 
+mit dem dunkelblauen Würfel den Ball abzufangen. Wechselt der Ball den Besitzer, werden die 
+Rollen getauscht: Der Angreifer ist jetzt Verteidiger, benutzt den dunkelblauen Würfel und gibt dem 
+anderen Spieler die drei Richtungswürfel. 
+Der Angreifer darf mit den roten Würfeln nur aufs Tor schießen, wenn der Ball im „Schussbereich“ 
+(den letzten drei Zeilen) liegt. Das Tor zählt, wenn der Ball direkt hineingeschossen wird und der 
+Verteidiger den Schuss nicht stoppen kann. Erfolgt der Schuss innerhalb des Strafraums, kann der 
+Verteidiger mit dem hellblauen Würfel versuchen, das Tor zu verhindern. Erfolgt der Schuss von 
+außerhalb des Strafraums, darf der dunkelblaue und, falls notwendig, auch der hellblaue Würfel 
+verwendet werden. 
+Wird im Strafraum ein Foul begangen, wird der Elfmeter mit dem schwarzen Würfel ausgeführt.
+Der weiße Würfel ist für den „Meisterschuss“ gedacht, der einen speziellen Spielzug ermöglicht 
+(z. B. einen unhaltbaren Schuss oder die perfekte Abwehr) und jederzeit den Verlauf der Partie 
+beeinflussen kann. Allerdings muss der weiße Meisterwürfel an den Gegner weitergegeben werden, 
+nachdem er verwendet worden ist!
+
+Wie bei einem normalen Fußballspiel, 
+wechseln sich Angreifer und Verteidiger ab. Der 
+Angreifer ist so lange an der Reihe, bis er den 
+Ball verliert oder aufs Tor schießt. Ein Torschuss    
+  ist möglich, wenn der Angreifer den Ball in 
+Spielablauf
+Die Partie beginnt mit der Auslosung (z. B. 
+mit einem Münzwurf): Der Sieger wirft den 
+Meisterwürfel und legt ihn vor sich ab (1). Der 
+andere Spieler erhält die drei Richtungswürfeln 
+(2) und beginnt mit dem Angriff, während sein 
+Gegner zur Verteidigung den dunkelblauen 
+Würfel bekommt (3).
+Die anderen drei Würfel (Meisterschuss, 
+Torwart und Elfmeter) werden am Rand des 
+Spielfelds bereitgelegt (4), und der Ball kommt 
+in die Mitte des Spielfelds (5).
+Die Spieler entscheiden, ob sie die VAR
+Variante spielen möchten (siehe Seite 14). Für 
+die erste Halbzeit der Partie (7:30 Minuten) 
+wird der Timer gestartet.
+
+Spielvorbereitung
+
+die letzten drei Zeilen des Felds bewegt hat, 
+markiert durch die kleinen Striche außerhalb 
+des Spielfelds (6).
+Wenn der Ballbesitz wechselt, tauschen 
+die Spieler die Würfel für den Angriff (7) 
+und die Verteidigung (8) aus, und der 
+Angreifer beginnt (wie gewohnt) mit dem 
+orangen Würfel (der jedoch nie zweimal 
+hintereinander geworfen werden darf).
+
+Spielende
+Eine Partie dauert 15 Minuten, unterteilt in 
+zwei Halbzeiten à 7:30 Minuten. 
+Die zweite Halbzeit beginnt der Spieler, der 
+die Auslosung zu Spielbeginn gewonnen 
+hatte. Wenn die Zeit abgelaufen ist, wird 
+weitergespielt, bis der Verteidiger den Ball 
+erhält (entweder durch einen Wechsel des 
+Ballbesitzes oder durch einen Rückpass). 
+Wird ein Turnier gespielt, empfehlen sich 
+Partien mit einer Dauer von 10 Minuten 
+(zweimal 5 Minuten) und anschließendem 
+Elfmeterschießen im Falle eines Gleichstands.
+
+Der Angriff
+Der Angreifer wirft jeweils einen der drei Richtungswürfel:
+Ballkontrolle: kleine Schritte und ein geringes Risiko, den Ball zu verlieren
+Ballabgabe: größere Schritte und ein mittleres Risiko
+Pass: die beste Taktik, aber ein höheres Risiko
+
+Durch den Angriff wird der Ball in die Pfeilrichtung gespielt (vorwärts, rückwärts, diagonal oder 
+zur Seite), und zwar um so viele Felder, wie die Zahl auf dem Pfeil angibt. (Mit dem nebenstehend 
+abgebildeten Würfel bewegt sich der Ball in gerader Linie um 
+2 Felder vorwärts, von Punkt A zu Punkt B.) Es empfiehlt sich, 
+den Würfel mit der Zahl parallel zu den Zeilen des Spielfelds 
+auszurichten, um die Pfeilrichtung richtig zu interpretieren.
+
+Zeigt der Pfeil eine diagonale Richtung an, kann der Spieler 
+entscheiden, ob er den Ball nach links (C) oder nach rechts (D) spielt.
+
+Auch wenn der Pfeil zur Seite zeigt, kann er sich für links (E) 
+oder rechts (F) entscheiden.
+
+Falls der Würfel im Pfeil ein „X“ zeigt, verliert der Angreifer den Ball: Der Ballbesitz wechselt.
+Falls das „?“ im Pfeil erscheint, kann der Verteidiger versuchen, den Ball abzufangen, indem er 
+den dunkelblauen Würfel wirft.
+In beiden Fällen („X“ und „?“) bewegt der Angreifer jedoch zuerst den Ball gemäß seinem gewürfelten 
+Wert.
+Wenn der Ball über eine Seitenlinie rollt (in der Abbildung z. B. 3 Felder geradeaus von Punkt 
+A zu Punkt G), wechselt der Ballbesitz mit einem Abstoß vom Tor (siehe S. 11).
+Befindet sich der Ball in den letzten drei Zeilen des Spielfelds (in der Abbildung E, C oder H), kann der 
+Angreifer entscheiden, den Ball zur Mitte des Felds anstatt zur Torlinie zu schießen, indem er seine 
+Absicht ansagt und den Pfeil um 90° dreht.
+Nach einem Wechsel des Ballbesitzes muss der erste Angriff mit dem Ballkontroll-Würfel 
+durchgeführt werden. Dieser Würfel darf nie zweimal hintereinander geworfen werden.
+Es gibt allerdings Ausnahmen, bei denen der erste Angriff auch mit dem Pass- oder Meisterschuss-Würfel 
+erfolgen kann: Anpfiff, Eckstoß, Einwurf, Abschlag, Abstoß oder Freistoß. Nachdem der Verteidiger den Ball 
+nicht erobern konnte beziehungsweise der Torwart oder der Verteidiger abgewehrt hat, gibt es keinen 
+Wechsel des Ballbesitzes – d. h. der Angreifer kann mit einem Würfel seiner Wahl weiterspielen, auch mit dem 
+Ballkontroll-Würfel (selbst wenn dieser direkt vor dem verpassten oder geklärten Ball gespielt worden ist).
+
+Schuss innerhalb des Strafraums
+Wenn der Ball auf einem der sechs Strafraum-Felder liegt (in der Abbildung rot hervorgehoben), z. B. in 
+Feld A, darf der rote Schuss-Würfel verwendet werden. Dabei kann es die folgenden Ergebnisse geben:
+Tor?: Der Ball erreicht Feld B, und der Gegner 
+wirft den hellblauen Torwart-Würfel, um zu 
+versuchen, den Schuss abzuwehren.
+Unhaltbar: Das Tor zählt, es sei denn, der Verteidiger 
+hat den Meisterwürfel mit einer „perfekten Abwehr“ 
+(siehe S. 13) und entscheidet, diesen einzusetzen.
+Pfosten: Der Ball prallt ab auf Feld C, und der 
+Gegner spielt den dunkelblauen Würfel, um 
+zu verteidigen.
+
+Querlatte: Der Ball prallt ab auf Feld B, 
+und der Verteidiger entscheidet, ob er den 
+hellblauen (Torwart) oder den dunkelblauen 
+Würfel (Verteidigung) werfen will.
+Am Tor vorbei: Es erfolgt ein Abstoß aus 
+Feld D (der Spieler kann frei wählen, ob er 
+links oder rechts vom Tor abschlägt).
+
+Schuss von außerhalb des Strafraums
+
+Wenn der Ball sich in Zeile zwei oder drei befindet, aber außerhalb des Strafraums (auf einem 
+der sieben rot umrandeten Felder), kann ein Schussversuch mit dem roten Würfel erfolgen. Beim 
+Würfelwurf kann es die folgenden Ergebnisse geben:
+Tor?: Der Ball wird Richtung Tor 
+geschossen. Dabei kommt es darauf an, 
+von wo aus er geschossen wird: Von Feld 
+A aus erreicht er Feld C, von Feld B aus 
+Feld D. Im Anschluss wirft der Verteidiger 
+den dunkelblauen Würfel. Verpasst der 
+Verteidiger den Schuss, rollt der Ball auf 
+Feld E – und der Verteidiger wirft den 
+hellblauen Torwart-Würfel, um das Tor zu 
+verhindern.
+
+Unhaltbar: Der Ball ist noch nicht im Tor, 
+sondern landet auf Feld E. Der Verteidiger wirft 
+den hellblauen Würfel, um das Tor zu verhindern.
+In den drei anderen Fällen (Pfosten, 
+Querlatte, Am Tor vorbei) sind die 
+Folgen dieselben wie beim Schuss 
+innerhalb des Strafraums (Seite 8).
+
+Die Verteidigung
+Der Verteidiger kann in drei Fällen mit dem dunkelblauen Würfel eingreifen:
+wenn der Angreifer das Fragezeichen (?) im Pfeil würfelt (gilt für alle Richtungswürfel),
+wenn der Angreifer von außerhalb des Strafraums schießt, der Ball den Strafraum erreicht, aber 
+noch abgefangen werden könnte,
+wenn der Angreifer mit seinem Schuss den Pfosten oder die Querlatte trifft; bei der Querlatte kann 
+der Verteidiger zwischen hellblauem (Torwart) und dunkelblauem Würfel (Verteidigung) wählen.
+Der Verteidiger kann dann:
+dem Angreifer den Ball abluchsen, sodass der Ballbesitz 
+wechselt, (oder den Schuss abfangen).
+den Ball verpassen, sodass er beim Angreifer bleibt (oder 
+der Schuss geht in Richtung Tor).
+
+den Ball verpassen oder ein Eigentor schießen: wie oben, außer dass der Ball sich innerhalb des 
+Strafraums direkt vorm Tor befindet (rot hervorgehobene Felder) – dann ist es ein Eigentor.
+den Ball abwehren, der drei Felder in gerader Linie zurückprallt, aber der Angreifer behält den Ball.
+ein Foul begehen: Der Angreifer behält den Ball und führt einen Freistoß aus. Falls der Ball sich im Strafraum befindet, 
+gibt es einen Elfmeter; wenn er drei oder vier Zeilen von der Torlinie entfernt ist, handelt es sich um einen direkten 
+Freistoß (siehe unten). In allen anderen Fällen wird der Angriff mit einem der drei Richtungswürfel fortgesetzt. 
+ Parade des Torwarts
+Der Torwart muss eingreifen, wenn der Ball nach einem Schuss 
+den Torraum erreicht (A). Er kann auch anstelle des Verteidigers 
+aktiv werden, wenn der Ball die Querlatte trifft. Hier die 
+möglichen Ergebnisse eines Wurfs des hellblauen Würfels:
+Gehalten: Der Ballbesitz wechselt, und 
+der Torwart schießt den Ball mit einem 
+Abschlag (siehe unten) ins Spielfeld zurück.
+Tor: Der Torwart fängt den Ball nicht, das 
+Tor zählt. (Falls die Querlatte getroffen 
+wird, ist es ein Eigentor.)
+Abstoß und Abschlag
+Ein Abstoß erfolgt von Feld C aus, der Abschlag von Feld D 
+oder E aus. Der Spieler darf entscheiden, von welchem der mit 
+diesen Buchstaben gekennzeichneten Feldern er den Schuss 
+ausführt. In beiden Fällen kann der Angreifer vor dem Würfeln 
+kundtun, dass er einen weiten Schuss zurück ins Spielfeld 
+versucht: Dann wird die im Pfeil angegebene Zahl verdoppelt.
+Eckstoß
+
+Faustabwehr: Der Ball prallt von A nach B 
+ab und bleibt beim Angreifer.
+Pariert: Der Angreifer hat den Ball und 
+erhält einen Eckstoß. 
+
+Ein Eckstoß erfolgt von Feld F aus mit einem der drei Richtungswürfel. Falls der Würfel 
+eine gerade Richtung anzeigt, bewegt sich der Ball parallel zur Torlinie. Mit dem orangen 
+Würfel würde er sich z. B. von F nach C bewegen, mit dem roten Würfel von F nach D.
+
+Der Meisterwürfel
+Zu Beginn der Partie erhält der Sieger der Auslosung den Meisterwürfel, wirft ihn und 
+legt ihn vor sich ab. Beide Spieler wissen, welches Würfelergebnis er erzielt hat und 
+im Laufe der Partie verwenden kann. Nachdem der Würfel eingesetzt wurde, muss er 
+an den Gegner weitergegeben werden. Dieser wirft ihn sofort, um herauszufinden, 
+welcher „Meisterschuss“ ihm nun zur Verfügung steht, bevor die Partie fortgesetzt wird.
+Der Meisterwürfel hat drei rote Seiten, die beim Angriff eingesetzt werden 
+können, und zwei blaue Seiten für die Verteidigung. Die letzte Fläche ist rot und 
+blau und kann sowohl im Angriff als auch in der Verteidigung verwendet werden.
+Weitschuss: Der Angreifer kann frühestens von der Mittellinie aus (A) aufs 
+Tor schießen. Der Ball erreicht Feld B. Der Verteidiger darf den hellblauen 
+Würfel werfen.
+Torvorlage: Der Angreifer darf von außerhalb seines Strafraums schießen, 
+frühestens von Feld C aus in gerader Linie. Der Ball landet in Position D und 
+liegt für einen Schuss aufs Tor bereit.
+
+Unhaltbarer Schuss: Wenn der Ball sich im Schussbereich befindet (auf einem 
+der mit dem Buchstaben E gekennzeichneten Feldern), schießt der Angreifer 
+mit diesem Meisterwürfel-Ergebnis ein Tor. ACHTUNG: Da der Meisterwürfel 
+unmittelbar nach seiner Verwendung an den Gegner weitergegeben wird, der 
+ihn sofort wirft, kann dieser das Tor noch verhindern, falls er „Perfekte Abwehr“ 
+würfelt. Erfolgt der Schuss von außerhalb des Strafraums, kann das Tor auch 
+mit dem Meisterwürfel-Ergebnis „Rückeroberung des Balls“ verhindert werden.
+
+Perfekte Abwehr: Der Verteidiger blockt den geschossenen Ball ab, der 
+bei B ein Tor erzielt hätte. Die perfekte Abwehr kann unter zwei Umständen 
+eingesetzt werden: bei einem unhaltbaren Schuss (mit dem roten 
+Schusswürfel oder dem Meisterwürfel) oder anstelle des hellblauen Würfels, 
+um garantiert das Tor zu verhindern. ACHTUNG: Wenn das Tor mit dem 
+hellblauen Würfel nicht verhindert wird, darf die perfekte Abwehr nicht noch 
+anschließend gespielt werden.
+Rückeroberung des Balls: Der Verteidiger kann in jeder Spielphase den 
+Ball an sich bringen, sogar nach einer Torvorlage – aber nicht nach einem 
+Schuss aus dem Strafraum. Auf diese Weise kann der Verteidiger auch einen 
+unhaltbaren Schuss abfangen, sofern er von außerhalb des Strafraums 
+erfolgt ist.
+Foul: Das Foul kann sowohl im Angriff als auch bei der Verteidigung 
+genutzt werden. Als Angreifer empfiehlt es sich, ein Foul einzusetzen, 
+wenn der Ball sich innerhalb der letzten vier Zeilen vor dem Tor befindet – 
+dafür gibt es einen direkten Freistoß (siehe unten). Falls der Ball innerhalb 
+des Strafraums liegt, gibt es einen Elfmeter. Wenn der Verteidiger das 
+Würfelergebnis „Foul“ nutzt, pfeift der Schiedsrichter ein Offensivfoul 
+(z. B. Abseits). In diesem Fall wechselt der Ballbesitz. Das Foul muss gespielt 
+werden, bevor der Angreifer würfelt.
+
+ Elfmeter
+Für die Durchführung eines Elfmeters wird der schwarze Würfel geworfen. Es gibt folgende 
+mögliche Ergebnisse:
+Tor: Der Ball wird zurück 
+auf den Mittelpunkt gelegt.
+Am Tor vorbei: Es 
+erfolgt ein Abstoß aus 
+Position C.
+VAR-Variante (Video-Assistent): Wird mit dieser Variante gespielt, kommt nach einem Foul 
+im Strafraum der orange Würfel zum Einsatz, um zu überprüfen, ob es wirklich ein Elfmeter 
+ist. In fünf von sechs Fällen gibt es tatsächlich einen Elfmeter – nur wenn das Fragezeichen 
+gewürfelt wird, kommt es nicht zum Elfmeter, aber der Angreifer bleibt im Ballbesitz.
+Sonderfälle
+Platzverweis: Wenn der Verteidiger zweimal hintereinander den 
+dunkelblauen Würfel wirft und „Foul“ würfelt, erhält er einen Platzverweis. 
+Falls er gerade den Meisterwürfel besitzt, muss er ihn seinem Gegner geben, 
+der ihn sofort wirft.
+
+Wird der Abstoß mit dem roten Ballabgabe-Würfel durchgeführt, und es 
+erfolgt ein Rückpass, geht der Ball ins Aus. Dann kommt es zu einem Eckstoß. 
+
+Pariert: Der Angreifer führt einen 
+Eckstoß durch. 
+Faustabwehr: Der Ball prallt von A 
+zurück auf Feld B. Der Angreifer bleibt im 
+Ballbesitz und darf sofort noch einmal 
+schießen.
+
+Falls der Torwart sich entschieden hat, die im Pfeil angegebene Zahl zu verdoppeln, 
+von Position B aus den Ball mit dem roten Ballabgabe-Würfel schießt, und es zu 
+einem Rückpass kommt, geht der Ball ins Netz und gilt als Eigentor.
+
+Wenn der Ball in der mittleren Zeile liegt (z. B. auf Feld D) und der Würfel „3 
+diagonal“ zeigt, geht der Ball ins Aus, und ein Einwurf ist erforderlich. Der 
+Ballbesitz wechselt, und der Ball muss nun von Feld F aus eingeworfen werden.
+Wenn der Verteidiger den Ball in Feld D, G oder H abwehrt, könnte der Ball ins Tor 
+rollen. Er bleibt in Feld H liegen, und der Angreifer wirft den hellblauen Würfel, 
+um ein Tor zu vermeiden. Befindet sich der Ball in Feld K, L oder M, geht er ins Aus, 
+und es kommt zu einem Abstoß.
+
+Direkter Freistoß: Wird von Feld N aus aufs Tor geschossen, fliegt der Ball über die 
+Mauer und erreicht Feld A, sodass der Torwart eingreifen muss. Falls der Schuss 
+aufs Tor von Feld P aus erfolgt, landet der Ball auf Feld B, und der Verteidiger greift 
+ein.
+Wenn der Verteidiger (mit dem Meisterwürfel) in die Schiedsrichterpfeife bläst 
+und so ein Offensivfoul anzeigt und der Ball sich im gegnerischen Strafraum 
+befindet (z. B. weil der Torwart nach einem Rückpass durch einen Spieler seiner 
+eigenen Mannschaft den Ball fängt), gibt es keinen Elfmeter, sondern einen 
+direkten Freistoß.
+
+Und nicht vergessen: Es handelt sich um ein ECHTES Fußballspiel, in dem alle 
+möglichen Spielzüge vorkommen können. Alle Regeln orientieren sich an realen 
+Spielsituationen – und bei Zweifelsfällen verlasst ihr euch am besten auf euren 
+gesunden Menschenverstand!

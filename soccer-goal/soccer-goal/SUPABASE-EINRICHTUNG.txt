@@ -1,0 +1,137 @@
+================================================================================
+  SOCCER GOAL – Supabase Schritt für Schritt (auch für Cursor / GitHub Pages)
+================================================================================
+
+WICHTIG: Cursor verbindet Supabase NICHT automatisch. Du musst:
+  1) ein Supabase-Projekt im Browser anlegen
+  2) zwei Werte in eine Datei im Projekt kopieren
+  3) SQL ausführen
+
+--------------------------------------------------------------------------------
+SCHRITT 1 – Supabase-Projekt erstellen
+--------------------------------------------------------------------------------
+1. Öffne https://supabase.com und melde dich an
+2. Klicke „New Project“
+3. Wähle Organisation, Name (z.B. soccer-goal), Passwort für die DB
+4. Warte bis das Projekt fertig ist (1–2 Minuten)
+
+--------------------------------------------------------------------------------
+SCHRITT 2 – API-Schlüssel kopieren
+--------------------------------------------------------------------------------
+1. Im Supabase-Dashboard: Zahnrad links → „Project Settings“
+2. Menü „API“
+3. Kopiere diese zwei Werte:
+
+   Project URL          → z.B. https://abcdefgh.supabase.co
+   anon public (Key)    → langer Key, beginnt oft mit eyJ... oder sb_publishable_...
+
+   NICHT kopieren: service_role Key (geheim, nur für Server!)
+
+--------------------------------------------------------------------------------
+SCHRITT 3 – In dein Spiel eintragen (Cursor)
+--------------------------------------------------------------------------------
+1. Öffne in Cursor die Datei:
+   IDK/soccer-goal/assets/js/config/backend.js
+
+2. Ersetze die Platzhalter:
+
+   supabaseUrl: "https://DEIN-PROJEKT.supabase.co",
+   supabaseAnonKey: "DEIN-ANON-KEY-HIER",
+
+3. Speichern (Strg+S)
+
+4. Datei NICHT mit service_role Key füllen!
+
+--------------------------------------------------------------------------------
+SCHRITT 4 – Datenbank-Tabellen anlegen
+--------------------------------------------------------------------------------
+1. Supabase Dashboard → „SQL Editor“ → „New query“
+2. Öffne die Datei supabase-schema.sql aus diesem Ordner in Cursor
+3. KOMPLETTEN Inhalt kopieren (nur SQL, keine ``` Zeichen)
+4. In SQL Editor einfügen → „Run“ / „Ausführen“
+5. Erfolg: grüne Meldung „Success“
+
+--------------------------------------------------------------------------------
+SCHRITT 5 – E-Mail-Bestätigung ausschalten (wichtig!)
+--------------------------------------------------------------------------------
+Sonst funktioniert Registrieren nicht sofort:
+
+1. Supabase → Authentication → Providers → Email
+2. „Confirm email“ AUSschalten
+3. Save
+
+--------------------------------------------------------------------------------
+SCHRITT 6 – Realtime aktivieren
+--------------------------------------------------------------------------------
+1. Supabase → Database → Replication (oder Publications)
+2. Tabelle soccer_rooms → Realtime AN
+3. Tabelle match_queue → Realtime AN
+
+(Falls Replication leer: unter SQL noch ausführen:)
+   alter publication supabase_realtime add table soccer_rooms;
+   alter publication supabase_realtime add table match_queue;
+
+--------------------------------------------------------------------------------
+SCHRITT 7 – Testen (lokal)
+--------------------------------------------------------------------------------
+1. In Cursor: Terminal öffnen
+2. In den Ordner soccer-goal wechseln:
+   cd IDK/soccer-goal
+3. Kleinen Webserver starten (Supabase funktioniert NICHT mit file://):
+
+   npx --yes serve .
+
+4. Browser öffnen: http://localhost:3000/spiel.html
+5. Account registrieren → Alias prüfen → Party erstellen
+
+Häufiger Fehler: HTML direkt per Doppelklick öffnen (file://) → CORS-Fehler!
+Immer über http://localhost oder GitHub Pages testen.
+
+--------------------------------------------------------------------------------
+SCHRITT 8 – GitHub Pages
+--------------------------------------------------------------------------------
+1. Repository auf GitHub hochladen
+2. Repository → Settings → Pages
+3. Source: Branch main, Ordner /root oder /docs (je nach Struktur)
+4. Wenn das Spiel in IDK/soccer-goal liegt:
+   - entweder nur soccer-goal Inhalt als Root deployen
+   - oder GitHub Pages URL wird: https://USER.github.io/REPO/IDK/soccer-goal/spiel.html
+
+5. In Supabase → Authentication → URL Configuration:
+   - Site URL: deine GitHub-Pages-URL eintragen
+   - Redirect URLs: dieselbe URL hinzufügen
+
+--------------------------------------------------------------------------------
+FEHLER-SUCHE
+--------------------------------------------------------------------------------
+
+„Supabase fehlt in backend.js“
+  → URL/Key noch PASTE_... oder Datei nicht gespeichert
+
+„Failed to fetch“ / CORS
+  → Nicht file:// nutzen, sondern lokalen Server oder GitHub Pages
+
+„Alias ist schon vergeben“ bei neuem Alias
+  → Normal – anderen Alias wählen
+
+„Invalid API key“
+  → anon Key nochmal kopieren, keine Leerzeichen
+
+Registrierung klappt, Login nicht
+  → Confirm email in Supabase ausschalten (Schritt 5)
+
+Online-Party findet Gegner nicht
+  → Realtime für soccer_rooms aktiv? (Schritt 6)
+  → Beide Spieler angemeldet? Beide gleiche Supabase-URL in backend.js?
+
+Tabellen fehlen
+  → supabase-schema.sql nochmal im SQL Editor ausführen
+
+--------------------------------------------------------------------------------
+Was Cursor NICHT macht
+--------------------------------------------------------------------------------
+- Cursor hat keinen „Supabase verbinden“-Button fürs Spiel
+- Optional: Cursor Settings → MCP → Supabase MCP (nur Hilfe für die KI, nicht Pflicht)
+- Die Verbindung läuft nur über backend.js + dein Supabase-Projekt im Browser
+
+================================================================================

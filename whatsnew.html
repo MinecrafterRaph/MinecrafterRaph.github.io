@@ -2,18 +2,16 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <!-- Verhindert, dass das Smartphone die skalierten Inhalte eigenmächtig verzieht -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Desktop-Ansicht</title>
     <style>
-        /* Verhindert Ränder und Scrollbalken auf der Hauptseite */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #000; /* Hintergrundfarbe für eventuelle Lade-Ränder */
+            background-color: #000;
         }
 
         /* Der virtuelle Desktop-Container */
@@ -21,19 +19,27 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 1280px;        /* Zwingt die Seite in das Standard-Desktop-Layout */
+            width: 1280px; /* Deine feste PC-Wunschbreite */
             height: 100%;
             transform-origin: top left;
             
-            /* Berechnet die Skalierung: Teilt die echte Displaybreite durch 1280px */
+            /* Der mathematische Zoom-Trick */
             transform: scale(calc(100vw / 1280)); 
+            
+            /* iOS FIX 1: Zwingt Apple-Geräte dazu, Scrollen innerhalb dieser Box zu erlauben */
+            -webkit-overflow-scrolling: touch;
+            overflow-y: auto;
         }
 
-        /* Das Iframe, das deine Webseite lädt */
+        /* Das Iframe, angepasst für iPad & iPhone */
         .desktop-scaler iframe {
-            width: 100%;
-            /* Berechnet die virtuelle Höhe, da das Iframe gestaucht wird */
+            /* iOS FIX 2: Verhindert, dass Safari die Breite unkontrolliert ausdehnt */
+            width: 1px;
+            min-width: 100%; 
+            
+            /* iOS FIX 3: Berechnet die exakte Höhe passend zum Zoom-Faktor */
             height: calc(100vh * (1280 / 100vw)); 
+            
             border: none;
             display: block;
         }
@@ -42,10 +48,11 @@
 <body>
 
     <div class="desktop-scaler">
-        <!-- Deine Webseite im skalierten Desktop-Modus inklusive Kamera- & Mikrofon-Freigabe -->
+        <!-- scrolling="yes" hilft älteren iOS-Versionen beim sauberen Rendering -->
         <iframe 
-            src="https://my-whatsapp.ai.studio" 
-            title="WhatsNew Web"
+            src="https://ai.studio" 
+            title="Desktop Ansicht"
+            scrolling="yes"
             allow="camera; microphone; display-capture; geolocation">
         </iframe>
     </div>

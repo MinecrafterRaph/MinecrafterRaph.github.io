@@ -2,44 +2,143 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <!-- Wichtig: Verhindert fehlerhaftes Zoomen auf Handys und Tablets -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Dein gewünschter Projekttitel im Browser-Tab -->
     <title>WhatsNew</title>
     <style>
-        /* Entfernt alle Standard-Ränder des Webbrowsers */
         html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden; /* Verhindert ungewollte doppelte Scrollbalken */
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: #0b141a;
         }
-
-        /* Spannt das iFrame zu 100% über den exakt sichtbaren Bildschirm */
         .fullscreen-iframe {
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-            margin: 0;
-            padding: 0;
-            z-index: 999999;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 1;
         }
+        #loader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0b141a; display: flex; justify-content: center; align-items: center;
+            z-index: 99999; transition: opacity 0.5s ease;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #222e35;
+            border-top: 5px solid #00a884; border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #settings-modal {
+            display: none; position: fixed; top: 20px; right: 20px; width: 280px; max-height: 350px;
+            background-color: #111b21; border: 1px solid #222e35; border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5); z-index: 10001; color: #e9edef; padding: 15px;
+            box-sizing: border-box; animation: fadeIn 0.4s ease forwards;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-scroll-area { max-height: 290px; overflow-y: auto; padding-right: 5px; }
+        .modal-scroll-area::-webkit-scrollbar { width: 6px; }
+        .modal-scroll-area::-webkit-scrollbar-thumb { background-color: #374248; border-radius: 3px; }
+        .modal-title { margin: 0 0 15px 0; font-size: 16px; font-weight: 600; border-bottom: 1px solid #222e35; padding-bottom: 8px; color: #00a884; }
+        .permission-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .permission-label { font-size: 14px; }
+        .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #374248; transition: .3s; border-radius: 22px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: #f0f2f5; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: #00a884; }
+        input:checked + .slider:before { transform: translateX(18px); }
     </style>
 </head>
 <body>
 
-    <!-- Lädt deine exakte Domain im echten Vollbildmodus -->
-    <iframe 
-        src="https://my-whatsapp.ai.studio" 
-        class="fullscreen-iframe"
-        allow="microphone; camera; clipboard-write; geolocation">
-    </iframe>
+    <div id="loader-overlay"><div class="spinner"></div></div>
 
+    <div id="settings-modal">
+        <div class="modal-scroll-area">
+            <h3 class="modal-title">Berechtigungen</h3>
+            <div class="permission-row"><span class="permission-label">Standort (Geolocation)</span><label class="switch"><input type="checkbox" id="geo" checked onchange="updatePermissions()"><span class="slider"></span></label></div>
+            <div class="permission-row"><span class="permission-label">Mikrofon</span><label class="switch"><input type="checkbox" id="mic" checked onchange="updatePermissions()"><span class="slider"></span></label></div>
+            <div class="permission-row"><span class="permission-label">Kamera</span><label class="switch"><input type="checkbox" id="cam" checked onchange="updatePermissions()"><span class="slider"></span></label></div>
+            <div class="permission-row"><span class="permission-label">Zwischenablage (Schreiben)</span><label class="switch"><input type="checkbox" id="clip-w" checked onchange="updatePermissions()"><span class="slider"></span></label></div>
+            <div class="permission-row"><span class="permission-label">Zwischenablage (Lesen)</span><label class="switch"><input type="checkbox" id="clip-r" checked onchange="updatePermissions()"><span class="slider"></span></label></div>
+            <div class="permission-row"><span class="permission-label">Autoplay (Audio/Video)</span><label class="switch"><input type="checkbox" id="auto" checked onchange="updatePermissions()"><span class="slider"></span></label></div>
+            <div class="permission-row"><span class="permission-label">Bewegungssensoren (Gyro)</span><label class="switch"><input type="checkbox" id="gyro" checked onchange="updatePermissions()"><span class="slider"></span></label></div>
+            <div class="permission-row"><span class="permission-label">Bild-in-Bild Modus</span><label class="switch"><input type="checkbox" id="pip" checked onchange="updatePermissions()"><span class="slider"></span></label></div>
+        </div>
+    </div>
+
+    <!-- Hier ist die korrekte Adresse hinterlegt -->
+    <iframe id="studio-iframe" src="https://my-whatsapp.ai.studio" class="fullscreen-iframe" allow="geolocation; microphone; camera; clipboard-write; clipboard-read; autoplay; fullscreen; accelerometer; gyroscope; magnetometer; picture-in-picture" allowfullscreen></iframe>
+
+    <script>
+        // EINSTELLUNG: Auf 0 setzen, um das kleine Fenster komplett zu deaktivieren
+        const ZEIGE_BERECHTIGUNGS_FENSTER = 1; 
+
+        const iframe = document.getElementById('studio-iframe');
+        const loader = document.getElementById('loader-overlay');
+        const modal = document.getElementById('settings-modal');
+
+        iframe.addEventListener('load', function() {
+            loader.style.opacity = '0';
+            setTimeout(() => { 
+                loader.style.display = 'none'; 
+                if (ZEIGE_BERECHTIGUNGS_FENSTER === 1) {
+                    modal.style.display = 'block';
+                }
+            }, 500);
+        });
+
+        function updatePermissions() {
+            let allowFeatures = [];
+            if (document.getElementById('geo').checked) allowFeatures.push('geolocation');
+            if (document.getElementById('mic').checked) allowFeatures.push('microphone');
+            if (document.getElementById('cam').checked) allowFeatures.push('camera');
+            if (document.getElementById('clip-w').checked) allowFeatures.push('clipboard-write');
+            if (document.getElementById('clip-r').checked) allowFeatures.push('clipboard-read');
+            if (document.getElementById('auto').checked) allowFeatures.push('autoplay');
+            if (document.getElementById('gyro').checked) allowFeatures.push('accelerometer', 'gyroscope', 'magnetometer');
+            if (document.getElementById('pip').checked) allowFeatures.push('picture-in-picture');
+            allowFeatures.push('fullscreen');
+
+            loader.style.display = 'flex';
+            loader.style.opacity = '1';
+            modal.style.display = 'none';
+
+            iframe.setAttribute('allow', allowFeatures.join('; '));
+            iframe.src = iframe.src; 
+        }
+
+        window.addEventListener('click', function(e) {
+            if (e.target !== modal && !modal.contains(e.target)) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Die sichere Brücke mit der korrekten Ziel-Origin-Validierung
+        window.addEventListener('message', function(event) {
+            if (event.origin !== 'https://my-whatsapp.ai.studio') return; 
+
+            const iframeWindow = iframe.contentWindow;
+            const data = event.data;
+
+            if (data && data.type) {
+                switch (data.type) {
+                    case 'LOCAL_STORAGE_SET':
+                        localStorage.setItem(data.key, data.value);
+                        break;
+
+                    case 'LOCAL_STORAGE_GET':
+                        const gespeicherterWert = localStorage.getItem(data.key);
+                        iframeWindow.postMessage({
+                            type: 'LOCAL_STORAGE_RESPONSE',
+                            key: data.key,
+                            value: gespeicherterWert
+                        }, 'https://my-whatsapp.ai.studio');
+                        break;
+
+                    case 'LOCAL_STORAGE_REMOVE':
+                        localStorage.removeItem(data.key);
+                        break;
+                }
+            }
+        });
+    </script>
 </body>
 </html>

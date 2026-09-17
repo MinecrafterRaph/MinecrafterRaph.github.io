@@ -30,13 +30,13 @@
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); /* Leicht gräulich / abgedunkelt */
-            z-index: 10000; /* Liegt über dem iFrame, aber unter dem Fenster */
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
         }
 
         #settings-modal {
             display: none; position: fixed; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); /* Zentriert das Fenster perfekt auf dem Bildschirm */
+            transform: translate(-50%, -50%);
             width: 300px; max-height: 420px;
             background-color: #111b21; border: 1px solid #222e35; border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.5); z-index: 10001; color: #e9edef; padding: 15px;
@@ -44,7 +44,6 @@
         }
         @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -60%); } to { opacity: 1; transform: translate(-50%, -50%); } }
         
-        /* Scrollbarer Bereich für die Schalter */
         .modal-scroll-area { max-height: 280px; overflow-y: auto; padding-right: 5px; margin-bottom: 15px; }
         .modal-scroll-area::-webkit-scrollbar { width: 6px; }
         .modal-scroll-area::-webkit-scrollbar-thumb { background-color: #374248; border-radius: 3px; }
@@ -59,18 +58,10 @@
         input:checked + .slider { background-color: #00a884; }
         input:checked + .slider:before { transform: translateX(18px); }
 
-        /* Grüner Übernehmen-Button ganz unten */
         .apply-btn {
-            width: 100%;
-            background-color: #00a884; /* WhatsApp Grün */
-            color: #ffffff;
-            border: none;
-            padding: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s;
+            width: 100%; background-color: #00a884; color: #ffffff; border: none;
+            padding: 10px; font-size: 14px; font-weight: bold; border-radius: 8px;
+            cursor: pointer; transition: background-color 0.2s;
         }
         .apply-btn:hover { background-color: #008f6f; }
     </style>
@@ -78,8 +69,6 @@
 <body>
 
     <div id="loader-overlay"><div class="spinner"></div></div>
-
-    <!-- Hintergrund-Schleier -->
     <div id="modal-backdrop"></div>
 
     <div id="settings-modal">
@@ -94,35 +83,45 @@
             <div class="permission-row"><span class="permission-label">Bewegungssensoren (Gyro)</span><label class="switch"><input type="checkbox" id="gyro" checked><span class="slider"></span></label></div>
             <div class="permission-row"><span class="permission-label">Bild-in-Bild Modus</span><label class="switch"><input type="checkbox" id="pip" checked><span class="slider"></span></label></div>
         </div>
-        <!-- Apply Button -->
         <button class="apply-btn" onclick="applySettings()">Apply</button>
     </div>
 
-    <!-- Hier ist die korrekte Adresse hinterlegt -->
-    <iframe id="studio-iframe" src="https://my-whatsapp.ai.studio" class="fullscreen-iframe" allow="geolocation; microphone; camera; clipboard-write; clipboard-read; autoplay; fullscreen; accelerometer; gyroscope; magnetometer; picture-in-picture" allowfullscreen></iframe>
+    <!-- Das iFrame bekommt seine Adresse dynamisch über das JavaScript unten zugewiesen -->
+    <iframe id="studio-iframe" class="fullscreen-iframe" allow="geolocation; microphone; camera; clipboard-write; clipboard-read; autoplay; fullscreen; accelerometer; gyroscope; magnetometer; picture-in-picture" allowfullscreen></iframe>
 
     <script>
-        // EINSTELLUNG: Auf 0 setzen, um das kleine Fenster komplett zu deaktivieren
-        const ZEIGE_BERECHTIGUNGS_FENSTER = 1; 
+        // ==========================================================
+        // EINSTELLUNGEN & VARIABLEN
+        // ==========================================================
+        const WEBSITE_URL = "https://my-whatsapp.ai.studio"; // Deine Studio-Adresse
+        const ZEIGE_BERECHTIGUNGS_FENSTER = 1;              // Auf 0 setzen zum kompletten Deaktivieren
+
+        let wurdeBestaetigt = false;
 
         const iframe = document.getElementById('studio-iframe');
         const loader = document.getElementById('loader-overlay');
         const modal = document.getElementById('settings-modal');
         const backdrop = document.getElementById('modal-backdrop');
 
+        // Setzt die URL beim ersten Laden der Seite aktiv in das iFrame ein
+        iframe.src = WEBSITE_URL;
+
         iframe.addEventListener('load', function() {
             loader.style.opacity = '0';
             setTimeout(() => { 
                 loader.style.display = 'none'; 
-                if (ZEIGE_BERECHTIGUNGS_FENSTER === 1) {
+                
+                // Verhindert das erneute Aufploppen nach dem Apply-Reload
+                if (ZEIGE_BERECHTIGUNGS_FENSTER === 1 && wurdeBestaetigt === false) {
                     modal.style.display = 'block';
-                    backdrop.style.display = 'block'; /* Zeigt den grauen Hintergrund an */
+                    backdrop.style.display = 'block';
                 }
             }, 500);
         });
 
-        // Aktiviert die ausgewählten Berechtigungen und schließt das Fenster
         function applySettings() {
+            wurdeBestaetigt = true;
+
             let allowFeatures = [];
             if (document.getElementById('geo').checked) allowFeatures.push('geolocation');
             if (document.getElementById('mic').checked) allowFeatures.push('microphone');
@@ -134,12 +133,9 @@
             if (document.getElementById('pip').checked) allowFeatures.push('picture-in-picture');
             allowFeatures.push('fullscreen');
 
-            // Schließt das Overlay und den grauen Schleier
             modal.style.display = 'none';
-            backdrop.style.none = 'none';
             backdrop.style.display = 'none';
 
-            // Zeige kurz den Loader, während das iFrame mit den neuen Rechten neu lädt
             loader.style.display = 'flex';
             loader.style.opacity = '1';
 
@@ -147,9 +143,16 @@
             iframe.src = iframe.src; 
         }
 
+        window.addEventListener('click', function(e) {
+            if (e.target !== modal && !modal.contains(e.target)) {
+                modal.style.display = 'none';
+            }
+        });
+
         // Speicher-Brücke
         window.addEventListener('message', function(event) {
-            if (event.origin !== 'https://my-whatsapp.ai.studio') return; 
+            // Nutzt die oben definierte Variable zur Sicherheitsprüfung
+            if (event.origin !== WEBSITE_URL) return; 
 
             const iframeWindow = iframe.contentWindow;
             const data = event.data;
@@ -166,7 +169,7 @@
                             type: 'LOCAL_STORAGE_RESPONSE',
                             key: data.key,
                             value: gespeicherterWert
-                        }, 'https://my-whatsapp.ai.studio');
+                        }, WEBSITE_URL); // Nutzt auch hier die Variable
                         break;
 
                     case 'LOCAL_STORAGE_REMOVE':

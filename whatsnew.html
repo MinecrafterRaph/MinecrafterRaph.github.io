@@ -2,60 +2,44 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Desktop-Ansicht</title>
+    <!-- Wichtig: Verhindert fehlerhaftes Zoomen auf Handys und Tablets -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Dein gewünschter Projekttitel im Browser-Tab -->
+    <title>WhatsNew</title>
     <style>
+        /* Entfernt alle Standard-Ränder des Webbrowsers */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
-            background-color: #000;
+            overflow: hidden; /* Verhindert ungewollte doppelte Scrollbalken */
         }
 
-        /* Der virtuelle Desktop-Container */
-        .desktop-scaler {
-            position: absolute;
+        /* Spannt das iFrame zu 100% über den exakt sichtbaren Bildschirm */
+        .fullscreen-iframe {
+            position: fixed;
             top: 0;
             left: 0;
-            width: 1280px; /* Deine feste PC-Wunschbreite */
+            bottom: 0;
+            right: 0;
+            width: 100%;
             height: 100%;
-            transform-origin: top left;
-            
-            /* Der mathematische Zoom-Trick */
-            transform: scale(calc(100vw / 1280)); 
-            
-            /* iOS FIX 1: Zwingt Apple-Geräte dazu, Scrollen innerhalb dieser Box zu erlauben */
-            -webkit-overflow-scrolling: touch;
-            overflow-y: auto;
-        }
-
-        /* Das Iframe, angepasst für iPad & iPhone */
-        .desktop-scaler iframe {
-            /* iOS FIX 2: Verhindert, dass Safari die Breite unkontrolliert ausdehnt */
-            width: 1px;
-            min-width: 100%; 
-            
-            /* iOS FIX 3: Berechnet die exakte Höhe passend zum Zoom-Faktor */
-            height: calc(100vh * (1280 / 100vw)); 
-            
             border: none;
-            display: block;
+            margin: 0;
+            padding: 0;
+            z-index: 999999;
         }
     </style>
 </head>
 <body>
 
-    <div class="desktop-scaler">
-        <!-- scrolling="yes" hilft älteren iOS-Versionen beim sauberen Rendering -->
-        <iframe 
-            src="https://ai.studio" 
-            title="Desktop Ansicht"
-            scrolling="yes"
-            allow="camera; microphone; display-capture; geolocation">
-        </iframe>
-    </div>
+    <!-- Lädt deine exakte Domain im echten Vollbildmodus -->
+    <iframe 
+        src="https://my-whatsapp.ai.studio" 
+        class="fullscreen-iframe"
+        allow="microphone; camera; clipboard-write; geolocation">
+    </iframe>
 
 </body>
 </html>

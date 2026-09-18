@@ -74,14 +74,14 @@
     <div id="settings-modal">
         <div class="modal-scroll-area">
             <h3 class="modal-title">Berechtigungen</h3>
-            <div class="permission-row"><span class="permission-label">Standort (Geolocation)</span><label class="switch"><input type="checkbox" id="geo" checked><span class="slider"></span></label></div>
+            <div class="permission-row"><span class="permission-label">Standort</span><label class="switch"><input type="checkbox" id="geo" checked><span class="slider"></span></label></div>
             <div class="permission-row"><span class="permission-label">Mikrofon</span><label class="switch"><input type="checkbox" id="mic" checked><span class="slider"></span></label></div>
             <div class="permission-row"><span class="permission-label">Kamera</span><label class="switch"><input type="checkbox" id="cam" checked><span class="slider"></span></label></div>
-            <div class="permission-row"><span class="permission-label">Zwischenablage (Schreiben)</span><label class="switch"><input type="checkbox" id="clip-w" checked><span class="slider"></span></label></div>
-            <div class="permission-row"><span class="permission-label">Zwischenablage (Lesen)</span><label class="switch"><input type="checkbox" id="clip-r" checked><span class="slider"></span></label></div>
+            <div class="permission-row"><span class="permission-label">Zwischenablage (Einfügen)</span><label class="switch"><input type="checkbox" id="clip-w" checked><span class="slider"></span></label></div>
+            <div class="permission-row"><span class="permission-label">Zwischenablage (Hinzufügen)</span><label class="switch"><input type="checkbox" id="clip-r" checked><span class="slider"></span></label></div>
             <div class="permission-row"><span class="permission-label">Autoplay (Audio/Video)</span><label class="switch"><input type="checkbox" id="auto" checked><span class="slider"></span></label></div>
             <div class="permission-row"><span class="permission-label">Bewegungssensoren (Gyro)</span><label class="switch"><input type="checkbox" id="gyro" checked><span class="slider"></span></label></div>
-            <div class="permission-row"><span class="permission-label">Bild-in-Bild Modus</span><label class="switch"><input type="checkbox" id="pip" checked><span class="slider"></span></label></div>
+            <div class="permission-row"><span class="permission-label">Bildunterstützung (Bild in Bild)</span><label class="switch"><input type="checkbox" id="pip" checked><span class="slider"></span></label></div>
         </div>
         <button class="apply-btn" onclick="applySettings()">Apply</button>
     </div>
@@ -93,8 +93,8 @@
         // ==========================================================
         // EINSTELLUNGEN & VARIABLEN
         // ==========================================================
-        const WEBSITE_URL = "https://my-whatsapp.ai.studio"; // Deine Studio-Adresse
-        const ZEIGE_BERECHTIGUNGS_FENSTER = 1;              // Auf 0 setzen zum kompletten Deaktivieren
+        const WEBSITE_URL = "https://my-whatsapp.ai.studio"; // Meine Studio-Adresse
+        const ZEIGE_BERECHTIGUNGS_FENSTER = 1;              // Fenster 1/0 = an/aus
 
         let wurdeBestaetigt = false;
 
@@ -103,18 +103,61 @@
         const modal = document.getElementById('settings-modal');
         const backdrop = document.getElementById('modal-backdrop');
 
+        // ==========================================================
+        // KANAL-EINLADUNG AUS URL ERKENNEN
+        // Unterstützt:
+        // - https://minecrafterraph.github.io/whatsnew.html/channel/[channelId]
+        // - https://minecrafterraph.github.io/whatsnew.html?channel=[channelId]
+        // - https://minecrafterraph.github.io/whatsnew.html#channel=[channelId]
+        // ==========================================================
+        function getInviteChannelId() {
+            try {
+                // 1. Prüfe URL-Pfad
+                const pathMatch = window.location.pathname.match(/\/channel\/([a-zA-Z0-9_\-]+)/i);
+                if (pathMatch && pathMatch[1]) return pathMatch[1];
+
+                // 2. Prüfe Query-Parameter
+                const params = new URLSearchParams(window.location.search);
+                const channelParam = params.get('channel') || params.get('channelId') || params.get('invite');
+                if (channelParam && channelParam.trim()) return channelParam.trim();
+
+                // 3. Prüfe Hash
+                const hashMatch = (window.location.hash || '').match(/(?:channel|invite)[=\/]([a-zA-Z0-9_\-]+)/i);
+                if (hashMatch && hashMatch[1]) return hashMatch[1];
+            } catch (e) {
+                console.error("Fehler beim Lesen der Kanal-ID:", e);
+            }
+            return null;
+        }
+
+        // URL des iFrames mit eventueller Kanal-ID zusammenbauen
+        const inviteChannelId = getInviteChannelId();
+        let targetIframeUrl = WEBSITE_URL;
+        if (inviteChannelId) {
+            const separator = targetIframeUrl.includes('?') ? '&' : '?';
+            targetIframeUrl += separator + 'channel=' + encodeURIComponent(inviteChannelId);
+        }
+
         // Setzt die URL beim ersten Laden der Seite aktiv in das iFrame ein
-        iframe.src = WEBSITE_URL;
+        iframe.src = targetIframeUrl;
 
         iframe.addEventListener('load', function() {
             loader.style.opacity = '0';
             setTimeout(() => { 
                 loader.style.display = 'none'; 
                 
-                // Verhindert das erneute Aufploppen nach dem Apply-Reload
+                // Verhindert das erneute Laden des Fenster nach dem Apply-Reload
                 if (ZEIGE_BERECHTIGUNGS_FENSTER === 1 && wurdeBestaetigt === false) {
                     modal.style.display = 'block';
                     backdrop.style.display = 'block';
+                }
+
+                // Falls eine Kanal-ID in der URL war, zusätzlich per postMessage an den iFrame senden
+                if (inviteChannelId && iframe.contentWindow) {
+                    iframe.contentWindow.postMessage({
+                        type: 'CHANNEL_INVITE',
+                        channelId: inviteChannelId
+                    }, '*');
                 }
             }, 500);
         });
@@ -149,16 +192,24 @@
             }
         });
 
-        // Speicher-Brücke
+        // ==========================================================
+        // SPEICHER- & EINLADUNGS-BRÜCKE (postMessage)
+        // ==========================================================
         window.addEventListener('message', function(event) {
-            // Nutzt die oben definierte Variable zur Sicherheitsprüfung
-            if (event.origin !== WEBSITE_URL) return; 
+            // Sicherheitsprüfung: Prüfe, ob die Nachricht von deiner App stammt
+            // (Erlaubt die konfigurierte WEBSITE_URL sowie eventuelle Subdomains)
+            const allowedOrigin = new URL(WEBSITE_URL).origin;
+            if (event.origin !== allowedOrigin && event.origin !== "null" && !event.origin.includes(".run.app") && !event.origin.includes(".ai.studio")) {
+                return;
+            }
 
             const iframeWindow = iframe.contentWindow;
+            if (!iframeWindow) return;
             const data = event.data;
 
             if (data && data.type) {
                 switch (data.type) {
+                    // 1. Lokale Speicherverwaltung
                     case 'LOCAL_STORAGE_SET':
                         localStorage.setItem(data.key, data.value);
                         break;
@@ -169,12 +220,25 @@
                             type: 'LOCAL_STORAGE_RESPONSE',
                             key: data.key,
                             value: gespeicherterWert
-                        }, WEBSITE_URL); // Nutzt auch hier die Variable
+                        }, '*');
                         break;
 
                     case 'LOCAL_STORAGE_REMOVE':
                         localStorage.removeItem(data.key);
                         break;
+
+                    // 2. Kanal-Einladungs-Abfrage von WhatsNew
+                    case 'GET_INVITE_CHANNEL':
+                    case 'GET_CHANNEL_INVITE': {
+                        const currentChannelId = getInviteChannelId();
+                        if (currentChannelId) {
+                            iframeWindow.postMessage({
+                                type: 'CHANNEL_INVITE_RESPONSE',
+                                channelId: currentChannelId
+                            }, '*');
+                        }
+                        break;
+                    }
                 }
             }
         });

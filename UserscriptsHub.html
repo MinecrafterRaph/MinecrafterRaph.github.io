@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MinecrafterRaph Userscripts Hub</title>
+  <title>MinecrafterRaph Userscripts</title>
   <style>
     * {
       margin: 0;
@@ -31,11 +31,44 @@
 <body>
 
   <iframe 
-    src="https://minecrafterraph-userscripts-hub.ai.studio" 
+    id="userscripts-frame"
+    src="about:blank"
     title="MinecrafterRaph Userscripts"
-    allow="clipboard-write; clipboard-read; fullscreen"
-    loading="lazy">
+    allow="clipboard-write; clipboard-read; fullscreen">
   </iframe>
+
+  <script>
+    (function() {
+      const BASE_URL = "https://minecrafterraph-userscripts-hub.ai.studio";
+      const iframe = document.getElementById("userscripts-frame");
+
+      function updateIframeSrc() {
+        const path = window.location.pathname.toLowerCase();
+        const hash = window.location.hash.toLowerCase();
+        const search = window.location.search.toLowerCase();
+
+        // Prüft, ob /dash in der URL, im Hash (#dash) oder als Parameter (?dash) steht
+        const isDash = path.endsWith("/dash") || 
+                       path.includes("/dash") || 
+                       hash === "#dash" || 
+                       hash === "#/dash" || 
+                       search.includes("dash");
+
+        const targetSrc = isDash ? (BASE_URL + "/dash") : BASE_URL;
+
+        if (iframe.src !== targetSrc) {
+          iframe.src = targetSrc;
+        }
+      }
+
+      // Initiales Laden
+      updateIframeSrc();
+
+      // Erkennt Änderungen, falls ohne Neuladen gewechselt wird (z. B. über #dash)
+      window.addEventListener("hashchange", updateIframeSrc);
+      window.addEventListener("popstate", updateIframeSrc);
+    })();
+  </script>
 
 </body>
 </html>

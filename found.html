@@ -25,10 +25,43 @@
   </head>
   <body>
     <iframe
+      id="app-frame"
       src="https://foundmyitems.ai.studio"
       title="Gefundene Sachen"
       allow="fullscreen; clipboard-write"
       loading="eager"
     ></iframe>
+
+    <script>
+      (function () {
+        const frame = document.getElementById('app-frame');
+        const baseUrl = 'https://foundmyitems.ai.studio';
+
+        function updateFrameSrc() {
+          const path = window.location.pathname.toLowerCase();
+          const hash = window.location.hash.toLowerCase();
+          const search = window.location.search.toLowerCase();
+
+          const isDash =
+            path === '/dash' ||
+            path.endsWith('/dash') ||
+            path.endsWith('/dash/') ||
+            hash === '#dash' ||
+            hash === '#/dash' ||
+            hash.includes('dash') ||
+            search.includes('dash');
+
+          const targetUrl = isDash ? baseUrl + '/dash#dash' : baseUrl;
+
+          if (frame.getAttribute('src') !== targetUrl) {
+            frame.setAttribute('src', targetUrl);
+          }
+        }
+
+        updateFrameSrc();
+        window.addEventListener('hashchange', updateFrameSrc);
+        window.addEventListener('popstate', updateFrameSrc);
+      })();
+    </script>
   </body>
 </html>

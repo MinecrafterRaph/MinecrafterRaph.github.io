@@ -30,25 +30,28 @@
 <body>
   <iframe
     id="app-frame"
-    src="https://ais-pre-itip4otpbtex7kvuioyh2o-674817004578.europe-west1.run.app"
     title="MinecrafterRaph GitHub Projects"
     allow="clipboard-read; clipboard-write; fullscreen;"
   ></iframe>
   <script>
     (function () {
       var frame = document.getElementById('app-frame');
-      var baseUrl = 'https://ais-pre-itip4otpbtex7kvuioyh2o-674817004578.europe-west1.run.app';
-      function syncHash() {
-        var target = baseUrl + (window.location.hash || '');
+      var baseUrl = 'https://ais-pre-itip4otpbtex7kvuioyh2o-674817004578.europe-west1.run.app/';
+      function syncRoute() {
+        var target = baseUrl + (window.location.search || '') + (window.location.hash || '');
         if (frame.src !== target) {
           frame.src = target;
         }
       }
-      if (window.location.hash) {
-        syncHash();
-      }
-      window.addEventListener('hashchange', syncHash);
+      syncRoute();
+      window.addEventListener('hashchange', syncRoute);
     })();
   </script>
+  <noscript>
+    <iframe
+      src="https://ais-pre-itip4otpbtex7kvuioyh2o-674817004578.europe-west1.run.app/"
+      title="MinecrafterRaph GitHub Projects"
+    ></iframe>
+  </noscript>
 </body>
 </html>

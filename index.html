@@ -1,41 +1,54 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MinecrafterRaph Projects</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>MinecrafterRaph — GitHub Projects</title>
+  <meta name="description" content="Kuratierte Sammlung aller GitHub Projekte & Web-Apps von MinecrafterRaph" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
   <style>
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
     }
     html, body {
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #f8f9fa;
+      background-color: #faf9f5;
     }
     iframe {
-      position: fixed;
-      top: 0;
-      left: 0;
+      display: block;
       width: 100vw;
       height: 100vh;
-      border: none;
+      border: 0;
       outline: none;
-      display: block;
     }
   </style>
 </head>
 <body>
-
-  <iframe 
-    src="https://minecrafterraph-projects.ai.studio" 
-    title="MinecrafterRaph Projects"
-    allow="clipboard-write; clipboard-read; fullscreen"
-    loading="lazy">
-  </iframe>
-
+  <iframe
+    id="app-frame"
+    src="https://ais-pre-itip4otpbtex7kvuioyh2o-674817004578.europe-west1.run.app"
+    title="MinecrafterRaph GitHub Projects"
+    allow="clipboard-read; clipboard-write; fullscreen;"
+  ></iframe>
+  <script>
+    (function () {
+      var frame = document.getElementById('app-frame');
+      var baseUrl = 'https://ais-pre-itip4otpbtex7kvuioyh2o-674817004578.europe-west1.run.app';
+      function syncHash() {
+        var target = baseUrl + (window.location.hash || '');
+        if (frame.src !== target) {
+          frame.src = target;
+        }
+      }
+      if (window.location.hash) {
+        syncHash();
+      }
+      window.addEventListener('hashchange', syncHash);
+    })();
+  </script>
 </body>
 </html>

@@ -1,0 +1,156 @@
+{
+  "users": [
+    {
+      "id": "usr_whatsapp_admin",
+      "name": "WhatsApp",
+      "password": "13243",
+      "avatar": "icon:admin",
+      "about": "Offizieller WhatsApp Administrator",
+      "isAdmin": true,
+      "createdAt": 1700000000000
+    },
+    {
+      "id": "usr_1788759975600_we21",
+      "name": "MinecrafterRaph",
+      "password": "MinecrafterR@ph876",
+      "avatar": "https://ui-avatars.com/api/?name=MinecrafterRaph&background=008069&color=fff&size=128&bold=true",
+      "about": "Verfügbar",
+      "createdAt": 1788759975600
+    },
+    {
+      "id": "usr_1788759998519_tsfl",
+      "name": "Alex",
+      "password": "",
+      "avatar": "https://ui-avatars.com/api/?name=Alex&background=008069&color=fff&size=128&bold=true",
+      "about": "Verfügbar",
+      "createdAt": 1788759998519
+    }
+  ],
+  "chats": [
+    {
+      "id": "chat_global_all",
+      "participants": [
+        "*",
+        "usr_1788759975600_we21",
+        "usr_whatsapp_admin"
+      ],
+      "participantNames": [
+        "Alle",
+        "MinecrafterRaph",
+        "WhatsApp"
+      ],
+      "createdAt": 1700000000000,
+      "name": "Alle",
+      "isGlobal": true,
+      "isPinned": true,
+      "avatar": "icon:globe"
+    },
+    {
+      "id": "chat_1788759998519_rgux",
+      "participants": [
+        "usr_1788759975600_we21",
+        "usr_1788759998519_tsfl"
+      ],
+      "participantNames": [
+        "MinecrafterRaph",
+        "Alex"
+      ],
+      "createdAt": 1788759998519
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg_welcome_global",
+      "chatId": "chat_global_all",
+      "senderId": "usr_whatsapp_admin",
+      "senderName": "WhatsApp",
+      "text": "👋 Willkommen im \"Alle\"-Chat! Dieser Chat verbindet die gesamte Community. Alle registrierten Nutzer können hier gemeinsam schreiben und sich austauschen.",
+      "timestamp": "5:53",
+      "status": "read",
+      "type": "text",
+      "createdAt": 1788756785064
+    },
+    {
+      "id": "msg_1788760402359_06ni",
+      "chatId": "chat_global_all",
+      "senderId": "usr_1788759975600_we21",
+      "senderName": "MinecrafterRaph",
+      "text": "Hallo an alle!",
+      "timestamp": "5:53",
+      "status": "read",
+      "type": "text",
+      "pollMultipleAnswers": false,
+      "createdAt": 1788760402359
+    },
+    {
+      "id": "msg_1789647782374_qxnn",
+      "chatId": "chat_global_all",
+      "senderId": "usr_1788759975600_we21",
+      "senderName": "MinecrafterRaph",
+      "text": "Es gab übrigens auch ein paar neue Updates!",
+      "timestamp": "12:23",
+      "status": "delivered",
+      "type": "text",
+      "pollMultipleAnswers": false,
+      "isPinned": false,
+      "isForwarded": false,
+      "isViewOnce": false,
+      "viewedBy": [],
+      "createdAt": 1789647782375
+    }
+  ],
+  "channels": [
+    {
+      "id": "whatsapp-official",
+      "name": "WhatsApp",
+      "category": "Offiziell",
+      "verified": true,
+      "avatar": "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?w=120&auto=format&fit=crop&q=80",
+      "followers": "154 Mio. Abonnenten",
+      "description": "Offizielle Neuigkeiten, exklusive Einblicke und neue Funktionen direkt vom WhatsApp-Team.",
+      "posts": [
+        {
+          "id": "p1",
+          "time": "Heute, 14:30",
+          "text": "Wir stellen neue WhatsApp-Funktionen für Freunde bereit: Benutzerdefinierte Chat-Hintergründe, persönliche Spitznamen, Einmal-Ansicht für Nachrichten und @Erwähnungen in Gruppen.",
+          "imageUrl": "https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&auto=format&fit=crop&q=80",
+          "link": {
+            "title": "WhatsApp Blog",
+            "url": "https://whatsapp.com"
+          },
+          "reactions": [
+            {
+              "emoji": "👍",
+              "count": 18420
+            },
+            {
+              "emoji": "❤️",
+              "count": 24150
+            },
+            {
+              "emoji": "🔥",
+              "count": 9840
+            }
+          ],
+          "createdAt": 1789732329372
+        },
+        {
+          "id": "p2",
+          "time": "Gestern, 11:15",
+          "text": "Alle Fake-Communitys und Fremdkanäle wurden entfernt. Dieser Kanal bleibt der einzige offizielle Update-Kanal und kann von Administratoren direkt gepflegt und erweitert werden.",
+          "reactions": [
+            {
+              "emoji": "👍",
+              "count": 14200
+            },
+            {
+              "emoji": "❤️",
+              "count": 19800
+            }
+          ],
+          "createdAt": 1789649529372
+        }
+      ]
+    }
+  ]
+}

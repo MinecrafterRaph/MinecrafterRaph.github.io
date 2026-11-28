@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/* WhatsApp Immersive UI Theme & Custom Scrollbars */
+:root {
+  --wa-green: #00a884;
+  --wa-green-dark: #008069;
+  --wa-green-light: #25d366;
+  --wa-bg-panel: #f0f2f5;
+  --wa-bg-chat: #efeae2;
+  --wa-bubble-out: #d9fdd3;
+  --wa-bubble-in: #ffffff;
+  --wa-text-primary: #111b21;
+  --wa-text-secondary: #667781;
+  --wa-text-body: #41525d;
+  --wa-border: #d1d7db;
+  --wa-border-subtle: #f0f2f5;
+  --wa-blue-tick: #53bdeb;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--wa-text-body);
+  background-color: #f0f2f5;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbars like WhatsApp Web */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(11, 20, 26, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(11, 20, 26, 0.35);
+}
+
+/* WhatsApp Classic Dot Pattern Background (Immersive UI exact SVG) */
+.wa-wallpaper-classic {
+  background-color: #efeae2;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0iIzAwMCIvPjwvc3ZnPg==");
+}
+
+.wa-wallpaper-mint {
+  background-color: #e3ede6;
+  background-image: radial-gradient(rgba(0, 128, 105, 0.05) 1px, transparent 0);
+  background-size: 20px 20px;
+}
+
+.wa-wallpaper-sand {
+  background-color: #f7f3ec;
+  background-image: radial-gradient(rgba(180, 150, 110, 0.06) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
+.wa-wallpaper-slate {
+  background-color: #eaeff2;
+  background-image: radial-gradient(rgba(84, 101, 111, 0.05) 1px, transparent 0);
+  background-size: 20px 20px;
+}
+
+.wa-wallpaper-clean {
+  background-color: #f6f7f8;
+}
+
+/* Audio Waveform animation */
+@keyframes wave-bar {
+  0%, 100% {
+    transform: scaleY(0.4);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.animate-wave {
+  animation: wave-bar 0.8s ease-in-out infinite;
+}
+

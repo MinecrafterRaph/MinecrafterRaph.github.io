@@ -1,0 +1,6 @@
+{
+  "name": "WhatsNew",
+  "description": "WhatsNew - WhatsApp Web App mit Channels, Chats und iFrame-Bridge für https://minecrafterraph.github.io/whatsnew.html",
+  "requestFramePermissions": ["microphone", "camera", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
